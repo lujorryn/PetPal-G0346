@@ -1,0 +1,1 @@
+./petpal/manage.py runserver
