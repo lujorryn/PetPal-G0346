@@ -134,4 +134,11 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Remove trailing slash requirement of Django to adhere to REST guidelines
 APPEND_SLASH = False
+
+# Uploaded files
+# https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-MEDIA_ROOT
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = 'media/'
