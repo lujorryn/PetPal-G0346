@@ -9,6 +9,9 @@ User = settings.AUTH_USER_MODEL
 
 # Create your models here.
 class PetListing(models.Model):
+    class Meta:
+        verbose_name = "pet listing"
+    
     CATEGORIES = (('D', 'Dog'),( 'C', 'Cat'), ('O', 'Other'))
     GENDER = (('M', 'Male'), ('F', 'Female'), ('X', 'Unknown'))
     SIZE = (('L', 'Large'), ('M', 'Mid'), ('S', 'Small'))
@@ -32,5 +35,8 @@ class PetListing(models.Model):
     favorited_by = models.ManyToManyField(User, related_name='favorited_pets')
 
 class PetListingImage(models.Model):
+    class Meta:
+        verbose_name = 'pet listing image'
+
     image = models.ImageField(upload_to="pet-images/")
     petlisting = models.ForeignKey(PetListing, on_delete=models.CASCADE, related_name='images')

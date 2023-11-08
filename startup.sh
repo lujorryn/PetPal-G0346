@@ -6,7 +6,7 @@ sudo apt-get install libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev \
     libharfbuzz-dev libfribidi-dev libxcb1-dev
 pip3 install -r requirements.txt
 
-# Recommended: Uncomment "after" custom User model is done, 
-# apparently doing migrations before custom User is complete creates a mess
-# ./petpal/manage.py makemigrations
-# ./petpal/manage.py migrate
+rm ./petpal/*/migrations/0*.py
+rm ./petpal/db.sqlite3
+./petpal/manage.py makemigrations
+./petpal/manage.py migrate
