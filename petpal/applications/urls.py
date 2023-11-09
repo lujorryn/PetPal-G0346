@@ -6,6 +6,6 @@ app_name = 'applications'
 
 urlpatterns = [
     path('', applications_list_and_create_view, name='applications-lists'),
-    path('/pet/<str:pet_id>', pet_applications_list_view, name='pet-applications-lists'),
-    path('/<str:app_id>', application_detail_view, name='applications-detail'),
+    path('/pet/<int:pet_id>', pet_applications_list_view, name='pet-applications-lists'),
+    path('/<int:app_id>', application_detail_view, name='applications-detail'),
 ]
