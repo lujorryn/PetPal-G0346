@@ -1,0 +1,111 @@
+[
+    {
+    "model": "accounts.petpaluser",
+        "pk": 1,
+        "fields": {
+            "email": "seeker@example.com",
+            "password": "hashed_password",
+            "role": "SEEKER"
+        }
+    },
+    {
+        "model": "accounts.petpaluser",
+        "pk": 2,
+        "fields": {
+            "email": "shelterr@example.com",
+            "password": "hashed_password",
+            "role": "SHELTER"
+        }
+    },
+    {
+        "model": "applications.application",
+        "pk": 1,
+        "fields": {
+            "first_name": "John",
+            "last_name": "Doe",
+            "address": "123 Main St",
+            "phone": "123-456-7890",
+            "email": "seeker@example.com",
+            "contact_pref": "E",
+            "pet_number": 1,
+            "has_children": false,
+            "experience": "EX",
+            "residence_type": "C",
+            "status": "P",
+            "created_time": "2023-01-01T00:00:00Z",
+            "last_updated": "2023-01-01T00:00:00Z",
+            "seeker": 1,
+            "shelter": 2,
+            "petlisting": 1
+        }
+    },
+    {
+        "model": "comments.comment",
+        "pk": 1,
+        "fields": {
+            "content": "I would like to adopt this pet!",
+            "created_time": "2023-01-01T00:00:00Z",
+            "rating": null,
+            "is_author_seeker": true,
+            "seeker": 1,
+            "shelter": 2,
+            "is_review": false,
+            "application": 1
+        }
+    },
+    {
+        "model": "comments.comment",
+        "pk": 2,
+        "fields": {
+            "content": "We would like you to provide more information about your family.",
+            "created_time": "2023-01-01T00:00:00Z",
+            "rating": null,
+            "is_author_seeker": false,
+            "seeker": 1,
+            "shelter": 2,
+            "is_review": false,
+            "application": 1
+        }
+    },
+    {
+        "_comment": "content_type is the id of Comment model, retrieveable from: content_type = ContentType.objects.get_for_model(Comment)",
+        "model": "notifications.notification",
+        "pk": 1,
+        "fields": {
+            "subject": "Notification Subject",
+            "body": "Notification Body",
+            "recipients": [1, 2],
+            "content_type": 12,
+            "object_id": 1
+        }
+    },
+
+    {
+        "model": "petlistings.petlisting",
+        "pk": 1,
+        "fields": {
+            "name": "Fluffy",
+            "category": "D",
+            "breed": "Golden Retriever",
+            "age": 3,
+            "gender": "M",
+            "size": "L",
+            "status": "AV",
+            "created_time": "2023-01-01T00:00:00Z",
+            "last_updated": "2023-01-01T00:00:00Z",
+            "med_history": "No significant medical history",
+            "behaviour": "Friendly and playful",
+            "special_needs": "",
+            "description": "Fluffy is a lovely Golden Retriever looking for a forever home.",
+            "owner": 2
+        }
+    },
+    {
+        "model": "petlistings.petlistingimage",
+        "pk": 1,
+        "fields": {
+            "image": "path/to/image.jpg",
+            "petlisting": 1
+        }
+    }
+]

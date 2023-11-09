@@ -1,4 +1,5 @@
 #!/bin/bash
+# If this script gives "-bash: ./startup.sh: /bin/bash^M: bad interpreter: No such file or directory", run dos2unix startup.sh
 sudo apt update
 sudo apt install -y python3-pip
 sudo apt install python3-virtualenv
