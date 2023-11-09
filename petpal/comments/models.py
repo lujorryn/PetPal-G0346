@@ -40,6 +40,7 @@ class Comment(models.Model):
                 subject = 'You have received a comment!'
                 body = f'You have received a comment from {self.shelter.email} for your application on {self.application.petlisting.name}.'
         notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self)
+        notification.save()
         if self.is_review:
             notification.recipients.add(self.shelter)
         else:

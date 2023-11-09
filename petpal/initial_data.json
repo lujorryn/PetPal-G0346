@@ -1,5 +1,8 @@
 [
     {
+        "_comment": "For reference only, refer to script.py for how data loading will work"
+    },
+    {
     "model": "accounts.petpaluser",
         "pk": 1,
         "fields": {
