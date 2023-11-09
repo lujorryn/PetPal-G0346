@@ -14,3 +14,4 @@ rm petpal/*/migrations/0*.py
 rm petpal/db.sqlite3
 python3 petpal/manage.py makemigrations
 python3 petpal/manage.py migrate
+python3 petpal/manage.py loaddata petpal/initial_data.json
