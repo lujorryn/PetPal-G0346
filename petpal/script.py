@@ -1,10 +1,17 @@
+import os
+import django
+# Set the DJANGO_SETTINGS_MODULE environment variable
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "petpal.settings")
+django.setup()
+
 from django.core.serializers import serialize
-from accounts.models import PetPalUserUser as User
+from accounts.models import PetPalUser as User
 from applications.models import Application
 from comments.models import Comment
 from petlistings.models import PetListing
 
 def create_initial_data_json():
+    print("Creating initial_data.json...")
     """Create initial_data json file for testing."""
     # Users
     seeker1 = User.objects.create(email="seeker1@example.com", password="123", role=User.Role.SEEKER)
@@ -44,6 +51,10 @@ def create_initial_data_json():
     
     # Notifications should be created automatically when comments, petlistings, and applications are created
     
-    data = serialize('json', [seeker1, seeker2, seeker3, shelter1, shelter2, shelter3, petlisting1, petlisting2, petlisting3, petlisting4, app1, app2, comment1, comment2, comment3])
-    with open('initial_data.json', 'w') as f:
-        f.write(data)
+    # If you want to create initial_data.json, uncomment the following lines as well as comment out "python3 petpal/script.py" in startup.sh and run "python3 petpal/script.py" in bash
+    # data = serialize('json', [seeker1, seeker2, seeker3, shelter1, shelter2, shelter3, petlisting1, petlisting2, petlisting3, petlisting4, app1, app2, comment1, comment2, comment3])
+    # with open('initial_data.json', 'w') as f:
+    #     f.write(data)
+        
+if __name__ == '__main__':
+    create_initial_data_json()
