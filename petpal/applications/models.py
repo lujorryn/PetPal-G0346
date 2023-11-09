@@ -28,6 +28,7 @@ class Application(models.Model):
     status = models.CharField(max_length=1, choices=STATUS)
     created_time = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    seeker = models.ForeignKey(User, on_delete=models.CASCADE, related_name="applications")
+    seeker = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seeker_applications")
+    shelter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="shelter_applications")
     petlisting = models.ForeignKey(PetListing, on_delete=models.CASCADE, related_name="applications")
     notification = GenericRelation(Notification)
