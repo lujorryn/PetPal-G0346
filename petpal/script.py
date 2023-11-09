@@ -52,9 +52,9 @@ def create_initial_data_json():
     # Notifications should be created automatically when comments, petlistings, and applications are created
     
     # If you want to create initial_data.json, uncomment the following lines as well as comment out "python3 petpal/script.py" in startup.sh and run "python3 petpal/script.py" in bash
-    data = serialize('json', [seeker1, seeker2, seeker3, shelter1, shelter2, shelter3, petlisting1, petlisting2, petlisting3, petlisting4, app1, app2, comment1, comment2, comment3])
-    with open('initial_data.json', 'w') as f:
-        f.write(data)
+    # data = serialize('json', [seeker1, seeker2, seeker3, shelter1, shelter2, shelter3, petlisting1, petlisting2, petlisting3, petlisting4, app1, app2, comment1, comment2, comment3])
+    # with open('initial_data.json', 'w') as f:
+    #     f.write(data)
         
 if __name__ == '__main__':
     create_initial_data_json()
