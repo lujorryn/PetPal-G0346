@@ -6,5 +6,5 @@ app_name = 'notifications'
 
 urlpatterns = [
     path('', notifications_list_view, name='note-list'),
-    path('/<str:note_id>', notifications_detail_view, name='note-detail'),
+    path('/<int:note_id>', notifications_detail_view, name='note-detail'),
 ]
