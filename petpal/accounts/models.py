@@ -39,7 +39,7 @@ class PetPalUser(AbstractUser):
     # Set during signup and "required"
     email = models.EmailField(max_length=255, unique=True) # email as username
     password = models.CharField(max_length=255)
-    role = models.CharField(max_length=7, choices=Role.choices)
+    role = models.CharField(max_length=7, choices=Role.choices, default=base_role)
     
     # Set during user profile update
     address = models.CharField(max_length=255, blank=True)
@@ -56,7 +56,7 @@ class PetPalUser(AbstractUser):
     objects = PetPalUserManager()
     
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["role"]
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email

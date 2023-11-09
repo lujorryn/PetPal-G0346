@@ -14,12 +14,12 @@ def create_initial_data_json():
     print("Creating initial_data.json...")
     """Create initial_data json file for testing."""
     # Users
-    seeker1 = User.objects.create(email="seeker1@example.com", password="123", role=User.Role.SEEKER)
-    seeker2 = User.objects.create(email="seeker2@example.com", password="123", role=User.Role.SEEKER)
-    seeker3 = User.objects.create(email="seeker3@example.com", password="123", role=User.Role.SEEKER)
-    shelter1 = User.objects.create(email="shelter1@example.com", password="123", role=User.Role.SHELTER)
-    shelter2 = User.objects.create(email="shelter2@example.com", password="123", role=User.Role.SHELTER)
-    shelter3 = User.objects.create(email="shelter3@example.com", password="123", role=User.Role.SHELTER)
+    seeker1 = User.objects.create_user(email="seeker1@example.com", password="123", role=User.Role.SEEKER)
+    seeker2 = User.objects.create_user(email="seeker2@example.com", password="123", role=User.Role.SEEKER)
+    seeker3 = User.objects.create_user(email="seeker3@example.com", password="123", role=User.Role.SEEKER)
+    shelter1 = User.objects.create_user(email="shelter1@example.com", password="123", role=User.Role.SHELTER)
+    shelter2 = User.objects.create_user(email="shelter2@example.com", password="123", role=User.Role.SHELTER)
+    shelter3 = User.objects.create_user(email="shelter3@example.com", password="123", role=User.Role.SHELTER)
     
     # Petlistings
     petlisting1 = PetListing.objects.create(name="Buddy", category="D", breed="Golden Retriver", age=3,

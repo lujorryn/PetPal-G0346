@@ -6,5 +6,5 @@ app_name = 'shelters'
 
 urlpatterns = [
     path('', shelters_list_view, name='shelter-list'),
-    path('/<str:account_id>', shelter_detail_view, name='shelter-detail'),
+    path('/<int:account_id>', shelter_detail_view, name='shelter-detail'),
 ]
