@@ -32,7 +32,7 @@ def notifications_list_view(request):
 
 '''
 VIEW / DELETE A Notification
-ENDPOINT: /api/notifications/<str:note_id>/
+ENDPOINT: /api/notifications/<int:note_id>/
 METHOD: GET, DELETE
 PERMISSION: User logged in and must be the recipient of the notification
 SUCCESS:
