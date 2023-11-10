@@ -109,8 +109,12 @@ def petlistings_category_list_view(request, category):
     if category not in ['D', 'C', 'O']:
         return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
     data = []
+    paginator = PageNumberPagination()
+    paginator.page_size = 2
+    
     petlistings = PetListing.objects.filter(category=category)
-    for listing in petlistings:
+    paginated_petlistings = paginator.paginate_queryset(petlistings, request)
+    for listing in paginated_petlistings:
         result = {
             'id': listing.pk,
             'name': listing.name,
@@ -134,7 +138,7 @@ def petlistings_category_list_view(request, category):
                 'url': image.image.url
             })
         data.append(result)
-    return Response({'data': data}, status=status.HTTP_200_OK)
+    return paginator.get_paginated_response({'data': data})
 
 '''
 VIEW / EDIT / DELETE A petlisting
