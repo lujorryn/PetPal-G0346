@@ -119,9 +119,10 @@ def comments_all_applications_list_view(request):
         for application in page_obj.object_list:
             
             data[application.pk] = []
-            comments = application.comment_set.all()
+            comments = application.comment_set.all().order_by('-created_time')
         
-            for comment in comments[:2]: # fixed length preview pagination
+            # for comment in comments[:2]: # fixed length preview pagination, use for P3
+            for comment in comments:
                 data[application.pk].append({
                     "id": comment.pk,
                     "content": comment.content,
@@ -160,10 +161,10 @@ def comments_application_list_view(request, app_id):
     try:
         application = Application.objects.get(pk=app_id)
         if request.user != application.seeker and request.user != application.shelter:
-            return Response({'error': 'User not authorized to view this comment'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'User not authorized to view this comment list'}, status=status.HTTP_401_UNAUTHORIZED)
 
         data = []
-        comments = application.comment_set.all()
+        comments = application.comment_set.all().order_by('-created_time')
 
         # pagination
         paginator = Paginator(comments, per_page=2)
@@ -210,7 +211,7 @@ def comments_shelter_list_view(request, shelter_id):
         if shelter.role != 'SHELTER':
             return JsonResponse({'data': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         
-        comments = Comment.objects.filter(shelter=shelter, is_review=True)
+        comments = Comment.objects.filter(shelter=shelter, is_review=True).order_by('-created_time')
         data = []
 
         # pagination
