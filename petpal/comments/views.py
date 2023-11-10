@@ -23,7 +23,12 @@ def comment_create_view(request):
     is_author_seeker = True if request.user.role == User.Role.SEEKER else False
     is_review = request.data.get('is_review')
     content = request.data.get('content')
+    if content.strip() == '':
+        return Response({'error': 'Content cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
 
+    if request.data.get('recipient_email') == None or request.data.get('recipient_email').strip() == '':
+        return Response({'error': 'Recipient email cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
+    
     # Check if email is seeker -> shelter, shelter -> seeker
     if request.user.role == User.objects.get(email=request.data.get('recipient_email')).role:
         return Response({'error': f'{request.user.role}-{request.user.role} communication not supported'}, status=status.HTTP_400_BAD_REQUEST)
