@@ -24,9 +24,7 @@ def notifications_list_view(request):
 
     if is_read is not None:
         if is_read.lower() == 'true' or is_read == True:
-            print('true')
             notifications = Notification.objects.filter(recipients=request.user, recipients_read=request.user)
-            print(notifications[0].recipients_read.all())
         else:
             notifications = Notification.objects.filter(recipients=request.user).exclude(recipients_read=request.user)
     else:
