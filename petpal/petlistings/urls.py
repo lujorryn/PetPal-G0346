@@ -6,7 +6,7 @@ app_name = 'petlistings'
 
 urlpatterns = [
     path('', petlistings_list_and_create_view, name='petlisting-lists'),
-    path('/category/<str:category>', petlistings_category_list_view, name='petlisting-category-lists'),
+    path('/filter', petlistings_category_list_view, name='petlisting-category-lists'),
     path('/<int:pet_id>', petlisting_detail_view, name='pelisting-detail'),
     path('/<int:pet_id>/<int:photo_id>', petlisting_photo_view, name='petlisting-photo')
 ]

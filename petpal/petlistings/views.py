@@ -60,21 +60,34 @@ def petlistings_list_and_create_view(request):
             return Response({'error': 'User not authorized to create petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
         
         # Check if all required fields are present and not null
-        required_fields = ['name', 'category', 'breed', 'age', 'gender', 'size', 'description']
+        required_fields = ['name', 'category', 'age', 'gender', 'size', 'description']
         for field in required_fields:
             if not request.data.get(field):
                 return Response({'error': f'{field} is required and cannot be null'}, status=status.HTTP_400_BAD_REQUEST)
 
         name = request.data.get('name')
+        if name.strip() == '':
+            return Response({'error': 'Name cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
         category = request.data.get('category')
-        breed = request.data.get('breed')
+        if category not in ['D', 'C', 'O']:
+            return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
+        breed = request.data.get('breed', 'N/A')
         age = request.data.get('age')
+        if int(age) < 0:
+            return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
         gender = request.data.get('gender')
+        if gender not in ['M', 'F', 'X']:
+            return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
         size = request.data.get('size')
+        if size not in ['L', 'M', 'S']:
+            return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
+        
         med_history = request.data.get('med_history', 'N/A')
         behaviour = request.data.get('behaviour', 'N/A')
         special_needs = request.data.get('special_needs', 'N/A')
         description = request.data.get('description')
+        if description.strip() == '':
+            return Response({'error': 'Description cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
         new_listing = PetListing(
             name=name,
             category=category,
@@ -97,22 +110,56 @@ def petlistings_list_and_create_view(request):
         return Response({'data': f'Petlisting for {name} created'}, status=status.HTTP_200_OK)
 
 '''
-LIST All Petlistings within category
-ENDPOINT: /api/petlistings/category/<str:category>
+LIST All Petlistings within the filter
+ENDPOINT: /api/petlistings/filter
 METHOD: GET
 PERMISSION: User logged in
 '''
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def petlistings_category_list_view(request, category):
-    # Check if category is valid
-    if category not in ['D', 'C', 'O']:
+def petlistings_category_list_view(request):
+    filter = {}
+    category = request.GET.get('category', None)
+    if category != None and category not in ['D', 'C', 'O']:
         return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
+    if category != None:
+        filter['category'] = category
+
+    age = request.GET.get('age', None)
+    if age != None and int(age) < 0:
+        return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
+    if age != None:
+        filter['age'] = age
+    
+    pet_status = request.GET.get('status', None)
+    if pet_status != None and pet_status not in ['AV', 'AD', 'PE', 'WI']:
+        return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+    if pet_status != None:
+        filter['status'] = pet_status
+    
+    gender = request.GET.get('gender', None)
+    if gender != None and gender not in ['M', 'F', 'X']:
+        return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
+    if gender != None:
+        filter['gender'] = gender
+    
+    size = request.GET.get('size', None)
+    if size != None and size not in ['L', 'M', 'S']:
+        return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
+    if size != None:
+        filter['size'] = size
+    
+    shelter_email = request.GET.get('shelter_email', None)
+    if shelter_email != None and not User.objects.filter(email=shelter_email).exists():
+        return Response({'error': 'Invalid shelter email'}, status=status.HTTP_400_BAD_REQUEST)
+    if shelter_email != None:
+        filter['owner'] = User.objects.get(email=shelter_email)
+    
     data = []
     paginator = PageNumberPagination()
     paginator.page_size = 2
     
-    petlistings = PetListing.objects.filter(category=category)
+    petlistings = PetListing.objects.filter(**filter)
     paginated_petlistings = paginator.paginate_queryset(petlistings, request)
     for listing in paginated_petlistings:
         result = {
@@ -185,33 +232,47 @@ def petlisting_detail_view(request, pet_id):
         try:
             if request.user != PetListing.objects.get(pk=pet_id).owner:
                 return Response({'data': 'User not authorized to edit this petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
-            required_fields = ['name', 'category', 'breed', 'age', 'gender', 'size', 'status', 'description']
+            required_fields = ['name', 'category', 'age', 'gender', 'size', 'status', 'description']
             for field in required_fields:
                 if not request.data.get(field):
                     return Response({'data': f'{field} is required and cannot be null'}, status=status.HTTP_400_BAD_REQUEST)
 
             name = request.data.get('name')
             category = request.data.get('category')
+            if category not in ['D', 'C', 'O']:
+                return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
             breed = request.data.get('breed')
             age = request.data.get('age')
+            if int(age) < 0:
+                return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
             gender = request.data.get('gender')
+            if gender not in ['M', 'F', 'X']:
+                return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
             size = request.data.get('size')
+            if size not in ['L', 'M', 'S']:
+                return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
             pet_status = request.data.get('status')
-            med_history = request.data.get('med_history', 'N/A')
-            behaviour = request.data.get('behaviour', 'N/A')
-            special_needs = request.data.get('special_needs', 'N/A')
+            if pet_status not in ['AV', 'AD', 'PE', 'WI']:
+                return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+            med_history = request.data.get('med_history')
+            behaviour = request.data.get('behaviour')
+            special_needs = request.data.get('special_needs')
             description = request.data.get('description')
             listing = PetListing.objects.get(pk=pet_id)
             listing.name = name
             listing.category = category
-            listing.breed = breed
+            if breed:
+                listing.breed = breed
             listing.age = age
             listing.gender = gender
             listing.size = size
             listing.status = pet_status
-            listing.med_history = med_history
-            listing.behaviour = behaviour
-            listing.special_needs = special_needs
+            if med_history:
+                listing.med_history = med_history
+            if behaviour:
+                listing.behaviour = behaviour
+            if special_needs:
+                listing.special_needs = special_needs
             listing.description = description
             listing.save()
             

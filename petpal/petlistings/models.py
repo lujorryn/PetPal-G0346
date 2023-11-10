@@ -25,7 +25,7 @@ class PetListing(models.Model):
     age = models.PositiveIntegerField(blank=True) # blank -> age unknown, can remove if implementation too complicated
     gender = models.CharField(max_length=1, choices=GENDER)
     size = models.CharField(max_length=1, choices=SIZE)
-    status = models.CharField(max_length=2, choices=STATUS)
+    status = models.CharField(max_length=2, choices=STATUS, default='AV')
     created_time = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     med_history = models.TextField(blank=True, null=True)
