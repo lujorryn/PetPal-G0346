@@ -71,9 +71,10 @@ def seeker_detail_view(request, account_id):
         # Check that the request is from the user themselves
         if request.user == seeker:
             # Payloads: name(?), email, location, phone, avatar, password, notification, preference
+            # Since there isn't a 'name' attribute for PetPalUser, I'll skip it.
             seeker.email = request.data.get('email', seeker.email)
             seeker.address = request.data.get('address', seeker.address)
-            seeker.city = request.data.get('city',seeker.city)
+            seeker.city = request.data.get('city', seeker.city)
             seeker.province = request.data.get('province', seeker.province)
             seeker.postal_code = request.data.get('postal_code', seeker.postal_code)
             seeker.phone = request.data.get('phone', seeker.phone)
@@ -82,6 +83,76 @@ def seeker_detail_view(request, account_id):
 
             # TODO: Update notifications/preferences
 
-            return Response()
+            serializer = SeekerSerializer(seeker, many=False)
+
+            return Response({'msg': 'Update Seeker', 'user_data': serializer.data}, status=status.HTTP_200_OK)
 
         return Response({'msg': 'You are not allowed to edit this profile'}, status=status.HTTP_403_FORBIDDEN)
+
+
+'''
+VIEW A seeker's favorite pets
+ENDPOINT: /api/seekers/<int:account_id>/favorites
+METHOD: GET
+PERMISSION:
+SUCCESS:
+'''
+
+
+@api_view(['GET'])
+def seeker_favorites_view(request, account_id):
+    # Check that the account_id exists
+    try:
+        seeker = Seeker.objects.get(id=account_id)
+    except Seeker.DoesNotExist:
+        return Response({'msg': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Check that only user can see this page
+    if request.user != seeker:
+        return Response({'msg': 'You are not allowed to see this page'}, status=status.HTTP_403_FORBIDDEN)
+
+    # Retrieve all the favorite pets' names
+    fav_pets = PetListing.objects.get(favorited_by=seeker)
+    fav_pet_serializer = FavPetSerializer(fav_pets, many=True)
+    return Response({'msg': f'{seeker.email} Favorites', 'data': fav_pet_serializer.data},
+                    status=status.HTTP_200_OK)
+
+
+'''
+VIEW A seeker's favorite pets add/delete
+ENDPOINT: /api/seekers/<int:account_id>/favorites/<int:pet_id>
+METHOD: POST, DELETE
+PERMISSION:
+SUCCESS:
+'''
+
+
+@api_view(['POST', 'DELETE'])
+def seeker_favorites_edit_view(request, account_id, pet_id):
+    # Check that the account_id exists
+    try:
+        seeker = Seeker.objects.get(id=account_id)
+    except Seeker.DoesNotExist:
+        return Response({'msg': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Check that only user can see this page
+    if request.user != seeker:
+        return Response({'msg': 'You are not allowed to see this page'}, status=status.HTTP_403_FORBIDDEN)
+
+    # Check that the pet_id exists
+    try:
+        pet_listing = PetListing.objects.get(id=pet_id)
+    except PetListing.DoesNotExist:
+        return Response({'msg': 'Pet listing does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "POST":
+        # Add the user to the favorited_by field of pet_listing
+        pet_listing.favorited_by.add(seeker)
+        return Response({'msg': f'Added {pet_listing.id} to favorites'}, status=status.HTTP_200_OK)
+
+    if request.method == "DELETE":
+        # Delete the user from the favorited_by field of pet_listing
+        pet_listing.favorited_by.remove(seeker)
+        return Response({'msg': f'Removed {pet_listing.id} from favorites'}, status=status.HTTP_200_OK)
+
+
