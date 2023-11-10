@@ -12,9 +12,9 @@ from accounts.models import PetPalUser as User
 # Create your views here.
 
 '''
-LIST All Petlistings / CREATE New Petlisting
+LIST All Petlistings with or without filter / CREATE New Petlisting
 ENDPOINT: /api/petlistings
-METHOD: GET, POST
+METHOD: POST
 PERMISSION: User logged in for GET, User logged in and is a shelter for POST
 SUCCESS:
 '''
@@ -22,32 +22,73 @@ SUCCESS:
 @permission_classes([IsAuthenticated])
 def petlistings_list_and_create_view(request):
     if request.method == 'GET':
+        filter = {}
+        category = request.GET.get('category', None)
+        if category != None and category not in ['D', 'C', 'O']:
+            return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
+        if category != None:
+            filter['category'] = category
+
+        age = request.GET.get('age', None)
+        if age != None and int(age) < 0:
+            return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
+        if age != None:
+            filter['age'] = age
+        
+        pet_status = request.GET.get('status', None)
+        if pet_status != None and pet_status not in ['AV', 'AD', 'PE', 'WI']:
+            return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+        if pet_status != None:
+            filter['status'] = pet_status
+        
+        gender = request.GET.get('gender', None)
+        if gender != None and gender not in ['M', 'F', 'X']:
+            return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
+        if gender != None:
+            filter['gender'] = gender
+        
+        size = request.GET.get('size', None)
+        if size != None and size not in ['L', 'M', 'S']:
+            return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
+        if size != None:
+            filter['size'] = size
+        
+        shelter_email = request.GET.get('shelter_email', None)
+        if shelter_email != None and not User.objects.filter(email=shelter_email).exists():
+            return Response({'error': 'Invalid shelter email'}, status=status.HTTP_400_BAD_REQUEST)
+        if shelter_email != None:
+            filter['owner'] = User.objects.get(email=shelter_email)
+        
+        name = request.GET.get('name', None)
+        if name != None and name.strip() == '':
+            return Response({'error': 'Invalid name'}, status=status.HTTP_400_BAD_REQUEST)
+        if name != None:
+            filter['name'] = name
+        data = []
         paginator = PageNumberPagination()
         paginator.page_size = 2
         
-        petlistings = PetListing.objects.all()
+        petlistings = PetListing.objects.filter(**filter)
         paginated_petlistings = paginator.paginate_queryset(petlistings, request)
-        
-        data = []
-        for petlisting in paginated_petlistings:
+        for listing in paginated_petlistings:
             result = {
-                "id": petlisting.pk,
-                "name": petlisting.name,
-                "category": petlisting.category,
-                "breed": petlisting.breed,
-                "age": petlisting.age,
-                "gender": petlisting.gender,
-                "size": petlisting.size,
-                "status": petlisting.status,
-                "created_time": petlisting.created_time,  
-                "med_history": petlisting.med_history,
-                "behaviour": petlisting.behaviour,
-                "special_needs": petlisting.special_needs,
-                "description": petlisting.description,
-                "owner": petlisting.owner.email              
+                'id': listing.pk,
+                'name': listing.name,
+                'category': listing.category,
+                'breed': listing.breed,
+                'age': listing.age,
+                'gender': listing.gender,
+                'size': listing.size,
+                'status': listing.status,
+                'created_time': listing.created_time,
+                'med_history': listing.med_history,
+                'behaviour': listing.behaviour,
+                'special_needs': listing.special_needs,
+                'description': listing.description,
+                'owner': listing.owner.email,
             }
             result['photos'] = []
-            for image in petlisting.images.all():
+            for image in listing.images.all():
                 result['photos'].append({
                     'id': image.pk,
                     'url': image.image.url
@@ -108,89 +149,6 @@ def petlistings_list_and_create_view(request):
                 new_image = PetListingImage(image=photo, petlisting=new_listing)
                 new_image.save()
         return Response({'data': f'Petlisting for {name} created'}, status=status.HTTP_200_OK)
-
-'''
-LIST All Petlistings within the filter
-ENDPOINT: /api/petlistings/filter
-METHOD: GET
-PERMISSION: User logged in
-'''
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def petlistings_category_list_view(request):
-    filter = {}
-    category = request.GET.get('category', None)
-    if category != None and category not in ['D', 'C', 'O']:
-        return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
-    if category != None:
-        filter['category'] = category
-
-    age = request.GET.get('age', None)
-    if age != None and int(age) < 0:
-        return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
-    if age != None:
-        filter['age'] = age
-    
-    pet_status = request.GET.get('status', None)
-    if pet_status != None and pet_status not in ['AV', 'AD', 'PE', 'WI']:
-        return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
-    if pet_status != None:
-        filter['status'] = pet_status
-    
-    gender = request.GET.get('gender', None)
-    if gender != None and gender not in ['M', 'F', 'X']:
-        return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
-    if gender != None:
-        filter['gender'] = gender
-    
-    size = request.GET.get('size', None)
-    if size != None and size not in ['L', 'M', 'S']:
-        return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
-    if size != None:
-        filter['size'] = size
-    
-    shelter_email = request.GET.get('shelter_email', None)
-    if shelter_email != None and not User.objects.filter(email=shelter_email).exists():
-        return Response({'error': 'Invalid shelter email'}, status=status.HTTP_400_BAD_REQUEST)
-    if shelter_email != None:
-        filter['owner'] = User.objects.get(email=shelter_email)
-    
-    name = request.GET.get('name', None)
-    if name != None and name.strip() == '':
-        return Response({'error': 'Invalid name'}, status=status.HTTP_400_BAD_REQUEST)
-    if name != None:
-        filter['name'] = name
-    data = []
-    paginator = PageNumberPagination()
-    paginator.page_size = 2
-    
-    petlistings = PetListing.objects.filter(**filter)
-    paginated_petlistings = paginator.paginate_queryset(petlistings, request)
-    for listing in paginated_petlistings:
-        result = {
-            'id': listing.pk,
-            'name': listing.name,
-            'category': listing.category,
-            'breed': listing.breed,
-            'age': listing.age,
-            'gender': listing.gender,
-            'size': listing.size,
-            'status': listing.status,
-            'created_time': listing.created_time,
-            'med_history': listing.med_history,
-            'behaviour': listing.behaviour,
-            'special_needs': listing.special_needs,
-            'description': listing.description,
-            'owner': listing.owner.email,
-        }
-        result['photos'] = []
-        for image in listing.images.all():
-            result['photos'].append({
-                'id': image.pk,
-                'url': image.image.url
-            })
-        data.append(result)
-    return paginator.get_paginated_response({'data': data})
 
 '''
 VIEW / EDIT / DELETE A petlisting
