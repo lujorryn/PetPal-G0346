@@ -42,7 +42,8 @@ class Comment(models.Model):
         notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self)
         notification.save()
         if self.is_review:
-            notification.recipients.add(self.shelter)
+            if self.shelter.is_notif_status:
+                notification.recipients.add(self.shelter)
         else:
             if self.is_author_seeker:
                 if self.shelter.is_notif_comment:
