@@ -66,7 +66,7 @@ def comment_create_view(request):
 
 '''
 VIEW A Comment
-ENDPOINT: /api/comments/<str:msg_id>
+ENDPOINT: /api/comments/<int:msg_id>
 METHOD: GET
 PERMISSION: User logged in and must be the author or recipient of the comment
 '''
@@ -150,7 +150,7 @@ def comments_all_applications_list_view(request):
 
 '''
 LIST All Comments of a Certain Application
-ENDPOINT: /api/comments/applications/<str:app_id>
+ENDPOINT: /api/comments/applications/<int:app_id>
 METHOD: GET
 PERMISSION: User logged in and must be part of the application
 FE: Message History with Shelter, Convo Name: Application
@@ -199,7 +199,7 @@ def comments_application_list_view(request, app_id):
 
 '''
 LIST All Comments of a Shelter
-ENDPOINT: /api/comments/shelter/<str:shelter_id>
+ENDPOINT: /api/comments/shelter/<int:shelter_id>
 METHOD: GET
 PERMISSION: User logged in
 '''

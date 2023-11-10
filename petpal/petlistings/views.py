@@ -35,7 +35,7 @@ def petlistings_category_list_view(request, category):
 
 '''
 VIEW / EDIT / DELETE A petlisting
-ENDPOINT: /api/petlistings/<str:pet_id>/
+ENDPOINT: /api/petlistings/<int:pet_id>/
 METHOD: GET, PUT, DELETE
 PERMISSION:
 SUCCESS:

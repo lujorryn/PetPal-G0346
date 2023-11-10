@@ -46,7 +46,7 @@ def signup_view(request):
 # region DELETE
 '''
 DELETE account
-ENDPOINT: /api/accounts/<str:account_id>
+ENDPOINT: /api/accounts/<int:account_id>
 METHOD: DELETE
 PERMISSION: Account holder
 SUCCESS: status=200, msg="User <user_id> deleted"
