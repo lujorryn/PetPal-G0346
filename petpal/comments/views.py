@@ -2,13 +2,13 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
+from django.core.paginator import Paginator
+from django.http import JsonResponse
 from applications.models import Application
 from .models import Comment
 from accounts.models import PetPalUser as User
-
-# Create your views here.
 
 '''
 CREATE New Comment
@@ -20,36 +20,49 @@ SUCCESS:
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def comment_create_view(request):
-    is_author_seeker = request.data.get('is_author_seeker')
+    is_author_seeker = True if request.user.role == User.Role.SEEKER else False
     is_review = request.data.get('is_review')
     content = request.data.get('content')
-    seeker_email = request.data.get('seeker_email')
-    shelter_email = request.data.get('shelter_email')
+
+    # Check if email is seeker -> shelter, shelter -> seeker
+    if request.user.role == User.objects.get(email=request.data.get('recipient_email')).role:
+        return Response({'error': f'{request.user.role}-{request.user.role} communication not supported'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if is_author_seeker:
+        seeker_email = request.user.email
+        shelter_email = request.data.get('recipient_email')
+    else:
+        shelter_email = request.user.email
+        seeker_email = request.data.get('recipient_email')
+    
     if is_review == None or is_author_seeker == None or content == None or seeker_email == None or shelter_email == None:
-        return Response({'data': 'Missing fields'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Missing fields'}, status=status.HTTP_400_BAD_REQUEST)
+    
     if is_review == False:
+        # Application message
         application_id = request.data.get('application_id')
         try:
             application = Application.objects.get(pk=application_id)
             # Check if user is part of the application
             if request.user != application.seeker and request.user != application.petlisting.owner:
-                return Response({'data': 'User not authorized to comment on this application'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'User not authorized to comment on this application'}, status=status.HTTP_401_UNAUTHORIZED)
             new_comment = Comment(content=content, is_author_seeker=is_author_seeker, seeker=application.seeker, shelter=application.petlisting.owner, is_review=is_review, application=application)
             new_comment.save()
-            return Response({'data': 'Comment Created'}, status=status.HTTP_200_OK)
-        except:
-            return Response({'data': 'Application does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'msg': 'Comment Created'}, status=status.HTTP_200_OK)
+        except Exception as e: 
+            # might also fail at save(), not necessarily "comment doesn't exist"
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     else:
+        # Shelter comment
         try:
             seeker = User.objects.get(email=seeker_email)
             shelter = User.objects.get(email=shelter_email)
             rating = request.data.get('rating')
             new_comment = Comment(content=content, is_author_seeker=is_author_seeker, seeker=seeker, shelter=shelter, is_review=is_review, rating=rating)
             new_comment.save()
-            return Response({'data': 'Review Created'}, status=status.HTTP_200_OK)
-        except:
-            return Response({'data': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'msg': 'Review Created'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 '''
 VIEW A Comment
@@ -60,11 +73,10 @@ PERMISSION: User logged in and must be the author or recipient of the comment
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def comment_detail_view(request, msg_id):
-    if request.user != comment.seeker and request.user != comment.shelter:
-        return Response({'data': 'User not authorized to view this comment'}, status=status.HTTP_401_UNAUTHORIZED)
-
     try:
         comment = Comment.objects.get(pk=msg_id)
+        if request.user != comment.seeker and request.user != comment.shelter:
+            return Response({'error': 'User not authorized to view this comment'}, status=status.HTTP_401_UNAUTHORIZED)
         data = {
             "id": comment.pk,
             "content": comment.content,
@@ -78,7 +90,7 @@ def comment_detail_view(request, msg_id):
         }
         return Response({'data': data}, status=status.HTTP_200_OK)
     except:
-        return Response({'data': 'Comment does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Comment does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 '''
 LIST All Comments of a User's All Applications
@@ -98,9 +110,18 @@ def comments_all_applications_list_view(request):
         else:
             user_applications = User.objects.get(pk=request.user.pk).seeker_applications.all()
         data = {}
-        for application in user_applications:
+
+        # Visualization: Message center with a message preview so paginating user_applications not comments
+        paginator = Paginator(user_applications, per_page=1)
+        page_number = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_number)
+        
+        for application in page_obj.object_list:
+            
             data[application.pk] = []
-            comments = application.comment_set.all()
+            comments = application.comment_set.all().order_by('-created_time')
+        
+            # for comment in comments[:2]: # fixed length preview pagination, use for P3
             for comment in comments:
                 data[application.pk].append({
                     "id": comment.pk,
@@ -113,9 +134,19 @@ def comments_all_applications_list_view(request):
                     "is_review": comment.is_review,
                     "application": comment.application.pk,
                 })
-        return Response({'data': data}, status=status.HTTP_200_OK)
-    except:
-        return Response({'data': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
+
+        payload = {
+            "page": {
+                "current": page_obj.number,
+                "has_next": page_obj.has_next(),
+                "has_previous": page_obj.has_previous(),
+            },
+            "data": data
+        }
+        
+        return Response(payload, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 '''
 LIST All Comments of a Certain Application
@@ -129,9 +160,18 @@ FE: Message History with Shelter, Convo Name: Application
 def comments_application_list_view(request, app_id):
     try:
         application = Application.objects.get(pk=app_id)
+        if request.user != application.seeker and request.user != application.shelter:
+            return Response({'error': 'User not authorized to view this comment list'}, status=status.HTTP_401_UNAUTHORIZED)
+
         data = []
-        comments = application.comment_set.all()
-        for comment in comments:
+        comments = application.comment_set.all().order_by('-created_time')
+
+        # pagination
+        paginator = Paginator(comments, per_page=2)
+        page_number = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_number)
+
+        for comment in page_obj.object_list:
             data.append({
                 "id": comment.pk,
                 "content": comment.content,
@@ -143,9 +183,19 @@ def comments_application_list_view(request, app_id):
                 "is_review": comment.is_review,
                 "application": comment.application.pk,
             })
-        return Response({'data': data}, status=status.HTTP_200_OK)
+
+        payload = {
+            "page": {
+                "current": page_obj.number,
+                "has_next": page_obj.has_next(),
+                "has_previous": page_obj.has_previous(),
+            },
+            "data": data
+        }
+        
+        return Response(payload, status=status.HTTP_200_OK)
     except:
-        return Response({'data': 'Application does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Application does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 '''
 LIST All Comments of a Shelter
@@ -159,10 +209,18 @@ def comments_shelter_list_view(request, shelter_id):
     try:
         shelter = User.objects.get(pk=shelter_id)
         if shelter.role != 'SHELTER':
-            return Response({'data': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-        comments = Comment.objects.filter(shelter=shelter, is_review=True)
+            return JsonResponse({'data': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        comments = Comment.objects.filter(shelter=shelter, is_review=True).order_by('-created_time')
         data = []
-        for comment in comments:
+
+        # pagination
+        paginator = Paginator(comments, per_page=1)
+        page_number = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_number)
+
+        # for comment in page_obj.object_list:
+        for comment in page_obj:
             data.append({
                 "id": comment.pk,
                 "content": comment.content,
@@ -172,8 +230,18 @@ def comments_shelter_list_view(request, shelter_id):
                 "seeker": comment.seeker.email,
                 "shelter": comment.shelter.email,
                 "is_review": comment.is_review,
-                "application": comment.application.pk,
+                "application": comment.application,
             })
-        return Response({'data': data}, status=status.HTTP_200_OK)
-    except:
-        return Response({'data': 'Error'}, status=status.HTTP_400_BAD_REQUEST)
+
+        payload = {
+            "page": {
+                "current": page_obj.number,
+                "has_next": page_obj.has_next(),
+                "has_previous": page_obj.has_previous(),
+            },
+            "data": data
+        }
+
+        return JsonResponse(payload, status=status.HTTP_200_OK)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
