@@ -48,6 +48,9 @@ def petlistings_list_and_create_view(request):
                     filter[param] = param_value
                 else:
                     filter['owner'] = User.objects.get(email=param_value)
+            if param == 'status' and (param_value is None or str(param_value).strip() == ''): # Default status is available
+                filter[param] = 'AV'
+                
         data = []
         paginator = PageNumberPagination()
         paginator.page_size = 2
