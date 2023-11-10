@@ -23,47 +23,31 @@ SUCCESS:
 def petlistings_list_and_create_view(request):
     if request.method == 'GET':
         filter = {}
-        category = request.GET.get('category', None)
-        if category != None and category not in ['D', 'C', 'O']:
-            return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
-        if category != None:
-            filter['category'] = category
+        allowed_params = ['category', 'age', 'status', 'gender', 'size', 'shelter_email', 'name']
 
-        age = request.GET.get('age', None)
-        if age != None and int(age) < 0:
-            return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
-        if age != None:
-            filter['age'] = age
-        
-        pet_status = request.GET.get('status', None)
-        if pet_status != None and pet_status not in ['AV', 'AD', 'PE', 'WI']:
-            return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
-        if pet_status != None:
-            filter['status'] = pet_status
-        
-        gender = request.GET.get('gender', None)
-        if gender != None and gender not in ['M', 'F', 'X']:
-            return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
-        if gender != None:
-            filter['gender'] = gender
-        
-        size = request.GET.get('size', None)
-        if size != None and size not in ['L', 'M', 'S']:
-            return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
-        if size != None:
-            filter['size'] = size
-        
-        shelter_email = request.GET.get('shelter_email', None)
-        if shelter_email != None and not User.objects.filter(email=shelter_email).exists():
-            return Response({'error': 'Invalid shelter email'}, status=status.HTTP_400_BAD_REQUEST)
-        if shelter_email != None:
-            filter['owner'] = User.objects.get(email=shelter_email)
-        
-        name = request.GET.get('name', None)
-        if name != None and name.strip() == '':
-            return Response({'error': 'Invalid name'}, status=status.HTTP_400_BAD_REQUEST)
-        if name != None:
-            filter['name'] = name
+        for param in allowed_params:
+            param_value = request.GET.get(param, None)
+            if param_value is not None and str(param_value).strip() != '':
+                # Validate the parameter if needed
+                if param == 'category' and param_value not in ['D', 'C', 'O']:
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'age' and int(param_value) < 0:
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'status' and param_value not in ['AV', 'AD', 'PE', 'WI']:
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'gender' and param_value not in ['M', 'F', 'X']:
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'size' and param_value not in ['L', 'M', 'S']:
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'shelter_email' and not User.objects.filter(email=param_value).exists():
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'name' and param_value.strip() == '':
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                if param != 'shelter_email':
+                    filter[param] = param_value
+                else:
+                    filter['owner'] = User.objects.get(email=param_value)
         data = []
         paginator = PageNumberPagination()
         paginator.page_size = 2
@@ -103,7 +87,7 @@ def petlistings_list_and_create_view(request):
         # Check if all required fields are present and not null
         required_fields = ['name', 'category', 'age', 'gender', 'size', 'description']
         for field in required_fields:
-            if not request.data.get(field):
+            if not request.data.get(field) or str(request.data.get(field)).strip() == '':
                 return Response({'error': f'{field} is required and cannot be null'}, status=status.HTTP_400_BAD_REQUEST)
 
         name = request.data.get('name')
@@ -197,7 +181,7 @@ def petlisting_detail_view(request, pet_id):
                 return Response({'data': 'User not authorized to edit this petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
             required_fields = ['name', 'category', 'age', 'gender', 'size', 'status', 'description']
             for field in required_fields:
-                if not request.data.get(field):
+                if not request.data.get(field) or str(request.data.get(field)).strip() == '':
                     return Response({'data': f'{field} is required and cannot be null'}, status=status.HTTP_400_BAD_REQUEST)
 
             name = request.data.get('name')
