@@ -26,6 +26,7 @@ class Application(models.Model):
     experience = models.CharField(max_length=2, choices=EXPERIENCE)
     residence_type = models.CharField(max_length=1, choices=RESIDENCE_TYPE)
     status = models.CharField(max_length=1, choices=STATUS)
+    # not included in form-data
     created_time = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     seeker = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seeker_applications")
