@@ -17,7 +17,7 @@ class Comment(models.Model):
     seeker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seeker_comments')
     shelter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shelter_comments')
     is_review = models.BooleanField() # True: shelter review, False: application comment
-    application = models.ForeignKey(Application, on_delete=models.CASCADE, blank=True)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, blank=True, null=True)
     notification = GenericRelation(Notification, related_query_name='comments')
 
     def save(self, *args, **kwargs):

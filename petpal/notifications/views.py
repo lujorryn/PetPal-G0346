@@ -1,9 +1,10 @@
 # from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.pagination import PageNumberPagination
 
-from django.http import JsonResponse
 from .models import Notification
 
 # Create your views here.
@@ -15,12 +16,16 @@ METHOD: GET
 PERMISSION: User logged in
 '''
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def notifications_list_view(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({'data': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
+    paginator = PageNumberPagination()
+    paginator.page_size = 4
+    
     notifications = Notification.objects.filter(recipients=request.user)
+    paginated_notifications = paginator.paginate_queryset(notifications, request)
+    
     data = []
-    for notification in notifications:
+    for notification in paginated_notifications:
         data.append({
             'id': notification.pk,
             'subject': notification.subject,
@@ -28,23 +33,22 @@ def notifications_list_view(request):
             'content_type': notification.content_type.model,
             'object_id': notification.object_id,
         })
-    return JsonResponse({'data': data}, status=status.HTTP_200_OK)
+    return paginator.get_paginated_response({'data': data})
 
 '''
 VIEW / DELETE A Notification
-ENDPOINT: /api/notifications/<str:note_id>/
+ENDPOINT: /api/notifications/<int:note_id>/
 METHOD: GET, DELETE
 PERMISSION: User logged in and must be the recipient of the notification
 SUCCESS:
 '''
 @api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def notifications_detail_view(request, note_id):
-    if not request.user.is_authenticated:
-        return JsonResponse({'data': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
     if request.method == 'GET':
         notification = Notification.objects.get(pk=note_id)
         if request.user not in notification.recipients.all():
-            return JsonResponse({'data': 'User not authorized to view this notification'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'User not authorized to view this notification'}, status=status.HTTP_401_UNAUTHORIZED)
         data = {
             'id': notification.pk,
             'subject': notification.subject,
@@ -52,16 +56,16 @@ def notifications_detail_view(request, note_id):
             'content_type': notification.content_type.model,
             'object_id': notification.object_id,
         }
-        return JsonResponse({'data': data}, status=status.HTTP_200_OK)
+        return Response({'data': data}, status=status.HTTP_200_OK)
 
 
     if request.method == 'DELETE':
         notification = Notification.objects.get(pk=note_id)
         if request.user not in notification.recipients.all():
-            return JsonResponse({'data': 'User not authorized to delete this notification'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'User not authorized to delete this notification'}, status=status.HTTP_401_UNAUTHORIZED)
         # Delete only the association with the user
         notification.recipients.remove(request.user)
         notification.save()
         if notification.recipients.count() == 0:
             notification.delete()
-        return JsonResponse({'data': 'Notification deleted'}, status=status.HTTP_200_OK)
+        return Response({'msg': 'Notification deleted'}, status=status.HTTP_200_OK)
