@@ -45,7 +45,9 @@ class Comment(models.Model):
             notification.recipients.add(self.shelter)
         else:
             if self.is_author_seeker:
-                notification.recipients.add(self.shelter)
+                if self.shelter.is_notif_comment:
+                    notification.recipients.add(self.shelter)
             else:
-                notification.recipients.add(self.seeker)
+                if self.seeker.is_notif_comment:
+                    notification.recipients.add(self.seeker)
         notification.save()
