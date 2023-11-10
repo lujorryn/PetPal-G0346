@@ -55,14 +55,14 @@ SUCCESS: status=200, msg="User <user_id> deleted"
 @permission_classes([IsAuthenticated])
 def account_delete_view(request, account_id):
     if account_id != request.user.id:
-        return Response({'msg': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN )
+        return Response({'error': 'Forbidden'}, status=status.HTTP_403_FORBIDDEN )
     
     try:
         user = PetPalUser.objects.get(pk=account_id)
         user.delete()
         return Response({'msg': f'User {account_id} deleted'}, status=status.HTTP_200_OK)
     except PetPalUser.DoesNotExist:
-        return Response({'msg': 'No such user'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'No such user'}, status=status.HTTP_404_NOT_FOUND)
 # endregion
 
 # region LOGOUT
