@@ -27,18 +27,18 @@ class Comment(models.Model):
         body = ''
         if self.is_review:
             if self.is_author_seeker:
-                subject = 'You have received a review!'
-                body = f'You have received a review from {self.seeker.email}.'
+                subject = f'You have received a review from {self.seeker.email}!'
+                body = self.content
             else:
-                subject = 'You have received a review!'
-                body = f'You have received a review from {self.shelter.email}.'
+                subject = f'You have received a review from {self.shelter.email}'
+                body = self.content
         else:
             if self.is_author_seeker:
-                subject = 'You have received a comment!'
-                body = f'You have received a comment from {self.seeker.email} for their application on {self.application.petlisting.name}.'
+                subject = f'You have received a comment from {self.seeker.email}'
+                body = self.content
             else:
-                subject = 'You have received a comment!'
-                body = f'You have received a comment from {self.shelter.email} for your application on {self.application.petlisting.name}.'
+                subject = f'You have received a comment from {self.shelter.email}'
+                body = self.content
         notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self)
         notification.save()
         if self.is_review:
