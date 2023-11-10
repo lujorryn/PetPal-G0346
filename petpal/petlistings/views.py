@@ -155,6 +155,11 @@ def petlistings_category_list_view(request):
     if shelter_email != None:
         filter['owner'] = User.objects.get(email=shelter_email)
     
+    name = request.GET.get('name', None)
+    if name != None and name.strip() == '':
+        return Response({'error': 'Invalid name'}, status=status.HTTP_400_BAD_REQUEST)
+    if name != None:
+        filter['name'] = name
     data = []
     paginator = PageNumberPagination()
     paginator.page_size = 2
