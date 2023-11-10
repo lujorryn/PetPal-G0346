@@ -2,7 +2,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 
 from django.http import JsonResponse
@@ -89,7 +89,7 @@ def petlistings_list_and_create_view(request):
             owner=request.user
         )
         new_listing.save()
-        photos = request.data.getlist('photos', None)
+        photos = request.FILES.getlist('photos', None)
         if photos:
             for photo in photos:
                 new_image = PetListingImage(image=photo, petlisting=new_listing)
@@ -211,7 +211,7 @@ def petlisting_detail_view(request, pet_id):
             listing.description = description
             listing.save()
             
-            photos = request.data.getlist('photos', None)
+            photos = request.FILES.getlist('photos', None)
             if photos:
                 for photo in photos:
                     new_image = PetListingImage(image=photo, petlisting=listing)
