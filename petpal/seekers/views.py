@@ -1,12 +1,15 @@
 # from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import Seeker, PetPalUser
 from .serializers import SeekerSerializer, FavPetSerializer
 from applications.models import Application
 from petlistings.models import PetListing
+from django.core.paginator import Paginator
+
 
 from django.http import JsonResponse
 
@@ -35,6 +38,7 @@ SUCCESS:
 
 
 @api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
 def seeker_detail_view(request, account_id):
     # Check that the seeker with account_id exists
     try:
@@ -65,7 +69,7 @@ def seeker_detail_view(request, account_id):
                 'user_data': serializer.data,
                 'fav_pets': fav_pet_serializer.data}, status=status.HTTP_200_OK)
         else:
-            return Response({'msg': 'You are not allowed to see this profile'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'You are not allowed to see this profile'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'PUT':
         # Check that the request is from the user themselves
@@ -87,7 +91,7 @@ def seeker_detail_view(request, account_id):
 
             return Response({'msg': 'Update Seeker', 'user_data': serializer.data}, status=status.HTTP_200_OK)
 
-        return Response({'msg': 'You are not allowed to edit this profile'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'error': 'You are not allowed to edit this profile'}, status=status.HTTP_403_FORBIDDEN)
 
 
 '''
@@ -100,22 +104,59 @@ SUCCESS:
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def seeker_favorites_view(request, account_id):
     # Check that the account_id exists
     try:
         seeker = Seeker.objects.get(id=account_id)
     except Seeker.DoesNotExist:
-        return Response({'msg': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     # Check that only user can see this page
     if request.user != seeker:
-        return Response({'msg': 'You are not allowed to see this page'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'error': 'You are not allowed to see this page'}, status=status.HTTP_403_FORBIDDEN)
 
     # Retrieve all the favorite pets' names
     fav_pets = PetListing.objects.get(favorited_by=seeker)
-    fav_pet_serializer = FavPetSerializer(fav_pets, many=True)
-    return Response({'msg': f'{seeker.email} Favorites', 'data': fav_pet_serializer.data},
-                    status=status.HTTP_200_OK)
+    # fav_pet_serializer = FavPetSerializer(fav_pets, many=True)
+    data = []
+
+    # -- Pagination --
+    # Picks how many shelters to show per page
+    paginator = Paginator(fav_pets, per_page=3)
+    # Retrieve page number
+    page_num = request.GET.get("page", 1)
+    # Get shelters from that page number
+    page_obj = paginator.get_page(page_num)
+
+    # Append each pet of the page in data lst
+    for pet in page_obj.object_list:
+        data.append({
+            'id': pet.pk,
+            'name': pet.name,
+            'category': pet.category,
+            'breed': pet.breed,
+            'age': pet.age,
+            'gender': pet.gender,
+            'size': pet.size,
+            'status': pet.status,
+            'med_history': pet.med_history,
+            'behaviour': pet.behaviour,
+            'special_needs': pet.special_needs,
+            'description': pet.description
+        })
+
+    payload = {
+        "page": {
+            "current": page_obj.number,
+            "has_next": page_obj.has_next(),
+            "has_previous": page_obj.has_previous(),
+        },
+        "msg": f'{seeker.email} Favorites',
+        "data": data
+    }
+
+    return Response(payload, status=status.HTTP_200_OK)
 
 
 '''
@@ -128,22 +169,23 @@ SUCCESS:
 
 
 @api_view(['POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def seeker_favorites_edit_view(request, account_id, pet_id):
     # Check that the account_id exists
     try:
         seeker = Seeker.objects.get(id=account_id)
     except Seeker.DoesNotExist:
-        return Response({'msg': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     # Check that only user can see this page
     if request.user != seeker:
-        return Response({'msg': 'You are not allowed to see this page'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'error': 'You are not allowed to see this page'}, status=status.HTTP_403_FORBIDDEN)
 
     # Check that the pet_id exists
     try:
         pet_listing = PetListing.objects.get(id=pet_id)
     except PetListing.DoesNotExist:
-        return Response({'msg': 'Pet listing does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Pet listing does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "POST":
         # Add the user to the favorited_by field of pet_listing
