@@ -29,7 +29,7 @@ def shelters_list_view(request):
 
     # -- Pagination --
     # Picks how many shelters to show per page
-    paginator = Paginator(shelters, per_page=3)
+    paginator = Paginator(shelters, per_page=2)
     # Retrieve page number
     page_num = request.GET.get("page", 1)
     # Get shelters from that page number
@@ -37,6 +37,7 @@ def shelters_list_view(request):
 
     # Append each shelter of the page in data lst
     for shelter in page_obj.object_list:
+        avatar_url = shelter.avatar.url if shelter.avatar else None
         data.append({
             'id': shelter.pk,
             'email': shelter.email,
@@ -45,7 +46,7 @@ def shelters_list_view(request):
             'province': shelter.province,
             'postal_code': shelter.postal_code,
             'phone': shelter.phone,
-            'avatar': shelter.avatar,
+            'avatar': avatar_url,
             'description': shelter.description
         })
 
@@ -79,6 +80,9 @@ def shelter_detail_view(request, account_id):
     except Shelter.DoesNotExist:
         return Response({'error': 'Shelter does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+    if shelter.role != PetPalUser.Role.SHELTER:
+        return Response({'error': 'Shelter does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
     # METHODS
     if request.method == 'GET':
         # Give details of the shelter
@@ -98,6 +102,7 @@ def shelter_detail_view(request, account_id):
             shelter.description = request.data.get('description', shelter.description)
             shelter.password = request.data.get('password', shelter.password)  # not sure if we should have password?
 
+            shelter.save()
             serialized = ShelterSerializer(shelter, many=False)
 
             return Response({'msg': 'edit shelter', 'data': serialized.data}, status=status.HTTP_200_OK)
