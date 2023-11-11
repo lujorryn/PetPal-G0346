@@ -12,4 +12,16 @@ class SeekerSerializer(serializers.ModelSerializer):
 class FavPetSerializer(serializers.ModelSerializer):
     class Meta:
         model = PetListing
-        fields = ['name']  # Maybe retrieve id/primary key instead of name?
+        fields = ['id', 'name', 'category', 'breed', 'age', 'gender', 'size', 'status', 'med_history',
+                  'behaviour', 'special_needs', 'description']
+
+
+# Function to help with the parameter
+def serialize_fav_pets(fav_pets):
+    # Check if fav_pets is a list (has many objects) or a single object
+    if isinstance(fav_pets, list):
+        serializer = FavPetSerializer(fav_pets, many=True)
+    else:
+        serializer = FavPetSerializer(fav_pets, many=False)
+
+    return serializer.data
