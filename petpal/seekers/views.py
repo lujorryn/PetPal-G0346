@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import Seeker, PetPalUser
-from .serializers import SeekerSerializer, FavPetSerializer, serialize_fav_pets
+from .serializers import SeekerSerializer, FavPetSerializer
 from applications.models import Application
 from petlistings.models import PetListing
 from django.core.paginator import Paginator
@@ -30,7 +30,7 @@ def seekers_list_view(request):
 
 '''
 VIEW / EDIT / DELETE A Seeker
-ENDPOINT: /api/seekers/<int:account_id>/
+ENDPOINT: /api/seekers/<str:account_id>/
 METHOD: GET, PUT, DELETE
 PERMISSION:
 SUCCESS:
@@ -76,10 +76,10 @@ def seeker_detail_view(request, account_id):
             else:
                 # Serialize the favorite pets
                 fav_pet_list = []
-                # Individual serialization, as for some reason serialize_fav_pets has issues when fav_pets > 1
                 for pet in fav_pets.values():
-                    pet_serialized = serialize_fav_pets(pet)
-                    fav_pet_list.append(pet_serialized)
+                    # pet_serialized = serialize_fav_pets(pet)
+                    pet_serialized = FavPetSerializer(pet, many=False)
+                    fav_pet_list.append(pet_serialized.data)
 
                 return Response({
                     'msg': 'Seeker details',
@@ -91,28 +91,12 @@ def seeker_detail_view(request, account_id):
     if request.method == 'PUT':
         # Check that the request is from the user themselves
         if request.user == seeker:
-            # Payloads: name(?), email, location, phone, avatar, password, notification(?), preference(?)
-            # Since there isn't a 'name' attribute for PetPalUser, skipping.
-            seeker.email = request.data.get('email', seeker.email)
-            seeker.address = request.data.get('address', seeker.address)
-            seeker.city = request.data.get('city', seeker.city)
-            seeker.province = request.data.get('province', seeker.province)
-            seeker.postal_code = request.data.get('postal_code', seeker.postal_code)
-            seeker.phone = request.data.get('phone', seeker.phone)
-            seeker.avatar = request.data.get('avatar', seeker.avatar)
-            seeker.password = request.data.get('password', seeker.password)
-
-            # Notifications and preferences
-            seeker.is_notif_comment = request.data.get('is_notif_comment', seeker.is_notif_comment)
-            seeker.is_notif_status = request.data.get('is_notif_status', seeker.is_notif_status)
-            seeker.is_notif_petlisting = request.data.get('is_notif_petlisting', seeker.is_notif_petlisting)
-
-
-            # Save changes
-            seeker.save()
-
-            serializer = SeekerSerializer(seeker, many=False)
-            return Response({'msg': 'Update Seeker', 'user_data': serializer.data}, status=status.HTTP_200_OK)
+            serializer = SeekerSerializer(seeker, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg': 'Update Seeker', 'user_data': serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'error': 'You are not allowed to edit this profile'}, status=status.HTTP_403_FORBIDDEN)
 
@@ -150,10 +134,10 @@ def seeker_favorites_view(request, account_id):
     # -- Pagination --
     # Serialize the favorite pets
     fav_pet_list = []
-    # Individual serialization, as for some reason serialize_fav_pets has issues when fav_pets > 1
     for pet in fav_pets.values():
-        pet_serialized = serialize_fav_pets(pet)
-        fav_pet_list.append(pet_serialized)
+        # pet_serialized = serialize_fav_pets(pet)
+        pet_serialized = FavPetSerializer(pet, many=False)
+        fav_pet_list.append(pet_serialized.data)
 
     # Picks how many pets to show per page
     paginator = Paginator(fav_pet_list, per_page=3)
