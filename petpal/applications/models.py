@@ -14,7 +14,9 @@ class Application(models.Model):
     EXPERIENCE = (('EX', 'Experienced'), ('IN', 'Intermediate'), ('NE', 'No Experience'))
     RESIDENCE_TYPE = (('C', 'Condo'), ('A', 'Apartment'), ('H', 'House'))
     STATUS = (('P', 'Pending'), ('A', 'Approved'), ('D', 'Declined'), ('W', 'Withdrawn'))
-    
+    ALLOWED_STATUS = ('P', 'A', 'D', 'W')
+
+
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)

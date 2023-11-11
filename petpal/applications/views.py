@@ -3,12 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 
 
 from .models import Application
 from .serializers import ApplicationSerializer
 from django.http import JsonResponse
-from rest_framework.authtoken.models import Token
 
 
 from petlistings.models import PetListing
@@ -30,18 +30,38 @@ SUCCESS:
 @permission_classes([IsAuthenticated])
 def applications_list_and_create_view(request):
     if request.method == 'GET':
-        # todo: user auth
-        print(request.user.id)
-
-        # user_id = Token.objects.get(key=request.).user_id
-        # user = PetPalUser.objects.get(id=user_id)
-        # print(user)
-
-        curr_user = PetPalUser.objects.first()
+        curr_user = PetPalUser.objects.get(pk=request.user.id)
+        status_filter = request.query_params.get('status')
+        sort_option = request.query_params.get('sort')
         
-        all_apps = Application.objects.filter(seeker=curr_user)
-        serialized_apps = ApplicationSerializer(all_apps, many=True)
-        return JsonResponse({'applications': serialized_apps.data}, status=status.HTTP_200_OK)
+        
+        if curr_user.role == PetPalUser.Role.SHELTER:
+            all_apps = Application.objects.filter(shelter=curr_user)
+        elif curr_user.role == PetPalUser.Role.SEEKER:
+            all_apps = Application.objects.filter(seeker=curr_user)
+        else:
+            return Response({'error':f'invalid user role: {curr_user.role}'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        if status_filter in Application.ALLOWED_STATUS:
+            all_apps = all_apps.filter(status=status_filter)
+
+        if sort_option == 'created_time':
+            all_apps = all_apps.order_by('-created_time')
+        elif sort_option == 'last_updated':
+            all_apps = all_apps.order_by('-last_updated')
+        else:
+            all_apps = all_apps.order_by('-created_time')
+
+
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+
+        paginated_apps = paginator.paginate_queryset(all_apps, request)
+
+        serialized_apps = ApplicationSerializer(data=paginated_apps, many=True)
+        serialized_apps.is_valid()
+        return JsonResponse({'data': serialized_apps.data}, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
         data = {
@@ -62,20 +82,21 @@ def applications_list_and_create_view(request):
 
         for field, value in data.items():
             if value == "":
-                return Response({'error': f'${field} cannot be blank'})
+                return Response({'error': f'{field} cannot be blank'})
     
         
         try:
-            curr_user = PetPalUser.objects.get(email=data['email'])
+            curr_user = PetPalUser.objects.get(pk=request.user.id)
         except PetPalUser.DoesNotExist:
-            return Response({'error': 'email invalid'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'user invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
-        
         try:
             listing = PetListing.objects.get(id=data['petlisting_id'])    
         except PetListing.DoesNotExist:
             return Response({'error': 'petlisintg invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
+        if listing.status != "AV":
+            return Response({'error': 'petlisintg unavailable'}, status=status.HTTP_400_BAD_REQUEST)
 
         new_app = Application.objects.create(
             first_name=data['first_name'],
@@ -90,10 +111,11 @@ def applications_list_and_create_view(request):
             residence_type=data['residence_type'],
             status=data['status'],
             seeker=curr_user,
+            shelter=listing.owner,
             petlisting=listing,
         )
 
-        success_url = f'/api/applications/${new_app.pk}'
+        success_url = f'/api/applications/{new_app.pk}'
         return Response({'redirect_url': success_url}, status=status.HTTP_201_CREATED)
 
 
@@ -115,9 +137,28 @@ METHOD: GET
 PERMISSION:
 '''
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def pet_applications_list_view(request, pet_id):
-    return Response({'msg': 'application of pet_id'}, status=status.HTTP_200_OK)
+    if request.method == 'GET':
+        curr_user = PetPalUser.objects.get(pk=request.user.id)
+        listing = PetListing.objects.get(pk=pet_id)
 
+        if listing.owner != curr_user:
+            return Response({'error': 'unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        
+        apps = Application.objects.filter(petlisting=pet_id)
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        
+        paginated_apps = paginator.paginate_queryset(apps, request)
+
+        serialized_apps = ApplicationSerializer(data=paginated_apps, many=True)
+        serialized_apps.is_valid()
+
+        return JsonResponse({'data': serialized_apps.data}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'method not accepted'}, status=status.HTTP_404_NOT_FOUND)
 
 '''
 VIEW / EDIT An Application
@@ -129,7 +170,38 @@ SUCCESS:
 @api_view(['GET', 'PUT'])
 def application_detail_view(request, app_id):
     if request.method == 'GET':
-        return Response({'msg': 'application detail'}, status=status.HTTP_200_OK)
+        app = Application.objects.get(pk=app_id)
+        serialized_app = ApplicationSerializer(app)
+        return JsonResponse({'data': serialized_app.data}, status=status.HTTP_200_OK)
 
-    if request.method == 'PUT':
-        return Response({'msg': 'edit application'}, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        data = {
+            "status" : request.data.get('status', ''),
+        }
+
+        put_app = Application.objects.get(pk=app_id)
+       
+        new_status = data["status"]
+
+        if new_status == put_app.status:
+            return Response({'error':'status did not change'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        curr_user = PetPalUser.objects.get(pk=request.user.id)
+
+        if curr_user.role == PetPalUser.Role.SHELTER:
+            if new_status not in ['A', 'D']:
+                return Response({'error':f'invalid status: {new_status}'}, status=status.HTTP_400_BAD_REQUEST)
+        elif curr_user.role == PetPalUser.Role.SEEKER:
+            if new_status not in ['W']:
+                return Response({'error':f'invalid status: {new_status}'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error':f'invalid user role: {curr_user.role}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        put_app.status = new_status
+        put_app.save()
+
+        success_url = f'/api/applications/{put_app.pk}'
+        return Response({'redirect_url': success_url}, status=status.HTTP_201_CREATED)
+
+    else:
+        return Response({'error': 'method not accepted'}, status=status.HTTP_404_NOT_FOUND)
