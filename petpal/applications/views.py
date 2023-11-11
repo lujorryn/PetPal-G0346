@@ -1,7 +1,9 @@
 # from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
 
 from .models import Application
 from .serializers import ApplicationSerializer
@@ -25,19 +27,13 @@ SUCCESS:
 '''
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def applications_list_and_create_view(request):
     if request.method == 'GET':
         # todo: user auth
-        print(request.auth)
-        auth_header = request.headers.get('Authorization')
+        print(request.user.id)
 
-        if auth_header:
-            # Split the header to get the token part
-            _, token = auth_header.split(' ')
-
-            # Now, 'token' contains the Bearer token
-            print("Bearer Token:", token)
-        # user_id = Token.objects.get(key=request.auth.key).user_id
+        # user_id = Token.objects.get(key=request.).user_id
         # user = PetPalUser.objects.get(id=user_id)
         # print(user)
 
