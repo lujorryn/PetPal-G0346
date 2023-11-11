@@ -437,24 +437,6 @@ The notifications app defines a Notification model with its fields specified in 
 **SUCCESS:** Return a message that indicates success and returns the list of user's notifications</br>
 
 -----
-**GET Notification**</br>
-**Endpoint:** `/api/notifications`</br>
-**Description:** Get all notification</br>
-**Methods:** `GET`</br>
-**Required Payload:** </br>
-**Optional Payload:** </br>
-**Permissions:**
-- User has the notifications
-
-**ERRORS:**
-- `400 Bad Request`: 
-
-- `401 Unauthorized`
-    - Authentication credentials were not provided. (user not logged in)
-
-**SUCCESS:** Return a message that indicates success and returns the list of user's notifications</br>
-
------
 **GET Notification Details**</br>
 **Endpoint:** `/api/notifications/<int:note_id>`</br>
 **Description:** Get a specific notification</br>
