@@ -9,10 +9,13 @@ from rest_framework.pagination import PageNumberPagination
 from .models import Application
 from .serializers import ApplicationSerializer
 from django.http import JsonResponse
+from django.contrib.contenttypes.models import ContentType
+
 
 
 from petlistings.models import PetListing
 from accounts.models import PetPalUser
+from notifications.models import Notification
 
 
 
@@ -61,7 +64,7 @@ def applications_list_and_create_view(request):
 
         serialized_apps = ApplicationSerializer(data=paginated_apps, many=True)
         serialized_apps.is_valid()
-        return JsonResponse({'data': serialized_apps.data}, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response({'data': serialized_apps.data})
 
     elif request.method == 'POST':
         data = {
@@ -115,6 +118,22 @@ def applications_list_and_create_view(request):
             petlisting=listing,
         )
 
+        subject = f'application with id {new_app.pk} created.'
+        body = f'user: {new_app.email}, petlisting: {new_app.petlisting.pk}'
+
+        new_notif = Notification(subject=subject, 
+                                    body=body, 
+                                    content_type=ContentType.objects.get_for_model(Application), 
+                                    object_id=new_app.pk, 
+                                    content_object=new_app)
+        # save initial new_notif 
+        new_notif.save()
+        # save again with valid shelter
+        print(new_app.shelter)
+        print(request.user)
+        new_notif.recipients.add(new_app.shelter)
+        new_notif.save()
+
         success_url = f'/api/applications/{new_app.pk}'
         return Response({'redirect_url': success_url}, status=status.HTTP_201_CREATED)
 
@@ -141,7 +160,11 @@ PERMISSION:
 def pet_applications_list_view(request, pet_id):
     if request.method == 'GET':
         curr_user = PetPalUser.objects.get(pk=request.user.id)
-        listing = PetListing.objects.get(pk=pet_id)
+        try:
+            listing = PetListing.objects.get(pk=pet_id)
+        except PetListing.DoesNotExist:
+            return Response({'error': 'invalid pet id'}, status=status.HTTP_400_BAD_REQUEST)
+
 
         if listing.owner != curr_user:
             return Response({'error': 'unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -156,7 +179,7 @@ def pet_applications_list_view(request, pet_id):
         serialized_apps = ApplicationSerializer(data=paginated_apps, many=True)
         serialized_apps.is_valid()
 
-        return JsonResponse({'data': serialized_apps.data}, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response({'data': serialized_apps.data})
     else:
         return Response({'error': 'method not accepted'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -170,7 +193,11 @@ SUCCESS:
 @api_view(['GET', 'PUT'])
 def application_detail_view(request, app_id):
     if request.method == 'GET':
-        app = Application.objects.get(pk=app_id)
+        try:
+            app = Application.objects.get(pk=app_id)
+        except Application.DoesNotExist:
+            return Response({'error':'app id not found'}, status=status.HTTP_400_BAD_REQUEST)
+
         serialized_app = ApplicationSerializer(app)
         return JsonResponse({'data': serialized_app.data}, status=status.HTTP_200_OK)
 
@@ -199,6 +226,21 @@ def application_detail_view(request, app_id):
 
         put_app.status = new_status
         put_app.save()
+
+
+        # notify user about status update
+        if put_app.seeker.is_notif_status:
+            subject = f'application with id {put_app.pk} got updated.'
+            body = f'updated status: {put_app.status}'
+            new_notif = Notification(subject=subject, body=body, 
+                                        content_type=ContentType.objects.get_for_model(Application), 
+                                        object_id=put_app.pk, content_object=put_app)
+            
+            new_notif.save()
+            # add recipients and save 
+            new_notif.recipients.add(put_app.seeker)
+            new_notif.save()
+
 
         success_url = f'/api/applications/{put_app.pk}'
         return Response({'redirect_url': success_url}, status=status.HTTP_201_CREATED)
