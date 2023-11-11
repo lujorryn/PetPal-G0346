@@ -92,19 +92,9 @@ def shelter_detail_view(request, account_id):
     if request.method == 'PUT':
         # Check that the request is from the shelter themselves
         if request.user == shelter:
-            shelter.email = request.data.get('email', shelter.email)
-            shelter.address = request.data.get('address', shelter.address)
-            shelter.city = request.data.get('city', shelter.city)
-            shelter.province = request.data.get('province', shelter.province)
-            shelter.postal_code = request.data.get('postal_code', shelter.postal_code)
-            shelter.phone = request.data.get('phone', shelter.phone)
-            shelter.avatar = request.data.get('avatar', shelter.avatar)
-            shelter.description = request.data.get('description', shelter.description)
-            shelter.password = request.data.get('password', shelter.password)  # not sure if we should have password?
-
-            shelter.save()
-            serialized = ShelterSerializer(shelter, many=False)
-
-            return Response({'msg': 'edit shelter', 'data': serialized.data}, status=status.HTTP_200_OK)
+            serializer = ShelterSerializer(shelter, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg': 'Shelter Updated', 'data': serializer.data}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Unauthorized'}, status=status.HTTP_403_FORBIDDEN)

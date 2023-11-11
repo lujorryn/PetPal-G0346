@@ -6,7 +6,8 @@ from accounts.models import Shelter
 class ShelterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shelter
-        fields = ['email', 'address', 'city', 'province', 'postal_code', 'phone', 'avatar', 'description']
+        fields = ['email', 'address', 'city', 'province', 'postal_code', 'phone', 'avatar', 'description',
+                  'is_notif_comment', 'is_notif_status', 'is_notif_petlisting']
 
 
 # class FavPetSerializer(serializers.ModelSerializer):
