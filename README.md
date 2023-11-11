@@ -206,22 +206,18 @@ The petlisting app defines a PetListing model with its fields specified in the E
 **Endpoint:** `/api/petlistings`</br>
 **Description:** Get a petlisting</br>
 **Methods:** `GET`</br>
-**Required Payload:** `is_review`, `content`, `recipient_email`</br>
-**Optional Payload:** `rating`, `application` (required if `is_review=True`)</br>
+**Required Payload:** </br>
+**Optional Payload:** `category`, `age`, `status`, `gender`, `size`, `shelter_email`, `name`</br>
 **Permissions:**
-- Application comments: application seeker and application's petlisting's owner
-- Shelter reviews: Any logged in user
+- Any logged in user
 
 **ERRORS:**
 - `400 Bad Request`: 
-    - SEEKER-SEEKER comments and SHELTER-SHELTER comments not supported
-    - Missing any field in required payload
-    - Application comment with no valid application_id
+    - Any optional field doesn't match the model's field options
 - `401 Unauthorized`
     - Authentication credentials were not provided. (user not logged in)
-    - Application comments: User does not match permissions specified above
 
-**SUCCESS:** Return a message that indicates petlisting created and returns listing details. </br>
+**SUCCESS:** Return a Json of pets that fit the filter requirements</br>
 
 -----
 **CREATE Petlisting**</br>
@@ -318,18 +314,22 @@ The comments app defines a Comment model with its fields specified in the ERD di
 **Endpoint:** `/api/comments`</br>
 **Description:** Create a comment regarding an application or a shelter</br>
 **Methods:** `POST`</br>
-**Required Payload:** </br>
-**Optional Payload:** `category`, `age`, `status`, `gender`, `size`, `shelter_email`, `name`</br>
+**Required Payload:** `is_review`, `content`, `recipient_email`</br>
+**Optional Payload:** `rating`, `application` (required if `is_review=True`)</br>
 **Permissions:**
-- Any logged in user
+- Application comments: application seeker and application's petlisting's owner
+- Shelter reviews: Any logged in user
 
 **ERRORS:**
 - `400 Bad Request`: 
-    - Any optional field doesn't match the model's field options
+    - SEEKER-SEEKER comments and SHELTER-SHELTER comments not supported
+    - Missing any field in required payload
+    - Application comment with no valid application_id
 - `401 Unauthorized`
     - Authentication credentials were not provided. (user not logged in)
+    - Application comments: User does not match permissions specified above
 
-**SUCCESS:** Return a Json of pets that fit the filter requirements</br>
+**SUCCESS:** Return a message that indicates Review/Comment created and returns comment details. Example:</br>
 ```
 {
     "msg": "Review Created",
@@ -507,4 +507,5 @@ The notifications app defines a Notification model with its fields specified in 
     - Authentication credentials were not provided. (user not logged in)
 
 **SUCCESS:** Return a message that indicates success of deletion</br>
+
 -----
