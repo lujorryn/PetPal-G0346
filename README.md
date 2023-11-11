@@ -199,29 +199,13 @@ Brief app description
 Brief app description
 
 -----
-**ENDPOINTS**
+The petlisting app defines a PetListing model with its fields specified in the ERD diagram. The app implements the following 5 endpoints that support creating, updating, viewing, and deleting Petlistings:
 
 -----
-
-
-## The applications app
-Brief app description
-
------
-**ENDPOINTS**
-
------
-
-
-## The comments app
-
-The accounts app defines a Comment model with its fields specified in the ERD diagram. The app implements the following 5 endpoints that support creating, listing and viewing comments:
-
------
-**CREATE COMMENT**</br>
-**Endpoint:** `/api/comments`</br>
-**Description:** Create a comment regarding an application or a shelter</br>
-**Methods:** `POST`</br>
+**GET Petlisting**</br>
+**Endpoint:** `/api/petlistings`</br>
+**Description:** Get a petlisting</br>
+**Methods:** `GET`</br>
 **Required Payload:** `is_review`, `content`, `recipient_email`</br>
 **Optional Payload:** `rating`, `application` (required if `is_review=True`)</br>
 **Permissions:**
@@ -237,7 +221,115 @@ The accounts app defines a Comment model with its fields specified in the ERD di
     - Authentication credentials were not provided. (user not logged in)
     - Application comments: User does not match permissions specified above
 
-**SUCCESS:** Return a message that indicates Review/Comment created and returns comment details. Example:</br>
+**SUCCESS:** Return a message that indicates petlisting created and returns listing details. </br>
+
+-----
+**CREATE Petlisting**</br>
+**Endpoint:** `/api/petlistings`</br>
+**Description:** Create a petlisting</br>
+**Methods:** `POST`</br>
+**Required Payload:** `name`, `category`, `gender`, `size`</br>
+**Optional Payload:** `age`, `breed`, `description`, `med_history`, `behaviour`, `special_needs`</br>
+**Permissions:**
+- Any logged in user and is a shelter
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Missing any field in required payload
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+    - User is not a shelter
+
+**SUCCESS:** Return a message that indicates petlisting created and returns listing details. </br>
+
+-----
+**GET Petlisting detail**</br>
+**Endpoint:** `/api/petlistings/<int:pet_id>`</br>
+**Description:** Get a petlisting details</br>
+**Methods:** `GET`</br>
+**Required Payload:** </br>
+**Optional Payload:** </br>
+**Permissions:**
+- Any logged in user
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Listing doesn't exist
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+
+**SUCCESS:** Return a message that indicates success and returns listing details. </br>
+
+-----
+**PUT Petlisting detail**</br>
+**Endpoint:** `/api/petlistings/<int:pet_id>`</br>
+**Description:** Update a petlisting details</br>
+**Methods:** `PUT`</br>
+**Required Payload:** `name`, `category`, `gender`, `size`</br>
+**Optional Payload:** `age`, `breed`, `description`, `med_history`, `behaviour`, `special_needs`</br>
+**Permissions:**
+- Any logged in user and is the shelter that created the listing
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Missing any field in required payload
+    - Listing doesn't exist
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+    - User is not a shelter
+
+**SUCCESS:** Return a message that indicates petlisting updated and returns listing details. </br>
+
+-----
+**DELETE Petlisting**</br>
+**Endpoint:** `/api/petlistings/<int:pet_id>`</br>
+**Description:** Delete a petlisting</br>
+**Methods:** `DELETE`</br>
+**Required Payload:** </br>
+**Optional Payload:** </br>
+**Permissions:**
+- Any logged in user and is the shelter which created the listing
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Listing doesn't exist
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+    - User is not the shelter that created the listing
+
+**SUCCESS:** Return a message that indicates petlisting is deleted</br>
+
+-----
+## The applications app
+Brief app description
+
+-----
+**ENDPOINTS**
+
+-----
+
+
+## The comments app
+
+The comments app defines a Comment model with its fields specified in the ERD diagram. The app implements the following 5 endpoints that support creating, listing and viewing comments:
+
+-----
+**CREATE COMMENT**</br>
+**Endpoint:** `/api/comments`</br>
+**Description:** Create a comment regarding an application or a shelter</br>
+**Methods:** `POST`</br>
+**Required Payload:** </br>
+**Optional Payload:** `category`, `age`, `status`, `gender`, `size`, `shelter_email`, `name`</br>
+**Permissions:**
+- Any logged in user
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Any optional field doesn't match the model's field options
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+
+**SUCCESS:** Return a Json of pets that fit the filter requirements</br>
 ```
 {
     "msg": "Review Created",
@@ -324,9 +416,95 @@ The accounts app defines a Comment model with its fields specified in the ERD di
 -----
 
 ## The notification app
-Brief app description
+The notifications app defines a Notification model with its fields specified in the ERD diagram. The app implements the following 4 endpoints that support reading, updating, and deleting notifications:
 
 -----
-**ENDPOINTS**
+**GET Notification**</br>
+**Endpoint:** `/api/notifications`</br>
+**Description:** Get all notification</br>
+**Methods:** `GET`</br>
+**Required Payload:** </br>
+**Optional Payload:** </br>
+**Permissions:**
+- User has the notifications
 
+**ERRORS:**
+- `400 Bad Request`: 
+
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+
+**SUCCESS:** Return a message that indicates success and returns the list of user's notifications</br>
+
+-----
+**GET Notification**</br>
+**Endpoint:** `/api/notifications`</br>
+**Description:** Get all notification</br>
+**Methods:** `GET`</br>
+**Required Payload:** </br>
+**Optional Payload:** </br>
+**Permissions:**
+- User has the notifications
+
+**ERRORS:**
+- `400 Bad Request`: 
+
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+
+**SUCCESS:** Return a message that indicates success and returns the list of user's notifications</br>
+
+-----
+**GET Notification Details**</br>
+**Endpoint:** `/api/notifications/<int:note_id>`</br>
+**Description:** Get a specific notification</br>
+**Methods:** `GET`</br>
+**Required Payload:** </br>
+**Optional Payload:** </br>
+**Permissions:**
+- User has the notification
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Notification doesn't exist
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+
+**SUCCESS:** Return a message that indicates success and returns the user's notification</br>
+
+-----
+**PUT Notification**</br>
+**Endpoint:** `/api/notifications/<int:note_id>`</br>
+**Description:** Update a specific notification to read</br>
+**Methods:** `PUT`</br>
+**Required Payload:** </br>
+**Optional Payload:** </br>
+**Permissions:**
+- User has the notification
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Notification doesn't exist
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+
+**SUCCESS:** Return a message that indicates success</br>
+
+-----
+**DELETE Notification**</br>
+**Endpoint:** `/api/notifications/<int:note_id>`</br>
+**Description:** Delete a specific notification</br>
+**Methods:** `DELETE`</br>
+**Required Payload:** </br>
+**Optional Payload:** </br>
+**Permissions:**
+- User has the notification
+
+**ERRORS:**
+- `400 Bad Request`: 
+    - Notification doesn't exist
+- `401 Unauthorized`
+    - Authentication credentials were not provided. (user not logged in)
+
+**SUCCESS:** Return a message that indicates success of deletion</br>
 -----
