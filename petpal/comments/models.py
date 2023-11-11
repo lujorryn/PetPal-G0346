@@ -17,7 +17,7 @@ class Comment(models.Model):
     seeker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seeker_comments')
     shelter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shelter_comments')
     is_review = models.BooleanField() # True: shelter review, False: application comment
-    application = models.ForeignKey(Application, on_delete=models.CASCADE, blank=True)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, blank=True, null=True)
     notification = GenericRelation(Notification, related_query_name='comments')
 
     def save(self, *args, **kwargs):
@@ -27,25 +27,28 @@ class Comment(models.Model):
         body = ''
         if self.is_review:
             if self.is_author_seeker:
-                subject = 'You have received a review!'
-                body = f'You have received a review from {self.seeker.email}.'
+                subject = f'You have received a review from {self.seeker.email}!'
+                body = self.content
             else:
-                subject = 'You have received a review!'
-                body = f'You have received a review from {self.shelter.email}.'
+                subject = f'You have received a review from {self.shelter.email}'
+                body = self.content
         else:
             if self.is_author_seeker:
-                subject = 'You have received a comment!'
-                body = f'You have received a comment from {self.seeker.email} for their application on {self.application.petlisting.name}.'
+                subject = f'You have received a comment from {self.seeker.email}'
+                body = self.content
             else:
-                subject = 'You have received a comment!'
-                body = f'You have received a comment from {self.shelter.email} for your application on {self.application.petlisting.name}.'
+                subject = f'You have received a comment from {self.shelter.email}'
+                body = self.content
         notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self)
         notification.save()
         if self.is_review:
-            notification.recipients.add(self.shelter)
+            if self.shelter.is_notif_status:
+                notification.recipients.add(self.shelter)
         else:
             if self.is_author_seeker:
-                notification.recipients.add(self.shelter)
+                if self.shelter.is_notif_comment:
+                    notification.recipients.add(self.shelter)
             else:
-                notification.recipients.add(self.seeker)
+                if self.seeker.is_notif_comment:
+                    notification.recipients.add(self.seeker)
         notification.save()

@@ -1,7 +1,6 @@
 from django.urls import path
 
 from .views import signup_view, LogoutView, account_delete_view
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 app_name = 'accounts'
 

@@ -24,7 +24,7 @@ def applications_list_and_create_view(request):
 
 '''
 LIST All Applications of a Petlisting
-ENDPOINT: /api/applications/pet/<str:pet_id>
+ENDPOINT: /api/applications/pet/<int:pet_id>
 METHOD: GET
 PERMISSION:
 '''
@@ -35,7 +35,7 @@ def pet_applications_list_view(request, pet_id):
 
 '''
 VIEW / EDIT An Application
-ENDPOINT: /api/applications/<str:app_id>/
+ENDPOINT: /api/applications/<int:app_id>/
 METHOD: GET, PUT
 PERMISSION:
 SUCCESS:
