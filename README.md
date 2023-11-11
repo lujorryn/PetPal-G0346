@@ -70,10 +70,118 @@ The accounts app defines a custom PetPalUser model derived from Django's Abstrac
 
 
 ## The seekers app
-Brief app description
+The seekers app corresponds to users looking for a pet. The app provides the functions to view and update a user's own profile, view their favorite pets, and add/delete pets from their favorites.  
 
 -----
-**ENDPOINTS**
+**ALL SEEKER USERS**</br>
+**Endpoint:** `/api/seekers`</br>
+**Description:** Forbids anyone from looking at the list of all seeker users. </br>
+**Methods:** `GET`</br>
+**Permissions:** None </br>
+**ERRORS:**
+- `403 Forbidden`
+    - Every user, authenticated or not, should receive this error.
+-----
+**USER DETAIL VIEW**</br>
+**Endpoint:** `/api/seekers/<int:account_id>`</br>
+**Description:** Get the details of a seeker and update the user's data if needed. </br>
+**Methods:** `GET` `PUT`</br>
+**Permissions:** Account owner has permissions for GET and PUT requests, only GET for shelters with an active application</br>
+**ERRORS:**
+- `401 Unauthorized`
+    - Authentication credentials were not provided (user not logged in).
+- `403 Forbidden`: 
+    - `account_id` does not match with `request.user.id`
+- `400 Bad Request`: 
+    - User tried to update a field incorrectly.
+- `404 Forbidden`: 
+    - Account with `account_id` does not exist.
+
+**SUCCESS:** Return the data of \<account_id\>. Example:</br>
+```
+{
+    "msg": "Seeker details",
+    "user_data": {
+        "email": "seeker2@example.com",
+        "address": "",
+        "city": "",
+        "province": "",
+        "postal_code": "",
+        "phone": "",
+        "avatar": null,
+        "is_notif_comment": true,
+        "is_notif_status": true,
+        "is_notif_petlisting": true
+    },
+    "fav_pets": []
+}
+```
+
+-----
+**USER PET FAVORITES**</br>
+**Endpoint:** `/api/seekers/<int:account_id>/favorites`</br>
+**Description:** Get the list of favorite pets by the user with id `account_id` </br>
+**Methods:** `GET`</br>
+**Permissions:** Account owner only</br>
+**ERRORS:**
+- `401 Unauthorized`
+    - Authentication credentials were not provided (user not logged in).
+- `403 Forbidden`: 
+    - `account_id` does not match with `request.user.id`
+- `404 Not Found`: 
+  - account with `account_id` not found
+
+**SUCCESS:** Return a list with \<account_id\> favorites. Example:</br>
+```
+{
+    "page": {
+        "current": 1,
+        "has_next": false,
+        "has_previous": false
+    },
+    "msg": "seeker1@example.com Favorites",
+    "data": [
+        {
+            "id": 1,
+            "name": "Buddy",
+            "category": "D",
+            "breed": "Golden Retriver",
+            "age": 3,
+            "gender": "M",
+            "size": "L",
+            "status": "",
+            "med_history": "None",
+            "behaviour": "Friendly",
+            "special_needs": "",
+            "description": "A very friendly dog."
+        }
+    ]
+}
+```
+
+-----
+**ADD/DELETE FAVORITES**</br>
+**Endpoint:** `/api/seekers/<int:account_id>/favorites/<int:pet_id>`</br>
+**Description:** Add or delete a pet with `pet_id` on `account_id`'s favorites </br>
+**Methods:** `POST`, `DELETE`</br>
+**Permissions:** Account owner only</br>
+**ERRORS:**
+- `401 Unauthorized`
+    - Authentication credentials were not provided (user not logged in).
+- `403 Forbidden`: 
+    - `account_id` does not match with `request.user.id`.
+- `404 Not Found`: 
+  - account with `account_id` or pet with `pet_id` not found
+- `409 Conflict`
+  - `pet_id` is already in favorites (add), or is not in favorites (delete)
+
+**SUCCESS:** Return a message of add/delete successful and `pet_id` Examples:</br>
+```
+{ "msg": "Added 4 to favorites" }
+```
+```
+{ "msg": "Removed 4 from favorites" }
+```
 
 -----
 
