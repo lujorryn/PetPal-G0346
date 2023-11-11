@@ -28,9 +28,16 @@ SUCCESS:
 def applications_list_and_create_view(request):
     if request.method == 'GET':
         # todo: user auth
-        print(request.user.id)
+        print(request.auth)
+        auth_header = request.headers.get('Authorization')
 
-        # user_id = Token.objects.get(key=request.).user_id
+        if auth_header:
+            # Split the header to get the token part
+            _, token = auth_header.split(' ')
+
+            # Now, 'token' contains the Bearer token
+            print("Bearer Token:", token)
+        # user_id = Token.objects.get(key=request.auth.key).user_id
         # user = PetPalUser.objects.get(id=user_id)
         # print(user)
 
