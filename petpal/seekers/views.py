@@ -30,7 +30,7 @@ def seekers_list_view(request):
 
 '''
 VIEW / EDIT / DELETE A Seeker
-ENDPOINT: /api/seekers/<str:account_id>/
+ENDPOINT: /api/seekers/<int:account_id>/
 METHOD: GET, PUT, DELETE
 PERMISSION:
 SUCCESS:

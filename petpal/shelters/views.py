@@ -19,7 +19,7 @@ def shelters_list_view(request):
 
 '''
 VIEW / EDIT / DELETE A shelter
-ENDPOINT: /api/shelters/<str:account_id>/
+ENDPOINT: /api/shelters/<int:account_id>/
 METHOD: GET, PUT, DELETE
 PERMISSION:
 SUCCESS:
