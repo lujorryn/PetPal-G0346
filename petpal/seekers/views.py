@@ -100,7 +100,13 @@ def seeker_detail_view(request, account_id):
             seeker.postal_code = request.data.get('postal_code', seeker.postal_code)
             seeker.phone = request.data.get('phone', seeker.phone)
             seeker.avatar = request.data.get('avatar', seeker.avatar)
-            seeker.password = request.data.get('password', seeker.password)  # not sure if we should have password?
+            seeker.password = request.data.get('password', seeker.password)
+
+            # Notifications and preferences
+            seeker.is_notif_comment = request.data.get('is_notif_comment', seeker.is_notif_comment)
+            seeker.is_notif_status = request.data.get('is_notif_status', seeker.is_notif_status)
+            seeker.is_notif_petlisting = request.data.get('is_notif_petlisting', seeker.is_notif_petlisting)
+
 
             # Save changes
             seeker.save()
