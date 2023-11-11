@@ -23,7 +23,7 @@ def comment_create_view(request):
     is_review = request.data.get('is_review')
     content = request.data.get('content')
     email=request.data.get('recipient_email')
-
+    
     # Validate required payload
     missing_fields = []
     if is_review==None: missing_fields.append("is_review")
@@ -31,9 +31,17 @@ def comment_create_view(request):
     if not email or email.strip()=="": missing_fields.append("recipient_email")
     if len(missing_fields) > 0:
         return Response({'error': f'Missing fields: {[field for field in missing_fields]} required'}, status=status.HTTP_400_BAD_REQUEST)
-
+    
+    if str(is_review).lower() != 'true' and str(is_review).lower() != 'false':
+        return Response({'error': 'is_review must be true or false'}, status=status.HTTP_400_BAD_REQUEST)
+    
     if request.data.get('recipient_email') == None or request.data.get('recipient_email').strip() == '':
         return Response({'error': 'Recipient email cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'error': 'Recipient does not exist'}, status=status.HTTP_400_BAD_REQUEST)
     
     # Check if email is seeker -> shelter, shelter -> seeker
     if request.user.role == User.objects.get(email=email).role:
