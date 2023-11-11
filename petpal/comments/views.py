@@ -5,7 +5,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from django.core.paginator import Paginator
-from django.http import JsonResponse
 from applications.models import Application
 from .models import Comment
 from accounts.models import PetPalUser as User
@@ -23,14 +22,21 @@ def comment_create_view(request):
     is_author_seeker = True if request.user.role == User.Role.SEEKER else False
     is_review = request.data.get('is_review')
     content = request.data.get('content')
-    if content.strip() == '':
-        return Response({'error': 'Content cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
+    email=request.data.get('recipient_email')
+
+    # Validate required payload
+    missing_fields = []
+    if is_review==None: missing_fields.append("is_review")
+    if not content or content.strip()=="": missing_fields.append("content")
+    if not email or email.strip()=="": missing_fields.append("recipient_email")
+    if len(missing_fields) > 0:
+        return Response({'error': f'Missing fields: {[field for field in missing_fields]} required'}, status=status.HTTP_400_BAD_REQUEST)
 
     if request.data.get('recipient_email') == None or request.data.get('recipient_email').strip() == '':
         return Response({'error': 'Recipient email cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
     
     # Check if email is seeker -> shelter, shelter -> seeker
-    if request.user.role == User.objects.get(email=request.data.get('recipient_email')).role:
+    if request.user.role == User.objects.get(email=email).role:
         return Response({'error': f'{request.user.role}-{request.user.role} communication not supported'}, status=status.HTTP_400_BAD_REQUEST)
     
     if is_author_seeker:
@@ -40,9 +46,6 @@ def comment_create_view(request):
         shelter_email = request.user.email
         seeker_email = request.data.get('recipient_email')
     
-    if is_review == None or is_author_seeker == None or content == None or seeker_email == None or shelter_email == None:
-        return Response({'error': 'Missing fields'}, status=status.HTTP_400_BAD_REQUEST)
-    
     if is_review == False:
         # Application message
         application_id = request.data.get('application_id')
@@ -51,9 +54,17 @@ def comment_create_view(request):
             # Check if user is part of the application
             if request.user != application.seeker and request.user != application.petlisting.owner:
                 return Response({'error': 'User not authorized to comment on this application'}, status=status.HTTP_401_UNAUTHORIZED)
+            if shelter_email != application.petlisting.owner.email:
+                return Response({'error': 'Shelter does not own this petlisting'}, status=status.HTTP_400_BAD_REQUEST)
             new_comment = Comment(content=content, is_author_seeker=is_author_seeker, seeker=application.seeker, shelter=application.petlisting.owner, is_review=is_review, application=application)
             new_comment.save()
-            return JsonResponse({'msg': 'Comment Created'}, status=status.HTTP_200_OK)
+            data = {
+                "To": new_comment.seeker.email if new_comment.is_author_seeker else new_comment.shelter.email,
+                "From": new_comment.shelter.email if new_comment.is_author_seeker else new_comment.seeker.email,
+                "Message": new_comment.content,
+                "application": new_comment.application.pk
+            }
+            return Response({'msg': 'Comment created', 'data': data}, status=status.HTTP_200_OK)
         except Exception as e: 
             # might also fail at save(), not necessarily "comment doesn't exist"
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -65,7 +76,13 @@ def comment_create_view(request):
             rating = request.data.get('rating')
             new_comment = Comment(content=content, is_author_seeker=is_author_seeker, seeker=seeker, shelter=shelter, is_review=is_review, rating=rating)
             new_comment.save()
-            return Response({'msg': 'Review Created'}, status=status.HTTP_200_OK)
+            data = {
+                "To": new_comment.seeker.email if new_comment.is_author_seeker else new_comment.shelter.email,
+                "From": new_comment.shelter.email if new_comment.is_author_seeker else new_comment.seeker.email,
+                "Message": new_comment.content,
+                "rating": new_comment.rating
+            }
+            return Response({'msg': 'Review created', 'data': data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -214,7 +231,7 @@ def comments_shelter_list_view(request, shelter_id):
     try:
         shelter = User.objects.get(pk=shelter_id)
         if shelter.role != 'SHELTER':
-            return JsonResponse({'data': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         
         comments = Comment.objects.filter(shelter=shelter, is_review=True).order_by('-created_time')
         data = []
@@ -247,6 +264,6 @@ def comments_shelter_list_view(request, shelter_id):
             "data": data
         }
 
-        return JsonResponse(payload, status=status.HTTP_200_OK)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(payload, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
