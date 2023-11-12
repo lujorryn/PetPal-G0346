@@ -14,7 +14,9 @@ class Application(models.Model):
     EXPERIENCE = (('EX', 'Experienced'), ('IN', 'Intermediate'), ('NE', 'No Experience'))
     RESIDENCE_TYPE = (('C', 'Condo'), ('A', 'Apartment'), ('H', 'House'))
     STATUS = (('P', 'Pending'), ('A', 'Approved'), ('D', 'Declined'), ('W', 'Withdrawn'))
-    
+    ALLOWED_STATUS = ('P', 'A', 'D', 'W')
+
+
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
@@ -26,6 +28,7 @@ class Application(models.Model):
     experience = models.CharField(max_length=2, choices=EXPERIENCE)
     residence_type = models.CharField(max_length=1, choices=RESIDENCE_TYPE)
     status = models.CharField(max_length=1, choices=STATUS)
+    # not included in form-data
     created_time = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     seeker = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seeker_applications")
