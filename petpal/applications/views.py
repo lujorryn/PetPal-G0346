@@ -82,10 +82,12 @@ def applications_list_and_create_view(request):
             "petlisting_id" : request.POST.get('petlisting_id', '')
         }
 
+        v = validate_data(data)
+        ok, err = v[0], v[1]
+        
+        if not ok:
+            return Response({'error': f'invalid {err}'}, status=status.HTTP_400_BAD_REQUEST)
 
-        for field, value in data.items():
-            if value == "":
-                return Response({'error': f'{field} cannot be blank'})
     
         
         try:
@@ -101,6 +103,8 @@ def applications_list_and_create_view(request):
         if listing.status != "AV":
             return Response({'error': 'petlisintg unavailable'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
         new_app = Application.objects.create(
             first_name=data['first_name'],
             last_name=data['last_name'],
@@ -108,7 +112,7 @@ def applications_list_and_create_view(request):
             phone=data['phone'],
             email=data['email'],
             contact_pref=data['contact_pref'],
-            pet_number=data['pet_number'],
+            pet_number=int(data['pet_number']),
             has_children=get_boolean(data["has_children"]),
             experience=data['experience'],
             residence_type=data['residence_type'],
@@ -117,6 +121,8 @@ def applications_list_and_create_view(request):
             shelter=listing.owner,
             petlisting=listing,
         )
+
+
 
         subject = f'application with id {new_app.pk} created.'
         body = f'user: {new_app.email}, petlisting: {new_app.petlisting.pk}'
@@ -129,8 +135,6 @@ def applications_list_and_create_view(request):
         # save initial new_notif 
         new_notif.save()
         # save again with valid shelter
-        print(new_app.shelter)
-        print(request.user)
         new_notif.recipients.add(new_app.shelter)
         new_notif.save()
 
@@ -146,7 +150,62 @@ def applications_list_and_create_view(request):
 helper func for converting string 'true/True' values
 '''
 def get_boolean(field) -> bool:
-    return str(field).lower()=='true' 
+    field = str(field).lower()
+    if field == 'true':
+        return True
+    elif field == 'false':
+        return False
+    else:
+        return Response({'error': 'invalid form-data'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+'''
+custom validator
+returns ok: bool, err: str
+'''
+def validate_data(data) -> (bool, str):
+    ok = True
+    err = "all good"
+
+    charfield_255 = ['first_name', 'last_name', 'address', 'email']
+    charfield_20 = ['phone']
+    charfield_2 = ['experience']
+    charfield_1 = ['contact_pref', 'residence_type', 'status']
+    is_int = ['pet_number']
+    is_bool = ['has_children']
+
+
+    for field, value in data.items():
+        if value == "":
+            ok = False
+            err = field 
+        elif field in charfield_255 and len(value) > 255:
+            ok = False
+            err = field
+        elif field in charfield_20 and len(value) > 20:
+            ok = False
+            err = field
+        elif field in charfield_2 and len(value) > 2:
+            ok = False
+            err = field
+        elif field in charfield_1 and len(value) > 1:
+            ok = False
+            err = field
+        elif field in is_int:
+            try:
+                int(value)
+            except ValueError:
+                ok = False
+                err = field
+        elif field in is_bool and value.lower() not in ['true', 'false']:
+            ok = False
+            err = field
+        else:
+            pass
+        if not ok:
+            return (ok, err)
+    
+    return (ok, err)
 
 
 '''
@@ -227,7 +286,6 @@ def application_detail_view(request, app_id):
         put_app.status = new_status
         put_app.save()
 
-
         # notify user about status update
         if put_app.seeker.is_notif_status:
             subject = f'application with id {put_app.pk} got updated.'
@@ -240,7 +298,6 @@ def application_detail_view(request, app_id):
             # add recipients and save 
             new_notif.recipients.add(put_app.seeker)
             new_notif.save()
-
 
         success_url = f'/api/applications/{put_app.pk}'
         return Response({'redirect_url': success_url}, status=status.HTTP_201_CREATED)
