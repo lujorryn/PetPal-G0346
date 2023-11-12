@@ -268,7 +268,12 @@ def application_detail_view(request, app_id):
             "status" : request.data.get('status', ''),
         }
 
-        put_app = Application.objects.get(pk=app_id)
+
+        try:
+            put_app = Application.objects.get(pk=app_id)
+        except Application.DoesNotExist:
+            return Response({'error':'app id not found'}, status=status.HTTP_400_BAD_REQUEST)
+
        
 
         new_status = data["status"]
@@ -297,18 +302,22 @@ def application_detail_view(request, app_id):
         put_app.status = new_status
         put_app.save()
 
-        # notify user about status update
-        if put_app.seeker.is_notif_status:
-            subject = f'application with id {put_app.pk} got updated.'
-            body = f'updated status: {put_app.status}'
-            new_notif = Notification(subject=subject, body=body, 
-                                        content_type=ContentType.objects.get_for_model(Application), 
-                                        object_id=put_app.pk, content_object=put_app)
-            
-            new_notif.save()
-            # add recipients and save 
-            new_notif.recipients.add(put_app.seeker)
-            new_notif.save()
+        
+        subject = f'application with id {put_app.pk} got updated.'
+        body = f'updated status: {put_app.status}'
+        new_notif = Notification(subject=subject, body=body, 
+                                    content_type=ContentType.objects.get_for_model(Application), 
+                                    object_id=put_app.pk, content_object=put_app)
+        
+        new_notif.save()
+        # add recipients and save 
+        if curr_user.role == PetPalUser.Role.SHELTER:
+            if put_app.seeker.is_notif_status:
+                new_notif.recipients.add(put_app.seeker)
+        else:
+            new_notif.recipients.add(put_app.shelter)
+
+        new_notif.save()
 
         success_url = f'/api/applications/{put_app.pk}'
         return Response({'redirect_url': success_url}, status=status.HTTP_201_CREATED)
