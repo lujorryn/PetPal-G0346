@@ -257,6 +257,9 @@ def application_detail_view(request, app_id):
         except Application.DoesNotExist:
             return Response({'error':'app id not found'}, status=status.HTTP_400_BAD_REQUEST)
 
+        if app.seeker !=  request.user and app.shelter != request.user:
+            return Response({'error':'unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
         serialized_app = ApplicationSerializer(app)
         return JsonResponse({'data': serialized_app.data}, status=status.HTTP_200_OK)
 
@@ -267,6 +270,7 @@ def application_detail_view(request, app_id):
 
         put_app = Application.objects.get(pk=app_id)
        
+
         new_status = data["status"]
 
         if new_status == put_app.status:
@@ -275,9 +279,16 @@ def application_detail_view(request, app_id):
         curr_user = PetPalUser.objects.get(pk=request.user.id)
 
         if curr_user.role == PetPalUser.Role.SHELTER:
+            if put_app.shelter != curr_user:
+                return Response({'error':'unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
             if new_status not in ['A', 'D']:
                 return Response({'error':f'invalid status: {new_status}'}, status=status.HTTP_400_BAD_REQUEST)
+
         elif curr_user.role == PetPalUser.Role.SEEKER:
+            if put_app.seeker != curr_user:
+                return Response({'error':'unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
             if new_status not in ['W']:
                 return Response({'error':f'invalid status: {new_status}'}, status=status.HTTP_400_BAD_REQUEST)
         else:

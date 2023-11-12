@@ -97,10 +97,292 @@ Brief app description
 
 
 ## The applications app
-Brief app description
+Allows the user to view, create, and modify applications for a petlisting.
+
+Shelters can view all of the applications for a petlisting. 
+
+Seekers can view their applications only.
 
 -----
-**ENDPOINTS**
+### ENDPOINTS
+
+**Endpoint:** </br>
+`/api/application`
+
+**Description:** </br>
+Create an application for a petlisting or view a list of applications
+
+**Methods:** </br>
+`GET`, `POST`
+
+
+### POST request:
+
+**Required Payload:** </br>
+- `first_name`, `last_name`, `address`, `phone`, `email`, `contact_pref`, `pet_number`, `has_children`, `experience`, `residence_type`, `status`, `petlisting_id`
+
+**Optional Payload:**</br>
+- None
+
+**Permissions:**
+- Shelter:
+    - must be authenticated
+
+- Seeker:
+    - must be authenticated
+
+**ERRORS:**
+- `400 Bad Request`:
+  - Invalid data in the payload.
+  - User invalid (when trying to retrieve the current user from the database).
+  - PetListing invalid (when trying to retrieve the petlisting from the database).
+  - PetListing unavailable (when the status of the petlisting is not 'AV' - available).
+
+- `401 Unauthorized`:
+  - Authentication credentials were not provided (user not logged in).
+
+**SUCCESS:** </br>
+Return a redirect url and success status code:
+
+```
+{
+    "redirect_url": "/api/applications/<application_id>", "status": 201
+}
+```
+
+### GET request:
+
+**Required Payload:** </br>
+- None
+
+**Optional Payload:**</br>
+- None
+
+**Permissions:**
+- Shelter:
+    - must be authenticated
+
+- Seeker:
+    - must be authenticated
+
+
+**ERRORS:**
+- `400 Bad Request`:
+  - Invalid status or sort option provided in the query parameters.
+  - Invalid user role (when the user role is not 'SHELTER' or 'SEEKER').
+  - Sorting option not supported.
+
+- `401 Unauthorized`:
+  - Authentication credentials were not provided (user not logged in).
+
+**SUCCESS:** 
+- Shelter:
+    - Return a paginated list of the applications for all of the shelter's pet listings with a status 200
+
+- Seeker:
+    - Return a paginated list of the user's applications with a status 200
+
+```
+{
+    "count": 35,
+    "next": "http://localhost:8000/api/applications?page=2",
+    "previous": null,
+    "results": {
+        "data": [
+            {
+                "id": 37,
+                "first_name": "John",
+                "last_name": "Doe",
+                "address": "123 Main St",
+                "phone": "555-1234-99999999999999999",
+                "email": "shelter1@example.com",
+                "contact_pref": "P",
+                "pet_number": 2,
+                "has_children": false,
+                "experience": "EX",
+                "residence_type": "C",
+                "status": "P",
+                "created_time": "2023-11-12T01:09:20.055224Z",
+                "last_updated": "2023-11-12T01:09:20.055265Z",
+                "seeker": 4,
+                "shelter": 4,
+                "petlisting": 1
+            },
+            ...
+            ]
+    }
+}
+```
+---
+
+**Endpoint:** </br>
+`/api/applications/pet/<int:pet_id>`
+
+**Description:** </br>
+List all applications for a pet listing (pet_id)
+
+**Methods:** </br>
+`GET`
+
+
+### GET request:
+
+**Required Payload:** </br>
+- None
+
+**Optional Payload:**</br>
+- None
+
+**Permissions:**
+- Shelter:
+    - must be authenticated
+
+- Seeker:
+    - not allowed
+
+
+**ERRORS:**
+- `400 Bad Request`:
+  - Invalid pet_id was provided.
+
+- `401 Unauthorized`:
+  - Shelter does not own the pet listing.
+
+**SUCCESS:** 
+- Return a paginated list of the applications for a petlisting with a status 200.
+
+    
+```
+{
+    "count": 35,
+    "next": "http://localhost:8000/api/applications/pet/1?page=2",
+    "previous": null,
+    "results": {
+        "data": [
+            {
+                "id": 37,
+                "first_name": "John",
+                "last_name": "Doe",
+                "address": "123 Main St",
+                "phone": "555-1234-99999999999999999",
+                "email": "shelter1@example.com",
+                "contact_pref": "P",
+                "pet_number": 2,
+                "has_children": false,
+                "experience": "EX",
+                "residence_type": "C",
+                "status": "P",
+                "created_time": "2023-11-12T01:09:20.055224Z",
+                "last_updated": "2023-11-12T01:09:20.055265Z",
+                "seeker": 4,
+                "shelter": 4,
+                "petlisting": 1
+            },
+            ...
+            ]
+    }
+}
+```
+
+---
+
+**Endpoint:** </br>
+`/api/applications/<int:app_id>`
+
+**Description:** </br>
+View or Edit the specified application
+
+**Methods:** </br>
+`GET`, `PUT`
+
+
+### GET request:
+
+**Required Payload:** </br>
+- None
+
+**Optional Payload:**</br>
+- None
+
+**Permissions:**
+- Shelter:
+    - must be authenticated and own the application
+
+- Seeker:
+    - must be authenticated and own the application
+
+
+**ERRORS:**
+- `400 Bad Request`:
+  - Invalid app_id was provided.
+
+- `401 Unauthorized`:
+  - Shelter does not own the pet listing for the application
+  - Seeker is not the author of the application
+
+**SUCCESS:** 
+- Return the details of the application with a status 200.
+
+    
+```
+{
+    "data": {
+        "id": 12,
+        "first_name": "John",
+        "last_name": "Doe",
+        "address": "123 Main St",
+        "phone": "555-1234",
+        "email": "shelter1@example.com",
+        "contact_pref": "P",
+        "pet_number": 2,
+        "has_children": false,
+        "experience": "EX",
+        "residence_type": "C",
+        "status": "D",
+        "created_time": "2023-11-11T15:12:47.599277Z",
+        "last_updated": "2023-11-11T15:13:17.139519Z",
+        "seeker": 4,
+        "shelter": 4,
+        "petlisting": 1
+    }
+}
+```
+
+
+### PUT request:
+
+**Required Payload:** </br>
+- `status`
+
+**Optional Payload:**</br>
+- None
+
+**Permissions:**
+- Shelter:
+    - must be authenticated and own the application
+
+- Seeker:
+    - must be authenticated and own the application
+
+
+**ERRORS:**
+- `400 Bad Request`:
+  - Invalid app_id was provided.
+  - Seeker wanted to update the application with a status other than 'w'
+  - Shelter wanted to update the application with a status other than 'A' or 'D'
+
+- `401 Unauthorized`:
+  - Shelter does not own the pet listing for the application
+  - Seeker is not the author of the application
+
+**SUCCESS:** 
+- Return a redirect url and success status code:
+
+```
+{
+    "redirect_url": "/api/applications/<application_id>", "status": 201
+}
+```
 
 -----
 
