@@ -8,13 +8,14 @@ from rest_framework.pagination import PageNumberPagination
 from django.http import JsonResponse
 from .models import PetListing, PetListingImage
 from accounts.models import PetPalUser as User
+from .serializers import PetListingSerializer
 
 # Create your views here.
 
 '''
 LIST All Petlistings with or without filter / CREATE New Petlisting
 ENDPOINT: /api/petlistings
-METHOD: POST
+METHOD: Get, POST
 PERMISSION: User logged in for GET, User logged in and is a shelter for POST
 SUCCESS:
 '''
@@ -87,55 +88,20 @@ def petlistings_list_and_create_view(request):
         if request.user.role != User.Role.SHELTER:
             return Response({'error': 'User not authorized to create petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
         
-        # Check if all required fields are present and not null
-        required_fields = ['name', 'category', 'age', 'gender', 'size', 'description']
-        for field in required_fields:
-            if not request.data.get(field) or str(request.data.get(field)).strip() == '':
-                return Response({'error': f'{field} is required and cannot be null'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = PetListingSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            pet_listing = serializer.save(owner=request.user)
+            
+            photos = request.FILES.getlist('photos', None)
+            if photos:
+                for photo in photos:
+                    PetListingImage.objects.create(petlisting=pet_listing, image=photo)
+            
+            pet_listing.refresh_from_db()
+            serializer = PetListingSerializer(instance=pet_listing)
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
 
-        name = request.data.get('name')
-        if name.strip() == '':
-            return Response({'error': 'Name cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
-        category = request.data.get('category')
-        if category not in ['D', 'C', 'O']:
-            return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
-        breed = request.data.get('breed', 'N/A')
-        age = request.data.get('age')
-        if int(age) < 0:
-            return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
-        gender = request.data.get('gender')
-        if gender not in ['M', 'F', 'X']:
-            return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
-        size = request.data.get('size')
-        if size not in ['L', 'M', 'S']:
-            return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        med_history = request.data.get('med_history', 'N/A')
-        behaviour = request.data.get('behaviour', 'N/A')
-        special_needs = request.data.get('special_needs', 'N/A')
-        description = request.data.get('description')
-        if description.strip() == '':
-            return Response({'error': 'Description cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
-        new_listing = PetListing(
-            name=name,
-            category=category,
-            breed=breed,
-            age=age,
-            gender=gender,
-            size=size,
-            med_history=med_history,
-            behaviour=behaviour,
-            special_needs=special_needs,
-            description=description,
-            owner=request.user
-        )
-        new_listing.save()
-        photos = request.FILES.getlist('photos', None)
-        if photos:
-            for photo in photos:
-                new_image = PetListingImage(image=photo, petlisting=new_listing)
-                new_image.save()
-        return Response({'data': f'Petlisting for {name} created'}, status=status.HTTP_200_OK)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 '''
 VIEW / EDIT / DELETE A petlisting
@@ -182,56 +148,19 @@ def petlisting_detail_view(request, pet_id):
         try:
             if request.user != PetListing.objects.get(pk=pet_id).owner:
                 return Response({'data': 'User not authorized to edit this petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
-            required_fields = ['name', 'category', 'age', 'gender', 'size', 'status', 'description']
-            for field in required_fields:
-                if not request.data.get(field) or str(request.data.get(field)).strip() == '':
-                    return Response({'data': f'{field} is required and cannot be null'}, status=status.HTTP_400_BAD_REQUEST)
-
-            name = request.data.get('name')
-            category = request.data.get('category')
-            if category not in ['D', 'C', 'O']:
-                return Response({'error': 'Invalid category'}, status=status.HTTP_400_BAD_REQUEST)
-            breed = request.data.get('breed')
-            age = request.data.get('age')
-            if int(age) < 0:
-                return Response({'error': 'Invalid age'}, status=status.HTTP_400_BAD_REQUEST)
-            gender = request.data.get('gender')
-            if gender not in ['M', 'F', 'X']:
-                return Response({'error': 'Invalid gender'}, status=status.HTTP_400_BAD_REQUEST)
-            size = request.data.get('size')
-            if size not in ['L', 'M', 'S']:
-                return Response({'error': 'Invalid size'}, status=status.HTTP_400_BAD_REQUEST)
-            pet_status = request.data.get('status')
-            if pet_status not in ['AV', 'AD', 'PE', 'WI']:
-                return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
-            med_history = request.data.get('med_history')
-            behaviour = request.data.get('behaviour')
-            special_needs = request.data.get('special_needs')
-            description = request.data.get('description')
-            listing = PetListing.objects.get(pk=pet_id)
-            listing.name = name
-            listing.category = category
-            if breed:
-                listing.breed = breed
-            listing.age = age
-            listing.gender = gender
-            listing.size = size
-            listing.status = pet_status
-            if med_history:
-                listing.med_history = med_history
-            if behaviour:
-                listing.behaviour = behaviour
-            if special_needs:
-                listing.special_needs = special_needs
-            listing.description = description
-            listing.save()
-            
-            photos = request.FILES.getlist('photos', None)
-            if photos:
-                for photo in photos:
-                    new_image = PetListingImage(image=photo, petlisting=listing)
-                    new_image.save()
-            return Response({'data': 'Petlisting updated'}, status=status.HTTP_200_OK)
+            serializer = PetListingSerializer(instance=PetListing.objects.get(pk=pet_id), data=request.data, context={'request': request})
+            if serializer.is_valid():
+                pet_listing = serializer.save()
+                
+                photos = request.FILES.getlist('photos', None)
+                if photos:
+                    for photo in photos:
+                        PetListingImage.objects.create(petlisting=pet_listing, image=photo)
+                
+                pet_listing.refresh_from_db()
+                serializer = PetListingSerializer(instance=pet_listing)
+                return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({'error': 'Petlisting does not exist'}, status=status.HTTP_400_BAD_REQUEST)
     
