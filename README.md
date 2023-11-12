@@ -1,7 +1,15 @@
 # CSC309 Group_0346 PetPal Overview
 
+The following link is our repository on github, which contains the same code as our P2 submission but with a complete commit history:
+
+<a href="https://github.com/lujorryn/PetPal-G0346">https://github.com/lujorryn/PetPal-G0346</a>
+
 ## Model Entity Relationship Diagram
-TBD in case we make changes to the model laters, will add a finalized version once all apps are complete
+<p>
+    <img src="petpal-ERD.png" alt="PETPAL ERD"/>
+</p>
+
+<div style="page-break-after: always;"></div>
 
 ## Simple JWT Token-based Authentication
 We use simple JWT's TokenObtainPairView to implement our login function.
