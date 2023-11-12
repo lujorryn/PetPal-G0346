@@ -195,10 +195,88 @@ The seekers app corresponds to users looking for a pet. The app provides the fun
 
 
 ## The shelters app
-Brief app description
+The shelters app corresponds to shelters that have pets up for adoption. The app provides the functions to view and update a shelter's own profile. 
 
 -----
-**ENDPOINTS**
+**ALL SHELTERS**</br>
+**Endpoint:** `/api/shelters`</br>
+**Description:** Provides a list view of all shelters. </br>
+**Methods:** `GET`</br>
+**Permissions:** Any logged-in users</br>
+**ERRORS:**
+- `401 Unauthorized`
+    - Authentication credentials were not provided (user not logged in).
+
+**SUCCESS:** Return a list of the shelters. Example:</br>
+```
+{
+    "page": {
+        "current": 1,
+        "has_next": true,
+        "has_previous": false
+    },
+    "data": [
+        {
+            "id": 4,
+            "email": "shelter1@example.com",
+            "address": "",
+            "city": "Vancouver",
+            "province": "",
+            "postal_code": "",
+            "phone": "",
+            "avatar": null,
+            "description": ""
+        },
+        {
+            "id": 5,
+            "email": "shelter2@example.com",
+            "address": "",
+            "city": "",
+            "province": "",
+            "postal_code": "",
+            "phone": "",
+            "avatar": null,
+            "description": ""
+        }
+    ]
+}
+```
+
+-----
+**SHELTER DETAIL VIEW**</br>
+**Endpoint:** `/api/shelters/<int:account_id>`</br>
+**Description:** Provides a view of the shelter with `account_id` to see details or update (if permitted) </br>
+**Methods:** `GET`, `PUT`</br>
+**Permissions:** Any logged-in user has access to `GET`, only account holders can make a `PUT` request.</br>
+**ERRORS:**
+- `401 Unauthorized`
+    - Authentication credentials were not provided (user not logged in).
+- `403 Forbidden`: 
+    - `account_id` does not match with `request.user.id`.
+- `404 Forbidden`: 
+    - Account with `account_id` does not exist.
+- `400 Bad Request`: 
+    - User tried to update a field incorrectly.
+
+**SUCCESS:** Return a the details of a shelter. Example:</br>
+```
+{
+    "msg": "Shelter Detail",
+    "data": {
+        "email": "shelter1@example.com",
+        "address": "",
+        "city": "Vancouver",
+        "province": "",
+        "postal_code": "",
+        "phone": "",
+        "avatar": null,
+        "description": "",
+        "is_notif_comment": true,
+        "is_notif_status": true,
+        "is_notif_petlisting": true
+    }
+}
+```
 
 -----
 
