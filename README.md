@@ -94,7 +94,7 @@ The seekers app corresponds to users looking for a pet. The app provides the fun
 **Endpoint:** `/api/seekers/<int:account_id>`</br>
 **Description:** Get the details of a seeker and update the user's data if needed. </br>
 **Methods:** `GET` `PUT`</br>
-**Optional Payload:** `email`, `address`, `city`, `province`, `postal_code`, `phone`, `avatar`, `is_notif_comment`, `is_notif_status`, `is_notif_petlisting`</br>
+**Optional Payload (PUT):** `email`, `address`, `city`, `province`, `postal_code`, `phone`, `avatar`, `is_notif_comment`, `is_notif_status`, `is_notif_petlisting`</br>
 **Permissions:** Account owner has permissions for GET and PUT requests, only GET for shelters with an active application</br>
 **ERRORS:**
 - `401 Unauthorized`
@@ -249,7 +249,7 @@ The shelters app corresponds to shelters that have pets up for adoption. The app
 **Description:** Provides a view of the shelter with `account_id` to see details or update (if permitted) </br>
 **Methods:** `GET`, `PUT`</br>
 **Permissions:** Any logged-in user has access to `GET`, only account holders can make a `PUT` request.</br>
-**Optional Payload:** `email`, `address`, `city`, `province`, `postal_code`, `phone`, `avatar`, `description`, `is_notif_comment`, `is_notif_status`, `is_notif_petlisting`</br>
+**Optional Payload (PUT):** `email`, `address`, `city`, `province`, `postal_code`, `phone`, `avatar`, `description`, `is_notif_comment`, `is_notif_status`, `is_notif_petlisting`</br>
 **ERRORS:**
 - `401 Unauthorized`
     - Authentication credentials were not provided (user not logged in).
