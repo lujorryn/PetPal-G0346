@@ -94,6 +94,7 @@ The seekers app corresponds to users looking for a pet. The app provides the fun
 **Endpoint:** `/api/seekers/<int:account_id>`</br>
 **Description:** Get the details of a seeker and update the user's data if needed. </br>
 **Methods:** `GET` `PUT`</br>
+**Optional Payload (PUT):** `email`, `address`, `city`, `province`, `postal_code`, `phone`, `avatar`, `is_notif_comment`, `is_notif_status`, `is_notif_petlisting`</br>
 **Permissions:** Account owner has permissions for GET and PUT requests, only GET for shelters with an active application</br>
 **ERRORS:**
 - `401 Unauthorized`
@@ -248,6 +249,7 @@ The shelters app corresponds to shelters that have pets up for adoption. The app
 **Description:** Provides a view of the shelter with `account_id` to see details or update (if permitted) </br>
 **Methods:** `GET`, `PUT`</br>
 **Permissions:** Any logged-in user has access to `GET`, only account holders can make a `PUT` request.</br>
+**Optional Payload (PUT):** `email`, `address`, `city`, `province`, `postal_code`, `phone`, `avatar`, `description`, `is_notif_comment`, `is_notif_status`, `is_notif_petlisting`</br>
 **ERRORS:**
 - `401 Unauthorized`
     - Authentication credentials were not provided (user not logged in).
@@ -282,9 +284,7 @@ The shelters app corresponds to shelters that have pets up for adoption. The app
 
 
 ## The petlistings app
-Brief app description
 
------
 The petlisting app defines a PetListing model with its fields specified in the ERD diagram. The app implements the following 5 endpoints that support creating, updating, viewing, and deleting Petlistings:
 
 -----
@@ -292,7 +292,6 @@ The petlisting app defines a PetListing model with its fields specified in the E
 **Endpoint:** `/api/petlistings`</br>
 **Description:** Get a petlisting</br>
 **Methods:** `GET`</br>
-**Required Payload:** </br>
 **Optional Payload:** `category`, `age`, `status`, `gender`, `size`, `shelter_email`, `name`</br>
 **Permissions:**
 - Any logged in user
@@ -329,8 +328,6 @@ The petlisting app defines a PetListing model with its fields specified in the E
 **Endpoint:** `/api/petlistings/<int:pet_id>`</br>
 **Description:** Get a petlisting details</br>
 **Methods:** `GET`</br>
-**Required Payload:** </br>
-**Optional Payload:** </br>
 **Permissions:**
 - Any logged in user
 
@@ -367,8 +364,6 @@ The petlisting app defines a PetListing model with its fields specified in the E
 **Endpoint:** `/api/petlistings/<int:pet_id>`</br>
 **Description:** Delete a petlisting</br>
 **Methods:** `DELETE`</br>
-**Required Payload:** </br>
-**Optional Payload:** </br>
 **Permissions:**
 - Any logged in user and is the shelter which created the listing
 
@@ -407,9 +402,6 @@ Create an application for a petlisting or view a list of applications
 **Required Payload:** </br>
 - `first_name`, `last_name`, `address`, `phone`, `email`, `contact_pref`, `pet_number`, `has_children`, `experience`, `residence_type`, `status`, `petlisting_id`
 
-**Optional Payload:**</br>
-- None
-
 **Permissions:**
 - Shelter:
     - must be authenticated
@@ -437,12 +429,6 @@ Return a redirect url and success status code:
 ```
 
 ### GET request:
-
-**Required Payload:** </br>
-- None
-
-**Optional Payload:**</br>
-- None
 
 **Permissions:**
 - Shelter:
@@ -513,12 +499,6 @@ List all applications for a pet listing (pet_id)
 
 ### GET request:
 
-**Required Payload:** </br>
-- None
-
-**Optional Payload:**</br>
-- None
-
 **Permissions:**
 - Shelter:
     - must be authenticated
@@ -584,12 +564,6 @@ View or Edit the specified application
 
 ### GET request:
 
-**Required Payload:** </br>
-- None
-
-**Optional Payload:**</br>
-- None
-
 **Permissions:**
 - Shelter:
     - must be authenticated and own the application
@@ -639,9 +613,6 @@ View or Edit the specified application
 
 **Required Payload:** </br>
 - `status`
-
-**Optional Payload:**</br>
-- None
 
 **Permissions:**
 - Shelter:
@@ -791,8 +762,6 @@ The notifications app defines a Notification model with its fields specified in 
 **Endpoint:** `/api/notifications`</br>
 **Description:** Get all notification</br>
 **Methods:** `GET`</br>
-**Required Payload:** </br>
-**Optional Payload:** </br>
 **Permissions:**
 - User has the notifications
 
@@ -809,8 +778,6 @@ The notifications app defines a Notification model with its fields specified in 
 **Endpoint:** `/api/notifications/<int:note_id>`</br>
 **Description:** Get a specific notification</br>
 **Methods:** `GET`</br>
-**Required Payload:** </br>
-**Optional Payload:** </br>
 **Permissions:**
 - User has the notification
 
@@ -827,8 +794,6 @@ The notifications app defines a Notification model with its fields specified in 
 **Endpoint:** `/api/notifications/<int:note_id>`</br>
 **Description:** Update a specific notification to read</br>
 **Methods:** `PUT`</br>
-**Required Payload:** </br>
-**Optional Payload:** </br>
 **Permissions:**
 - User has the notification
 
@@ -845,8 +810,6 @@ The notifications app defines a Notification model with its fields specified in 
 **Endpoint:** `/api/notifications/<int:note_id>`</br>
 **Description:** Delete a specific notification</br>
 **Methods:** `DELETE`</br>
-**Required Payload:** </br>
-**Optional Payload:** </br>
 **Permissions:**
 - User has the notification
 
