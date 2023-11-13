@@ -52,7 +52,7 @@ def seeker_detail_view(request, account_id):
             # If the request is from a shelter, check it has an application with the seeker
             if request.user.role == PetPalUser.Role.SHELTER:
                 try:
-                    Application.objects.get(seeker=account_id, shelter=request.user)
+                    Application.objects.filter(shelter=request.user, seeker=seeker)
                 except Application.DoesNotExist:
                     return Response({'error': 'You are not allowed to see this profile'},
                                     status=status.HTTP_403_FORBIDDEN)
