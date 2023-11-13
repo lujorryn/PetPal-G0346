@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from django.urls import reverse
 
 from .models import Notification
 
@@ -21,6 +22,7 @@ def notifications_list_view(request):
     paginator = PageNumberPagination()
     paginator.page_size = 4
     is_read = request.GET.get('is_read', None)
+    sort_by_created_time = request.GET.get('sort_by_created_time', None)
 
     if is_read is not None:
         if is_read.lower() == 'true' or is_read == True:
@@ -29,7 +31,11 @@ def notifications_list_view(request):
             notifications = Notification.objects.filter(recipients=request.user).exclude(recipients_read=request.user)
     else:
         notifications = Notification.objects.filter(recipients=request.user).exclude(recipients_read=request.user)
-    
+    notifications = notifications.order_by('-created_time')
+    if sort_by_created_time == 'asc':
+        notifications = notifications.order_by('created_time')
+    elif sort_by_created_time == 'desc':
+        notifications = notifications.order_by('-created_time')
     paginated_notifications = paginator.paginate_queryset(notifications, request)
     
     data = []
@@ -42,7 +48,18 @@ def notifications_list_view(request):
             'object_id': notification.object_id,
         }
         if notification.content_type.model == 'petlisting':
+            pet_listing_url = reverse('petlistings:pelisting-detail', args=[notification.object_id])
+            result['link'] = pet_listing_url
             result['status'] = notification.content_object.status
+        elif notification.content_type.model == 'comment':
+            comment_url = reverse('comments:comment-detail', args=[notification.object_id])
+            result['link'] = comment_url
+        elif notification.content_type.model == 'application':
+            application_url = reverse('applications:applications-detail', args=[notification.object_id])
+            result['link'] = application_url
+            result['status'] = notification.content_object.status
+        result['created_time'] = notification.content_object.created_time
+        
         data.append(result)
     return paginator.get_paginated_response({'data': data})
 

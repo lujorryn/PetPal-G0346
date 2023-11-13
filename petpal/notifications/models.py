@@ -16,3 +16,4 @@ class Notification(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) # Can also be set null depending on interpretation
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
+    created_time = models.DateTimeField(auto_now_add=True)

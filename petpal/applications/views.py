@@ -94,11 +94,20 @@ def applications_list_and_create_view(request):
             curr_user = PetPalUser.objects.get(pk=request.user.id)
         except PetPalUser.DoesNotExist:
             return Response({'error': 'user invalid'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if curr_user.role != PetPalUser.Role.SEEKER:
+            return Response({'error': 'user not seeker'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if curr_user.email != data['email']:
+            return Response({'error': 'user email not match'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             listing = PetListing.objects.get(id=data['petlisting_id'])    
         except PetListing.DoesNotExist:
             return Response({'error': 'petlisintg invalid'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if curr_user.seeker_applications.filter(pk=data['petlisting_id']).exists():
+            return Response({'error': 'application already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         if listing.status != "AV":
             return Response({'error': 'petlisintg unavailable'}, status=status.HTTP_400_BAD_REQUEST)
