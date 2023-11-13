@@ -292,7 +292,6 @@ The petlisting app defines a PetListing model with its fields specified in the E
 **Endpoint:** `/api/petlistings`</br>
 **Description:** Get a petlisting</br>
 **Methods:** `GET`</br>
-**Required Payload:** </br>
 **Optional Payload:** `category`, `age`, `status`, `gender`, `size`, `shelter_email`, `name`</br>
 **Permissions:**
 - Any logged in user
