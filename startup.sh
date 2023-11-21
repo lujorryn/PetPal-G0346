@@ -10,8 +10,8 @@ sudo apt-get install libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev \
     libharfbuzz-dev libfribidi-dev libxcb1-dev
 pip3 install -r requirements.txt
 
-rm petpal/*/migrations/0*.py
-rm petpal/db.sqlite3
-python3 petpal/manage.py makemigrations
-python3 petpal/manage.py migrate
-python3 petpal/script.py
+rm backend/*/migrations/0*.py
+rm backend/db.sqlite3
+python3 backend/manage.py makemigrations
+python3 backend/manage.py migrate
+python3 backend/script.py

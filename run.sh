@@ -1,3 +1,3 @@
 #!/bin/bash
 source venv/bin/activate
-python3 petpal/manage.py runserver
+python3 backend/manage.py runserver
