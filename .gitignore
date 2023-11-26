@@ -5,3 +5,4 @@ __pycache__
 venv
 initial_data.json
 media
+*.DS_Store
