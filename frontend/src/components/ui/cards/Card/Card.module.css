@@ -1,0 +1,32 @@
+.card {
+  width: 25%;
+  min-width: 15rem;
+  margin: var(--margin-mid);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+.card:hover {
+  box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.2);
+}
+
+.img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* .card-text { */
+.text {
+  width: 100%;
+  text-align: center;
+  padding: var(--padding-narrow) 0;
+  
+  line-height: 2;
+  font-weight: 600;
+  color: var(--color-black);
+  background-color: var(--color-secondary);
+}

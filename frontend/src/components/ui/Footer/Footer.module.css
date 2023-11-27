@@ -1,0 +1,130 @@
+.footer {
+  display: grid;
+  grid-template-columns: auto 12rem 30rem;
+  padding: var(--padding-narrow);
+  
+  background-color: var(--color-primary);
+  background-image: linear-gradient(var(--color-primary), var(--color-dark));
+  color: var(--color-white);
+}
+
+.footer > * {
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-wide);
+}
+
+.nav {
+  display: flex;
+}
+
+.nav > a {
+  color: var(--color-white);
+  font-size: var(--font-size);
+  margin-bottom: var(--margin-narrow);
+  transition: 0.3s;
+}
+
+.nav > a:hover {
+  color: var(--color-secondary);
+}
+
+.social_media {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.social_media > p {
+  margin-bottom: var(--margin-narrow);
+  align-self: flex-start;
+}
+
+.social_media a {
+  color: var(--color-white);
+  font-size: var(--heading-5);
+  margin-left: 0.2rem;
+  transition: 0.3s;
+}
+
+.social_media a:hover {
+  color: var(--color-secondary);
+}
+
+
+.newsletter {
+  border-left: solid 2px var(--color-white);
+  display: flex;
+  justify-content: center;
+}
+
+.newsletter > *:not(:last-child) {
+  margin-bottom: var(--margin-narrow);
+}
+
+.email {
+  border-radius: 2rem;
+  padding-left: 1rem;
+}
+
+.btn {
+  margin-top: var(--margin-narrow);
+}
+
+
+/* Tablets and ipads */
+@media (max-width: 52rem) { 
+  .footer {
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+  }
+
+  .footer > * {
+    padding: var(--padding-mid);
+  }
+
+  .social_media {
+    grid-column: 1;
+    grid-row: 2;
+    align-items: flex-start;
+  }
+
+  .newsletter {
+    grid-row: 1/-1;
+    grid-column: 2;
+    align-items: center;
+  }
+}
+
+
+
+/* Mobile devices */
+@media (max-width: 36rem) {
+  .footer {
+    grid-template-rows: auto auto auto;
+    grid-template-columns: auto;
+  }
+
+  .footer > * {
+    padding: var(--padding-narrow);
+  }
+
+  .social_media {
+    grid-row: 2;
+  }
+
+  .newsletter {
+    grid-column: 1;
+    grid-row: 3;
+    align-items: center;
+
+    border-top: 2px solid var(--color-white);
+    border-left: none;
+  }
+
+  .newsletter > :last-child > button {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

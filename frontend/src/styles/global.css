@@ -1,0 +1,132 @@
+@import './reset.css';
+
+/* 
+ * SITE
+ */
+
+:root {
+  /* color variable experiments */
+  /* #3dac78, #74c69d, #95d5b2, #b7e4c7, #d8f3dc */
+  /* #5603AD, #8367C7, #7EDFA0, #B3E9C7, #C2F8CB */
+  /* #06a778, #c6e4b5, #eaf4cb, #f1ea9b */
+  /* #3ab284, #23c686, #c5d893 */
+  /* #5a9f68, #1d3853, #bbd581, #344e41, #3A5A40, #588157 */
+  
+  --color-primary: #7da441;
+  --color-secondary: #d69942;
+  --color-tertiary: #e6dbcf;
+  --color-dark: #465d24;
+  --color-warning: #ff9595;
+  
+  --color-white: #f7f9f0;
+  --color-grey: #ccc;
+  --color-black: #010101;
+  
+  /* header specs */
+  --header-height: 6rem;
+  --logo-size: 4rem;
+  --logo-font: 2.5rem;
+
+  /* spacing variables */
+  --margin-wide: 1.5rem;
+  --margin-mid: 1rem;
+  --margin-narrow: 0.5rem;
+
+  --padding-extra: 2.5rem;
+  --padding-wide: 1.5rem;
+  --padding-mid: 1rem;
+  --padding-narrow: 0.5rem;
+
+  /* type variables */
+  --type-scale: 1.25;
+  --line-height: 1.5;
+  --font-size: 1rem;
+  --heading-6: calc(var(--font-size) * var(--type-scale));
+  --heading-5: calc(var(--heading-6) * var(--type-scale));
+  --heading-4: calc(var(--heading-5) * var(--type-scale));
+  --heading-3: calc(var(--heading-4) * var(--type-scale));
+  --heading-2: calc(var(--heading-3) * var(--type-scale));
+  --heading-1: calc(var(--heading-2) * var(--type-scale));
+
+  /* button variable */
+  --btn-padding-default: 0.5rem 2rem;
+  --btn-bg-color-default: var(--color-secondary);
+  --btn-txt-color-default: var(--color-white);
+}
+
+body {
+  height: 100%;
+  color: var(--text-dark);
+  background-color: var(--bg-light);  
+
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* 
+ * TYPOGRAPHY 
+ */
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+  font-weight: 700;
+}
+h1, .h1 {
+  font-size: var(--heading-1);
+}
+h2, .h2 {
+  font-size: var(--heading-2);
+}
+h3, .h3 {
+  font-size: var(--heading-3);
+}
+h4, .h4 {
+  font-size: var(--heading-4);
+}
+h5, .h5 {
+  font-size: var(--heading-5);
+}
+h6, .h6 {
+  font-size: var(--heading-6);
+}
+p {
+  font-size: var(--font-size);
+}
+
+
+#nav__menu-toggle:checked + ul {
+  right: 0;
+}
+
+
+/*
+ * MAIN
+ */
+main {
+  background-color: var(--color-white);
+  flex: 1 0 auto; /* For footer placement */
+  
+  display: flex;
+  flex-direction: column;
+
+}
+
+/*
+ * FOOTER
+ */
+
+/* Tablets and ipads */
+@media (max-width: 52rem) { 
+  .card {
+    width: 40%;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 36rem) {
+  .card {
+    width: 80%;
+  }
+}

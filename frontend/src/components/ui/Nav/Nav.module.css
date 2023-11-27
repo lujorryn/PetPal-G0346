@@ -1,0 +1,169 @@
+.nav {
+  display: flex;
+  align-items: center;
+}
+
+.toggle {
+  display: none;
+}
+
+.menu, .icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: 0.5s;
+}
+
+.link {
+  color: var(--color-white);
+  margin-right: var(--margin-mid);
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.active {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.link:hover,
+.active:hover {
+  color: var(--color-secondary);
+}
+
+.hamburger {
+  display: none;
+  position: relative;
+  width: 2.5rem;
+  height: 0.3rem;
+  border-radius: 0.15rem;
+  background-color: var(--color-white);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 0.3rem;
+  background-color: var(--color-white);
+  border-radius: 0.15rem;
+  transition: 0.3s;
+}
+
+.hamburger::before {
+  top: -0.8rem;
+}
+.hamburger::after {
+  top: 0.8rem;
+}
+
+.hamburger:hover,
+.hamburger:hover::before,
+.hamburger:hover::after {
+  background-color: var(--color-secondary);
+}
+
+/*
+  MATERIAL ICONS
+*/
+.icon {
+  margin-left: var(--margin-mid);
+  color: var(--color-white);
+  font-size: 2.5rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.icon:hover {
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+
+.nav__icons {
+  flex-shrink: 0;
+  justify-content: space-between;
+  padding-top: 4px; /* hack due to icon specs */
+}
+
+.account,
+.notification {
+  position: absolute;
+  right: 0;
+  border-radius: .375rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  background-color: var(--color-white);
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.account {
+  width: 14rem;
+}
+
+.acctlink {
+  width: 100%;
+  padding: var(--padding-narrow) var(--padding-mid);
+  color: var(--text-grey);
+}
+
+.notification {
+  width: 28rem;
+}
+
+.nlist {
+  display: flex;
+  align-items: center;
+}
+
+
+.img {
+  display: inline-block;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+/* Tablets and ipads */
+@media (max-width: 52rem) { 
+  .hamburger {
+    display: block;
+    z-index: 3;
+  }
+
+  .icons { 
+    order: -1; 
+    margin-right: var(--margin-mid);
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    right: -15rem;
+    height: 100%;
+    padding-top: calc(var(--header-height) + 2rem);
+    width: 15rem;
+    background-color: var(--color-primary);
+    z-index: 2;
+  }
+
+  .menu > li:not(:last-of-type) {
+    margin-bottom: 1rem;
+  }
+}
+
+
+/* Mobile devices */
+@media (max-width: 36rem) {
+  .menu {
+    width: 100%;
+    right: -100%;
+  }
+}
