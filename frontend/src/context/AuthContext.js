@@ -10,13 +10,14 @@ const AuthContext = createContext()
 export const AuthProvider = ({children}) => {
   const navigate = useNavigate()
   const [token, setToken] = useState(localStorage.getItem('accessToken') || null)
-  const [userId, setUserId] = useState(null)
-  const [role, setRole] = useState(null)
+  const [userId, setUserId] = useState(localStorage.getItem('userId') || null)
+  const [role, setRole] = useState(localStorage.getItem('role') || null)
 
   const checkUserRole = async (accessToken) => {
     const decodedToken = jwtDecode(accessToken)
-    const { user_id} = decodedToken
+    const { user_id } = decodedToken
     setUserId(user_id)
+    localStorage.setItem('userId', user_id)
 
     try {
       const res = await fetch(`${API_URL}/api/shelters/${user_id}`, {
@@ -25,21 +26,25 @@ export const AuthProvider = ({children}) => {
         }
       })
 
-      if (!res.ok) return setRole('seeker')
-
-      setRole('shelter')
+      if (!res.ok) {
+        setRole('seeker')
+        localStorage.setItem('role', 'seeker')
+      } else {
+        setRole('shelter')
+        localStorage.setItem('role', 'shelter')
+      }
 
     } catch (error) {
       console.log('error ', error);
     }
   }
 
-  const login = (accessToken, refreshToken) => {
+  const login = async (accessToken, refreshToken) => {
     setToken(accessToken)
     localStorage.setItem('accessToken', accessToken)
     localStorage.setItem('refreshToken', refreshToken)
 
-    checkUserRole(accessToken)
+    await checkUserRole(accessToken)
     navigate('/')
   }
 
@@ -49,6 +54,8 @@ export const AuthProvider = ({children}) => {
     setRole(null)
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
+    localStorage.removeItem('userId')
+    localStorage.removeItem('role')
     navigate('/login')
   }
 

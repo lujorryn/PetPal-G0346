@@ -51,7 +51,7 @@ function Nav() {
 
   return (
     <nav className={styles.nav}>
-      <label for='nav__menu-toggle'>
+      <label htmlFor='nav__menu-toggle'>
         <div className={styles.hamburger}></div>
       </label>
       <input

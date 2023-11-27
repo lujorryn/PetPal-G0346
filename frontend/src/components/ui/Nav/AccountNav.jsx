@@ -11,7 +11,7 @@ function AccountNav({onClick}) {
       <Link
         to='/profile'
         className={styles.acctlink}
-        tabindex='-1'
+        tabIndex='-1'
         onClick={onClick}
         >
         My Profile
@@ -19,14 +19,15 @@ function AccountNav({onClick}) {
       <Link
         to='/messages'
         className={styles.acctlink}
-        tabindex='-1'
+        tabIndex='-1'
         onClick={onClick}
         >
         Messages
       </Link>
       <Link
+        to='/login'
         className={styles.acctlink}
-        tabindex='-1'
+        tabIndex='-1'
         onClick={() => {
           onClick()
           logout() 

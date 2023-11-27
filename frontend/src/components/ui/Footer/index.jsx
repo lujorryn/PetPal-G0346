@@ -34,7 +34,7 @@ function Footer() {
 
         {/* Is this form supposed to do anything? */}
         <form id="newsletter_form">
-          <Input type="email" name="email" placeholder="Your email..." classes={styles.email} />
+          <Input type="email" name="email" id="newsletter_email" placeholder="Your email..." classes={styles.email} />
           <Button classes={styles.btn}>Subscribe</Button>
         </form>
       </div>
