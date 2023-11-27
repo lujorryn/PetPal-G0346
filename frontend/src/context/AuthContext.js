@@ -30,7 +30,7 @@ export const AuthProvider = ({children}) => {
       setRole('shelter')
 
     } catch (error) {
-      
+      console.log('error ', error);
     }
   }
 
