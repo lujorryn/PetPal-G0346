@@ -1,0 +1,62 @@
+/* 
+ * RESET
+ * Reference: Josh Comeau's CSS Reset https://www.joshwcomeau.com/css/custom-css-reset/
+ */
+
+html {
+  width: 100vw;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Use border-box not content-box */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* Accessible line-height and improve text rendering */
+body {
+  line-height: 1.5;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Improve media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Remove built-in typography styles */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* Avoid text overflows */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Remove list styling */
+li {
+  list-style-type: none;
+}
+
+/* Root stacking content */
+/* Useful for JS framework like React */
+#root {
+  isolation: isolate;
+}
+
+/* Remove default text styling */
+a {
+  text-decoration: none;
+}

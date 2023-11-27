@@ -1,0 +1,36 @@
+/* 
+ * BUTTONS
+ */
+.btn {
+  display: inline-block;
+  padding: var(--btn-padding, var(--btn-padding-default));
+  border-radius: 2rem;
+  font-size: var(--font-size);
+  cursor: pointer;
+  appearance: none;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: var(--btn-bg-color, var(--btn-txt-color-default));
+  color: var(--btn-txt-color, var(--btn-bg-color-default));
+}
+
+/* Button Variations */
+.default {
+  background-color: var(--btn-bg-color-default);
+  color: var(--btn-txt-color-default);
+}
+
+.transparent {
+  background-color: transparent;
+}
+
+.atag {
+  line-height: 1.25;
+}
+
+.large {
+  --btn-padding: 1rem 4rem;
+}
+/* End of Button Variations */

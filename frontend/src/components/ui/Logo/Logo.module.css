@@ -1,0 +1,25 @@
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.img {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: 50%;
+}
+
+.span {
+  margin-left: var(--margin-wide);
+  color: var(--color-white);
+  font-size: var(--logo-font);
+  font-weight: 700;
+}
+
+
+/* Tablets and ipads */
+@media (max-width: 52rem) { 
+  .span {
+    display: none;
+  }
+}
