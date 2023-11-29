@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/applications', include("applications.urls", namespace="applications")),
     path('api/comments', include("comments.urls", namespace="comments")),
     path('api/notifications', include("notifications.urls", namespace="notifications")),
+    path('api/blogposts', include("blogposts.urls", namespace="blogposts")),
 
     # For Simple JWT
     path('api/token/', TokenObtainPairView.as_view(), name='account-login'),

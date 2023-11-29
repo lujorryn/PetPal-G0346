@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'applications',
     'comments',
     'notifications',
+    'blogposts',
 
     # for logout functionality
     'rest_framework_simplejwt.token_blacklist',
