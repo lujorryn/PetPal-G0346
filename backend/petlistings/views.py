@@ -8,6 +8,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.http import JsonResponse
 from .models import PetListing, PetListingImage
 from accounts.models import PetPalUser as User
+from accounts.models import Shelter
 from .serializers import PetListingSerializer
 
 # Create your views here.
@@ -24,7 +25,8 @@ SUCCESS:
 def petlistings_list_and_create_view(request):
     if request.method == 'GET':
         filter = {}
-        allowed_params = ['category', 'age', 'status', 'gender', 'size', 'shelter_email', 'name']
+        allowed_params = ['category', 'age', 'status', 'gender', 'size', 'shelter_email', 'shelter_name', 'name']
+        owner_list = None
 
         for param in allowed_params:
             param_value = request.GET.get(param, None)
@@ -42,13 +44,17 @@ def petlistings_list_and_create_view(request):
                     return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
                 elif param == 'shelter_email' and not User.objects.filter(email=param_value).exists():
                     return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'shelter_name' and not Shelter.objects.filter(first_name=param_value).exists():
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
                 elif param == 'name' and param_value.strip() == '':
                     return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
                 
-                if param != 'shelter_email':
+                if param != 'shelter_name' and param != 'shelter_email':
                     filter[param] = param_value
-                else:
+                elif param == 'shelter_email':
                     filter['owner'] = User.objects.get(email=param_value)
+                else:
+                    owner_list = Shelter.objects.filter(first_name=param_value)
             if param == 'status' and (param_value is None or str(param_value).strip() == ''): # Default status is available
                 filter[param] = 'AV'
                 
@@ -56,7 +62,10 @@ def petlistings_list_and_create_view(request):
         paginator = PageNumberPagination()
         paginator.page_size = 2
         
-        petlistings = PetListing.objects.filter(**filter)
+        if owner_list: # Using this method otherwise fails if 2 shelters have the same name
+            petlistings = PetListing.objects.filter(**filter).filter(owner__in=owner_list)
+        else:
+            petlistings = PetListing.objects.filter(**filter)
         paginated_petlistings = paginator.paginate_queryset(petlistings, request)
         for listing in paginated_petlistings:
             result = {
@@ -69,6 +78,7 @@ def petlistings_list_and_create_view(request):
                 'size': listing.size,
                 'status': listing.status,
                 'created_time': listing.created_time,
+                'last_updated': listing.last_updated,
                 'med_history': listing.med_history,
                 'behaviour': listing.behaviour,
                 'special_needs': listing.special_needs,
@@ -128,6 +138,7 @@ def petlisting_detail_view(request, pet_id):
                 'size': listing.size,
                 'status': listing.status,
                 'created_time': listing.created_time,
+                'last_updated': listing.last_updated,
                 'med_history': listing.med_history,
                 'behaviour': listing.behaviour,
                 'special_needs': listing.special_needs,
@@ -147,7 +158,7 @@ def petlisting_detail_view(request, pet_id):
     if request.method == 'PUT':
         try:
             if request.user != PetListing.objects.get(pk=pet_id).owner:
-                return Response({'data': 'User not authorized to edit this petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'User not authorized to edit this petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
             serializer = PetListingSerializer(instance=PetListing.objects.get(pk=pet_id), data=request.data, context={'request': request})
             if serializer.is_valid():
                 pet_listing = serializer.save()
@@ -167,7 +178,7 @@ def petlisting_detail_view(request, pet_id):
     if request.method == 'DELETE':
         try:
             if request.user != PetListing.objects.get(pk=pet_id).owner:
-                return Response({'data': 'User not authorized to delete this petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'User not authorized to delete this petlisting'}, status=status.HTTP_401_UNAUTHORIZED)
             PetListing.objects.get(pk=pet_id).delete()
             return Response({'data': 'Petlisting deleted'}, status=status.HTTP_200_OK)
         except:
@@ -185,7 +196,7 @@ SUCCESS:
 @permission_classes([IsAuthenticated])
 def petlisting_photo_view(request, pet_id, photo_id):
     if request.user != PetListing.objects.get(pk=pet_id).owner:
-        return Response({'data': 'User not authorized to delete this photo'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'User not authorized to delete this photo'}, status=status.HTTP_401_UNAUTHORIZED)
     PetListingImage.objects.get(pk=photo_id).delete()
     return Response({'data': 'Photo deleted'}, status=status.HTTP_200_OK)
     
