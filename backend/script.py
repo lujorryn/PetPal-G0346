@@ -9,6 +9,7 @@ from accounts.models import PetPalUser as User
 from applications.models import Application
 from comments.models import Comment
 from petlistings.models import PetListing
+from blogposts.models import BlogPost
 
 def create_initial_data_json():
     print("Creating initial_data.json...")
@@ -17,9 +18,9 @@ def create_initial_data_json():
     seeker1 = User.objects.create_user(email="seeker1@example.com", password="123", role=User.Role.SEEKER)
     seeker2 = User.objects.create_user(email="seeker2@example.com", password="123", role=User.Role.SEEKER)
     seeker3 = User.objects.create_user(email="seeker3@example.com", password="123", role=User.Role.SEEKER)
-    shelter1 = User.objects.create_user(email="shelter1@example.com", password="123", role=User.Role.SHELTER)
-    shelter2 = User.objects.create_user(email="shelter2@example.com", password="123", role=User.Role.SHELTER)
-    shelter3 = User.objects.create_user(email="shelter3@example.com", password="123", role=User.Role.SHELTER)
+    shelter1 = User.objects.create_user(email="shelter1@example.com", password="123", first_name="shelter 1", role=User.Role.SHELTER)
+    shelter2 = User.objects.create_user(email="shelter2@example.com", password="123", first_name="shelter 2", role=User.Role.SHELTER)
+    shelter3 = User.objects.create_user(email="shelter3@example.com", password="123", first_name="shelter 3", role=User.Role.SHELTER)
     
     # Petlistings
     petlisting1 = PetListing.objects.create(name="Buddy", category="D", breed="Golden Retriver", age=3,
@@ -34,6 +35,9 @@ def create_initial_data_json():
     petlisting4 = PetListing.objects.create(name="Rocket", category="O", breed="Turtle", age=3,
                                             gender="M", size="L", med_history="None", behaviour="Friendly",
                                             special_needs="", description="A very fast turtle.", owner=shelter1)
+    petlisting5 = PetListing.objects.create(name="Pumpkin", category="C", breed="N/A", age=5,
+                                            gender="M", size="L", med_history="None", behaviour="Friendly",
+                                            special_needs="", description="A very cute cat.", owner=shelter3)
     
     # Applications
     app1 = Application.objects.create(first_name="John", last_name="Doe", address="123 Main St", phone="123-456-7890",
@@ -56,6 +60,10 @@ def create_initial_data_json():
     review2 = Comment.objects.create(content="I would definitely visit again", is_author_seeker=True, seeker=seeker2, shelter=shelter2, is_review=True, rating=5)
     review3 = Comment.objects.create(content="Very long response time to messages", is_author_seeker=True, seeker=seeker1, shelter=shelter3, is_review=True, rating=3)
     review4 = Comment.objects.create(content="We're very sorry for your inconvenience, we will try to improve next time.", is_author_seeker=False, seeker=seeker1, shelter=shelter3, is_review=True)
+
+    blogpost1 = BlogPost.objects.create(title="Blog post 1", content="Explore the latest tips and tricks for fostering a paw-sitively happy and healthy bond with your furry friend on our insightful blog!", author=shelter1)
+    blogpost2 = BlogPost.objects.create(title="Blog post 2", content="Dive into our blog for a tail-wagging journey through pet care hacks, heartwarming stories, and expert advice on creating a purr-fectly harmonious life with your beloved pets.", author=shelter1)
+    blogpost3 = BlogPost.objects.create(title="Blog post 3", content="Unleash a world of pet-centric wisdom at our blog, where every post is a paw-some adventure filled with practical tips, adorable anecdotes, and a sprinkle of pet magic!", author=shelter2)
     
     # Notifications should be created automatically when comments, petlistings, and applications are created
     
