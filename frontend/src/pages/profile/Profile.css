@@ -1,0 +1,150 @@
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        'profile-img profile-desc'
+        'profile-favs profile-favs';
+    width: 100%;
+}
+
+.shelter-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        'profile-img profile-desc'
+        'profile-pets profile-pets';
+    width: 100%;
+    flex-grow: 1;
+}
+
+.profile-img {
+    grid-area: profile-img;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-container {
+    height: 250px;
+    width: 250px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.shelter-profile-container {
+    height: 250px;
+    width: 250px;
+    border-radius: 10%;
+    overflow: hidden;
+}
+
+.profile-desc {
+    grid-area: profile-desc;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    margin: 4rem;
+}
+
+.profile-list {
+    width: 100%;
+}
+
+.profile-list li {
+    margin-bottom: 1rem;
+    width: 60%;
+}
+
+.profile-list li:last-child {
+    margin-bottom: 0;
+}
+
+.profile-favs {
+    grid-area: profile-favs;
+}
+
+.profile-pets {
+    grid-area: profile-pets;
+}
+
+.line {
+    border: none;
+    width: 50%;
+    height: 2px; 
+    background-color: #000;
+    margin: 20px 0;
+}
+
+.review-box {
+    width: 60%;
+}
+
+@media (max-width: 36rem) { 
+    /* size for phone is basically the same */
+    .profile-grid {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 4rem;
+        flex-grow: 1;
+    }
+
+    .profile-desc {
+        grid-area: profile-desc;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0rem;
+        margin-top : 4rem;
+        margin-bottom: 4rem;
+    }
+
+    .profile-list {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .line {
+        border: none;
+        width: 50%;
+        height: 2px; 
+        background-color: #000;
+        margin: 20px 0;
+    }
+
+    .shelter-profile-grid {
+        display: flex;
+        flex-direction: column;
+        margin-top: 4rem;
+        width: 100%;
+        flex-grow: 1;
+    }
+
+    .review-box {
+        width: 90%;
+    }
+}
+
+#add-pet {
+    background-color: gray;
+    border-radius: 20%;
+}
+
+.shelter-pet-list {
+    display: flex;
+    align-items: center;
+}
