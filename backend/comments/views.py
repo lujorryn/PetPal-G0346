@@ -84,7 +84,15 @@ def comment_create_view(request):
         try:
             seeker = User.objects.get(email=seeker_email)
             shelter = User.objects.get(email=shelter_email)
-            rating = request.data.get('rating')
+            rating = request.data.get('rating', None)
+            print(rating)
+            if (rating == None or int(rating) < 1 or int(rating) > 5):
+                if (request.user.role == User.Role.SEEKER):
+                    # Seeker rating shelter, shelter reply can have no rating
+                    return Response({'error': 'Rating must be between 1 and 5'}, status=status.HTTP_400_BAD_REQUEST)
+            # Check if user is already reviewed
+            if (Comment.objects.filter(is_review=True, seeker=seeker, shelter=shelter).exists() and request.user.role == User.Role.SEEKER):
+                return Response({'error': 'User already reviewed'}, status=status.HTTP_400_BAD_REQUEST)
             new_comment = Comment(content=content, is_author_seeker=is_author_seeker, seeker=seeker, shelter=shelter, is_review=is_review, rating=rating)
             new_comment.save()
             data = {
@@ -244,17 +252,17 @@ def comments_shelter_list_view(request, shelter_id):
         if shelter.role != 'SHELTER':
             return Response({'error': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         
-        comments = Comment.objects.filter(shelter=shelter, is_review=True).order_by('-created_time')
+        comments = Comment.objects.filter(shelter=shelter, is_review=True, rating__isnull=False).order_by('-created_time')
         data = []
 
         # pagination
-        paginator = Paginator(comments, per_page=1)
+        paginator = Paginator(comments, per_page=10)
         page_number = request.GET.get("page", 1)
         page_obj = paginator.get_page(page_number)
 
         # for comment in page_obj.object_list:
         for comment in page_obj:
-            data.append({
+            temp = {
                 "id": comment.pk,
                 "content": comment.content,
                 "created_time": comment.created_time,
@@ -264,7 +272,25 @@ def comments_shelter_list_view(request, shelter_id):
                 "shelter": comment.shelter.email,
                 "is_review": comment.is_review,
                 "application": comment.application,
-            })
+            }
+            # Get shelter reply if exists
+            try:
+                shelter = User.objects.get(email=temp['shelter'])
+                reply = shelter.shelter_comments.get(is_review=True, shelter=shelter, seeker=comment.seeker, is_author_seeker=False)
+                temp['reply'] = {
+                    "id": reply.pk,
+                    "content": reply.content,
+                    "created_time": reply.created_time,
+                    "rating": reply.rating,
+                    "is_author_seeker": reply.is_author_seeker,
+                    "seeker": reply.seeker.email,
+                    "shelter": reply.shelter.email,
+                    "is_review": reply.is_review,
+                    "application": reply.application,
+                }
+            except:
+                temp['reply'] = None
+            data.append(temp)
 
         payload = {
             "page": {
