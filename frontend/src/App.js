@@ -16,6 +16,7 @@ import ShelterEdit from './pages/shelters/ShelterEdit';
 
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
+import ProfileOther from './pages/profile/ProfileOther';
 
 import PetListings from './pages/petlistings/PetListings';
 import PetDetail from './pages/petlistings/PetDetail';
@@ -47,6 +48,7 @@ function App() {
 
             <Route path='profile' element={<Profile />} />
             <Route path='profile/edit' element={<ProfileEdit />} />
+            <Route path='profile/:userId' element={<ProfileOther />} />
             
             <Route path='petlistings' element={<PetListings />} />
             <Route path='petlistings/:petId' element={<PetDetail />} />
