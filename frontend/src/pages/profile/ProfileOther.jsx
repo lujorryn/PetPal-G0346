@@ -10,6 +10,8 @@ function ProfileOther() {
     const [shelter, setShelter] = useState(null)
     const [shelterPets, setShelterPets] = useState(null)
     const [shelterReviews, setShelterReviews] = useState(null)
+    const [rating, setRating] = useState(5)
+    const [is_reviewed, setIsReviewed] = useState(false)
     // 1 = seeker->shelter, 2 = shelter->seeker, 3 = shelter->shelter
     const [state, setState] = useState(0)
     const navigate = useNavigate()
@@ -67,7 +69,7 @@ function ProfileOther() {
         } catch (err) {
             console.log(err)
         }
-    }, [token, userId, role, navigate])
+    }, [token, userId, role, navigate, otherUserId])
 
     useEffect(() => {
         const getShelterPets = async () => {
@@ -84,7 +86,6 @@ function ProfileOther() {
                     allResults.push(...data.results.data)
                     nextPage = data.next
                 }
-                console.log("all", allResults)
                 setShelterPets(allResults)
             } catch (err) {
                 console.log(err)
@@ -92,7 +93,6 @@ function ProfileOther() {
         }
 
         const getShelterReviews = async () => {
-            console.log(shelter?.data)
             var nextPage = `${process.env.REACT_APP_API_URL}/api/comments/shelter/${otherUserId}`
             const allResults = []
             var pageNum = 1
@@ -113,7 +113,6 @@ function ProfileOther() {
                         break
                     }
                 }
-                console.log("allreviews", allResults)
                 setShelterReviews(allResults)
             } catch (err) {
                 console.log(err)
@@ -126,7 +125,35 @@ function ProfileOther() {
         }
     }, [shelter?.data.email, token, otherUserId, shelter?.data])
 
-    
+    const handleSubmitReview = async (e) => {
+        e.preventDefault()
+        try {
+            fetch(`${process.env.REACT_APP_API_URL}/api/comments`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    is_review: true,
+                    content: e.target.review.value,
+                    recipient_email: shelter?.data.email,
+                    rating: rating,
+                    application_id: null,
+                }),
+            }).then((res) => {
+                if (res.status === 403 || res.status === 404 || res.status === 400) {
+                    setIsReviewed(true)
+                } else {
+                    window.location.reload()
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     const renderProfile = () => {
         // 3 cases: seeker->shelter, shelter->seeker, shelter->shelter
@@ -170,7 +197,7 @@ function ProfileOther() {
                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                         </svg>
                     ))}
-                    {shelter?.data.avg_rating} out of 5
+                    {shelter?.data.avg_rating.toFixed(2)} out of 5
                     </div>
                 )}
                 </div>
@@ -259,9 +286,9 @@ function ProfileOther() {
                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                         </svg>
                     ))}
-                    <p class="ml-2">{review.rating} out of 5</p>
+                    <p class="ml-2">{review.rating.toFixed(2)} out of 5</p>
                     </div>
-                    <div class="mt-2">{review.content}</div>
+                    <div class="mt-2">{review.seeker}: {review.content}</div>
                     {review?.reply ? (
                     <p>Shelter's response: {review?.reply.content}</p>
                     ) : (
@@ -271,6 +298,27 @@ function ProfileOther() {
                 </div>
                 ))}
           </div>
+          <div class="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
+            <form class="review-box mx-auto block rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700" onSubmit={handleSubmitReview}>
+                <label for="review" class="text-base text-neutral-600 dark:text-neutral-200 mb-2">
+                    Leave a review:
+                </label>
+                <textarea id="review" name="review" class="w-full px-3 py-4 border rounded-lg mb-4" placeholder="Leave your review here" required></textarea>
+                <label for="rating" class="text-base text-neutral-600 dark:text-neutral-200 mb-2">
+                    Rating:
+                </label>
+                <p class="text-base text-neutral-600 dark:text-neutral-200" id="rating-display">{Array.from({ length: rating }, (_, index) => (
+                    <span class="text-yellow-300" key={index}>⭐</span>
+                ))}</p>
+                <input type="range" id="rating" name="rating" min="1" max="5" step="1" value={rating} class="w-full mb-4" onChange={(e) => setRating(e.target.value)}></input>
+                {is_reviewed ? (
+                    <p class="text-base text-neutral-600 dark:text-neutral-200 mb-2">You have already reviewed this shelter.</p>
+                ) : (
+                    <div></div>
+                )}
+                <button type="submit" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Leave a review</button>
+            </form>
+            </div>
         </div>
         )
     }
@@ -360,7 +408,7 @@ function ProfileOther() {
                             <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                             </svg>
                         ))}
-                        {shelter?.data.avg_rating} out of 5
+                        {shelter?.data.avg_rating.toFixed(2)} out of 5
                         </div>
                     )}
                     </div>
@@ -449,9 +497,9 @@ function ProfileOther() {
                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                         </svg>
                     ))}
-                    <p class="ml-2">{review.rating} out of 5</p>
+                    <p class="ml-2">{review.rating.toFixed(2)} out of 5</p>
                     </div>
-                    <div class="mt-2">{review.content}</div>
+                    <div class="mt-2">{review.seeker}: {review.content}</div>
                     {review?.reply ? (
                     <p>Shelter's response: {review?.reply.content}</p>
                     ) : (

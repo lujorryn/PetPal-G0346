@@ -14,14 +14,20 @@ function Profile() {
 
   useEffect(() => {
     if (!token) return navigate('/login')
+    console.log(userId)
     // Fetch user data
-    fetch(`${process.env.REACT_APP_API_URL}/api/${role}s/${userId}`, { // TODO: Change to /api/seekers/${userId
+    fetch(`${process.env.REACT_APP_API_URL}/api/${role}s/${userId}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).then(res => res.json())
-      .then(data => setUser(data))
+      .then(data => {
+        if (data.code === 'token_not_valid') {
+          navigate('/login')
+        } else {
+          setUser(data)
+        }})
       .catch(err => console.log(err))
     
     // Different fetches for different roles
@@ -31,6 +37,7 @@ function Profile() {
           const data = await getShelterPets()
           setShelterPets(data)
           const reviews = await getReviews()
+          console.log(reviews)
           setReviews(reviews)
         } else if (role === 'seeker') {
           const data = await getFavPets()
@@ -255,7 +262,7 @@ function Profile() {
                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                       </svg>
                     ))}
-                    {user?.data.avg_rating} out of 5
+                    {user?.data.avg_rating.toFixed(2)} out of 5
                   </div>
                 )}
               </div>
@@ -349,9 +356,9 @@ function Profile() {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                     </svg>
                   ))}
-                  <p class="ml-2">{review.rating} out of 5</p>
+                  <p class="ml-2">{review.rating.toFixed(2)} out of 5</p>
                 </div>
-                <div class="mt-2">{review.content}</div>
+                <div class="mt-2">{review.seeker}: {review.content}</div>
                 {review?.reply ? (
                   <p>Your response: {review?.reply.content}</p>
                 ) : (
