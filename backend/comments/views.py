@@ -85,7 +85,6 @@ def comment_create_view(request):
             seeker = User.objects.get(email=seeker_email)
             shelter = User.objects.get(email=shelter_email)
             rating = request.data.get('rating', None)
-            print(rating)
             if (rating == None or int(rating) < 1 or int(rating) > 5):
                 if (request.user.role == User.Role.SEEKER):
                     # Seeker rating shelter, shelter reply can have no rating
