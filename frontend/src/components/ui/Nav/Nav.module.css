@@ -70,9 +70,10 @@
   MATERIAL ICONS
 */
 .icon {
+  padding-top: 4px;
   margin-left: var(--margin-mid);
   color: var(--color-white);
-  font-size: 2.5rem;
+  font-size: 2rem !important;
   cursor: pointer;
   transition: color 0.3s;
 }
@@ -80,12 +81,6 @@
 .icon:hover {
   color: var(--color-secondary);
   font-weight: 500;
-}
-
-.nav__icons {
-  flex-shrink: 0;
-  justify-content: space-between;
-  padding-top: 4px; /* hack due to icon specs */
 }
 
 .account,
@@ -98,6 +93,7 @@
   margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
+  z-index: 10;
 }
 
 .account {
