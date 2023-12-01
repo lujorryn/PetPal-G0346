@@ -9,10 +9,12 @@ import Layout from './components/ui/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import SignupSuccess from './pages/SignupSuccess';
 
 import Shelters from './pages/shelters/Shelters';
 import Shelter from './pages/shelters/Shelter';
 import ShelterEdit from './pages/shelters/ShelterEdit';
+import ShelterPets from './pages/shelters/ShelterPets';
 
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
@@ -41,10 +43,12 @@ function App() {
             <Route index element={<Home />} />
             <Route path='login' element={<Login />} />
             <Route path='signup' element={<SignUp />} />
+            <Route path='success' element={<SignupSuccess />} />
 
             <Route path='shelters' element={<Shelters />} />
             <Route path='shelters/:shelterId' element={<Shelter />} />
             <Route path='shelters/:shelterId/edit' element={<ShelterEdit />} />
+            <Route path='my-pets' element={<ShelterPets />} />
 
             <Route path='profile' element={<Profile />} />
             <Route path='profile/edit' element={<ProfileEdit />} />
@@ -59,8 +63,6 @@ function App() {
 
             <Route path='applications' element={<Applications />} />
             <Route path='applications/:appId' element={<ApplicationDetail />} />
-
-            <Route path='search' element={<Search />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>

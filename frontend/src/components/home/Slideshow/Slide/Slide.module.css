@@ -1,0 +1,50 @@
+.wrapper {
+  height: 25rem;
+
+  display: flex;
+  justify-content: flex-end;
+  flex: 1 0 100%;
+  
+  background-size: cover;
+  background-position: center;
+  background-color: var(--color-primary);
+  
+  scroll-snap-align: start;
+}
+
+.card {
+  width: 22rem;
+  height: 75%;
+  margin: var(--margin-wide);
+  padding: var(--padding-wide);
+
+  color: var(--color-black);
+
+  border-radius: 0.5rem;
+  background-color: var(--color-tertiary);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.3s;
+  overflow: scroll;
+}
+
+.card > * {
+  margin-bottom: var(--margin-narrow);
+}
+
+.card:hover {
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+@media (max-width: 52rem) {
+  .wrapper {
+    height: 30rem;
+    justify-content: center;
+  }
+
+  .card {
+    width: 80%;
+    padding: 2.5rem;
+  }
+}

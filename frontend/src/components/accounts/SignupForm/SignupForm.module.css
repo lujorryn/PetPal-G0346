@@ -10,11 +10,38 @@
 
 .form {
   width: 32rem;
-  border-radius: 1rem;
 }
 
-.form > *:not(last-child) {
-  margin-bottom: var(--margin-mid);
+/* SEEKER/SHELTER TABS  */
+.rolegroup {
+  width: 32rem;
+  display: flex;
+}
+
+.role {
+  flex-basis: 50%;
+  padding: var(--padding-narrow);
+  border-radius: 1rem 1rem 0 0;
+
+  text-align: center;
+
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.active {
+  background-color: var(--color-primary);
+}
+
+.error {
+  margin: var(--margin-mid) 0;
+  padding: var(--padding-narrow);
+  padding-left: var(--margin-mid);
+
+  border: 1.5px red solid;
+  border-radius: 0.5rem;
+  background-color: var(--color-warning);
 }
 
 .instr {
@@ -26,36 +53,21 @@
   margin-top: var(--margin-wide);
 }
 
-.error {
-  margin: var(--margin-mid) 0;
-  padding: var(--padding-narrow);
-  padding-left: var(--margin-mid);
-
-  border: 1.5px red solid;
-  border-radius: 1.5rem;
-  background-color: var(--color-warning);
-}
-
 .link {
   color: var(--color-white);
   text-decoration: underline;
 }
 
-.input {
-  border-radius: 1.5rem;
-  padding-left: 1rem;
-}
-
 /* Tablets and ipads */
 @media (max-width: 52rem) { 
-  .form {
+  .form, .rolegroup{
     width: 70%;
   }
 }
 
 /* Mobile devices */
 @media (max-width: 36rem) {
-  .form {
+  .form, .rolegroup {
     width: 100%;
   }
 }

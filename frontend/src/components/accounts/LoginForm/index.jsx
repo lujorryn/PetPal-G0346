@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -11,16 +11,16 @@ import styles from './LoginForm.module.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
 function LoginForm() {
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const [hasError, setHasError] = useState(false);
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  // for testing purposes
-  // const [email, setEmail] = useState('seeker1@example.com');
-  // const [email, setEmail] = useState('shelter1@example.com');
-  // const [password, setPassword] = useState('123');
+  // log user out if they access this page
+  useEffect(() => {
+    logout()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
