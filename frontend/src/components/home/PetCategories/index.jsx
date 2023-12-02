@@ -8,17 +8,17 @@ import styles from './PetCategories.module.css';
 const categories = [
   {
     to: '/petlistings?category=D',
-    imgSrc: 'images/dog-profile-2.png',
+    imgSrc: '/images/dog-profile-2.png',
     text: 'Dog',
   },
   {
     to: '/petlistings?category=C',
-    imgSrc: 'images/cat-profile-1.png',
+    imgSrc: '/images/cat-profile-1.png',
     text: 'Cat',
   },
   {
     to: '/petlistings?category=O',
-    imgSrc: 'images/other-profile-1.png',
+    imgSrc: '/images/other-profile-1.png',
     text: 'Other',
   },
 ];

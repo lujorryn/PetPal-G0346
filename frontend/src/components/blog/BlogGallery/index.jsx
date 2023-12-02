@@ -2,11 +2,11 @@ import styles from "./BlogGallery.module.css"
 
 import { Link } from "react-router-dom";
 
-import { useNavigate } from 'react-router-dom'
-
 import CardWrapper from "../../ui/cards/CardWrapper";
 import BlogCard from "../BlogCard";
 import Button from "../../ui/Button";
+
+const API_URL = process.env.REACT_APP_API_URL
 
 function BlogGallery({blogPosts, isOwner}) {
   return (
@@ -20,7 +20,7 @@ function BlogGallery({blogPosts, isOwner}) {
               return <BlogCard
                 key={blogPost.id}
                 to={`post/${blogPost.id}`} 
-                imgSrc={blogPost.image ? blogPost.image : defaultImg} 
+                imgSrc={blogPost.image ? `${API_URL}${blogPost.image}` : defaultImg} 
                 title={blogPost.title}
                 content={blogPost.content}
               />

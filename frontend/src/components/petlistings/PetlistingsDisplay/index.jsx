@@ -4,6 +4,8 @@ import CardWrapper from '../../ui/cards/CardWrapper'
 import Card from '../../ui/cards/Card'
 import Pagination from '../../ui/Pagination'
 
+const API_URL = process.env.REACT_APP_API_URL
+
 function PetlistingsDisplay({data, setPage}) {
   const results = data ? data.results.data : []
   const next = data ? data.next : null
@@ -17,14 +19,14 @@ function PetlistingsDisplay({data, setPage}) {
             <CardWrapper>
               { results.map( result => {
                 let defaultImg
-                if(result.category==='D') defaultImg = `images/dog-profile-2.png`
-                else if(result.category==='C') defaultImg = `images/cat-profile-1.png`
-                else defaultImg = `images/other-profile-1.png`
+                if(result.category==='D') defaultImg = `/images/dog-profile-2.png`
+                else if(result.category==='C') defaultImg = `/images/cat-profile-1.png`
+                else defaultImg = `/images/other-profile-1.png`
                 
                 return <Card 
                   key={result.id}
                   to={`/petlistings/${result.id}`} 
-                  imgSrc={result.photos.length > 0 ? result.photos[0] : defaultImg} 
+                  imgSrc={result.photos.length > 0 ? `${API_URL}${result.photos[0]}` : defaultImg} 
                   text={result.name}
                 />
               })}

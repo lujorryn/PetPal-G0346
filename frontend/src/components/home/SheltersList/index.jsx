@@ -9,7 +9,7 @@ const API_URL = process.env.REACT_APP_API_URL
 
 function SheltersList() {
   const { token } = useAuth()
-  const defaultImageSrc = 'images/pet-shelter.png'
+  const defaultImageSrc = '/images/pet-shelter.png'
   const [shelters, setShelters] = useState([])
 
   useEffect(() => {
@@ -37,8 +37,8 @@ function SheltersList() {
       <CardWrapper>
         {shelters.map((shelter, i) => (
           <div key={i} className={styles.container}>
-            <img src={shelter.avatar? shelter.avatar : defaultImageSrc} alt={shelter.name} />
-            <Link to={`shelters/${shelter.id}`} className={styles.overlay}>
+            <img src={shelter.avatar ? `${API_URL}${shelter.avatar}` : defaultImageSrc} alt={shelter.name} />
+            <Link to={`/shelters/${shelter.id}`} className={styles.overlay}>
               <p className={styles.text}>{shelter.name}</p>
             </Link>
           </div>
