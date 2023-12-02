@@ -68,7 +68,6 @@ function PetListings() {
     if (page > 1) queryString = queryString + (queryString !== '' ? `&page=${page}`:`page=${page}`)
   
     setQuery(queryString)
-    console.log(queryString)
   }, [searchTerm, filters, sortOption, sortAsc, page])
 
   // set query to send to backend

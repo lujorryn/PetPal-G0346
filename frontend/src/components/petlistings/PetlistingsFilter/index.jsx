@@ -13,7 +13,6 @@ function PetlistingsFilter({ setFilters }) {
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(window.innerWidth > 832 ? true : false);
 
   const clearFilter = () => {
-    console.log('clear all filters')
     setResetFilter(true)
     setFilters(() => ({}));
   };
