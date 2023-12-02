@@ -156,59 +156,59 @@ function Profile() {
   const renderProfile = () => {
     if (role === 'seeker') {
       return (
-        <div class='profile-grid'>
-          <div class='profile-img'>
-              <div class='profile-container'>
-                <img class='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+        <div className='profile-grid'>
+          <div className='profile-img'>
+              <div className='profile-container'>
+                <img className='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
               </div>
-              <a href='profile/edit' class='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Edit Profile</a>
+              <a href='profile/edit' className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Edit Profile</a>
           </div>
-          <div class='profile-desc'>
-            <p class='font-semibold text-5xl break-all'>Your Profile</p>
-            <hr class='line'></hr>
-            <ul class='profile-list'>
+          <div className='profile-desc'>
+            <p className='font-semibold text-5xl break-all'>Your Profile</p>
+            <hr className='line'></hr>
+            <ul className='profile-list'>
               <li>
-                <span class='font-bold'>Email:</span>
-                <span class='text-gray-700'>
+                <span className='font-bold'>Email:</span>
+                <span className='text-gray-700'>
                   <a href={`mailto:${user?.data.email}`}>{user?.data.email}</a>
                 </span>
               </li>
               <li>
-                <span class='font-bold'>Adress:</span>
-                <span class='text-gray-700'>
+                <span className='font-bold'>Adress:</span>
+                <span className='text-gray-700'>
                   <p>{user?.data.address === '' ? 'N/A' : user?.data.address}</p>
                 </span>
               </li>
               <li>
-                <span class='font-bold'>Postal Code:</span>
-                <span class='text-gray-700'>
+                <span className='font-bold'>Postal Code:</span>
+                <span className='text-gray-700'>
                   <p>{user?.data.postal_code === '' ? 'N/A' : user?.data.postal_code}</p>
                 </span>
               </li>
               <li>
-                <span class='font-bold'>City:</span>
-                <span class='text-gray-700'>
+                <span className='font-bold'>City:</span>
+                <span className='text-gray-700'>
                   <p>{user?.data.city === '' ? 'N/A' : user?.data.city}</p>
                 </span>
               </li>
               <li>
-                <span class='font-bold'>Province:</span>
-                <span class='text-gray-700'>
+                <span className='font-bold'>Province:</span>
+                <span className='text-gray-700'>
                   <p>{user?.data.province === '' ? 'N/A' : user?.data.province}</p>
                 </span>
               </li>
               <li>
-                <span class='font-bold'>Phone:</span>
-                <span class='text-gray-700'>
+                <span className='font-bold'>Phone:</span>
+                <span className='text-gray-700'>
                   <p>{user?.data.phone === '' ? 'N/A' : user?.data.phone}</p>
                 </span>
               </li>
               <li>
-                <a class='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-full' href='applications'>My Applications</a>
+                <a className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-full' href='applications'>My Applications</a>
               </li>
             </ul>
           </div>
-          <div class='profile-favs'>
+          <div className='profile-favs'>
             <div className='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
               <p className='text-xl font-bold'>Your Favorites</p>
               <div className='-m-1 flex flex-wrap md:-m-2'>
@@ -231,24 +231,24 @@ function Profile() {
     } else {
       return (
         <div>
-          <div class='profile-grid'>
-            <div class='profile-img'>
-                <div class='profile-container'>
-                  <img class='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+          <div className='profile-grid'>
+            <div className='profile-img'>
+                <div className='profile-container'>
+                  <img className='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
                 </div>
-                <a href='profile/edit' class='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Edit Profile</a>
+                <a href='profile/edit' className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Edit Profile</a>
             </div>
-            <div class='profile-desc'>
-              <p class='font-semibold text-5xl break-all'>Your Profile</p>
-              <div class="flex items-center">
+            <div className='profile-desc'>
+              <p className='font-semibold text-5xl break-all'>Your Profile</p>
+              <div className="flex items-center">
                 {user?.data.avg_rating === 0 ? (
                   <span>No Rating</span>
                 ) : (
-                  <div class="flex items-center">
+                  <div className="flex items-center">
                     {Array.from({ length: user?.data.avg_rating }, (_, index) => (
                       <svg
                         key={index}
-                        class="w-4 h-4 text-yellow-300 me-1"
+                        className="w-4 h-4 text-yellow-300 me-1"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -261,58 +261,61 @@ function Profile() {
                   </div>
                 )}
               </div>
-              <hr class='line'></hr>
-              <ul class='profile-list'>
+              <hr className='line'></hr>
+              <ul className='profile-list'>
                 <li>
-                  <span class='font-bold'>Email:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Email:</span>
+                  <span className='text-gray-700'>
                     <a href={`mailto:${user?.data.email}`}>{user?.data.email}</a>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Adress:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Adress:</span>
+                  <span className='text-gray-700'>
                     <p>{user?.data.address === '' ? 'N/A' : user?.data.address}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Postal Code:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Postal Code:</span>
+                  <span className='text-gray-700'>
                     <p>{user?.data.postal_code === '' ? 'N/A' : user?.data.postal_code}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>City:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>City:</span>
+                  <span className='text-gray-700'>
                     <p>{user?.data.city === '' ? 'N/A' : user?.data.city}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Province:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Province:</span>
+                  <span className='text-gray-700'>
                     <p>{user?.data.province === '' ? 'N/A' : user?.data.province}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Phone:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Phone:</span>
+                  <span className='text-gray-700'>
                     <p>{user?.data.phone === '' ? 'N/A' : user?.data.phone}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Mission Statement:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Mission Statement:</span>
+                  <span className='text-gray-700'>
                     <p>{user?.data.description === '' ? 'N/A' : user?.data.description}</p>
                   </span>
                 </li>
+                <li>
+                  <a href={`/blog/${userId}`} className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Shelter Blog</a>
+                </li>
               </ul>
             </div>
-            <div class='profile-favs'>
-              <div class='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
-                <div class='shelter-pet-list'>
-                  <p class='text-xl font-bold center-text mr-4'>Listed Pets</p>
+            <div className='profile-favs'>
+              <div className='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
+                <div className='shelter-pet-list'>
+                  <p className='text-xl font-bold center-text mr-4'>Listed Pets</p>
                     <a href='petlistings/create'>
-                      <button class='bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded-full'>
+                      <button className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded-full'>
                         +
                       </button>
                     </a>
@@ -334,15 +337,15 @@ function Profile() {
               </div>
             </div>
           </div>
-          <div class="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
-            <p class="text-xl font-bold center-text mr-4">My Reviews</p>
+          <div className="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
+            <p className="text-xl font-bold center-text mr-4">My Reviews</p>
             {reviews?.map((review) => (
-              <div class="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
-                <div class="flex items-center">
+              <div className="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
+                <div className="flex items-center">
                   {Array.from({ length: review.rating }, (_, index) => (
                     <svg
                       key={index}
-                      class="w-4 h-4 text-yellow-300 me-1"
+                      className="w-4 h-4 text-yellow-300 me-1"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -351,15 +354,15 @@ function Profile() {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                     </svg>
                   ))}
-                  <p class="ml-2 text-white">{review.rating.toFixed(2)} out of 5</p>
+                  <p className="ml-2 text-white">{review.rating.toFixed(2)} out of 5</p>
                 </div>
-                <div class="mt-2 text-white">{review.seeker}: {review.content}</div>
+                <div className="mt-2 text-white">{review.seeker}: {review.content}</div>
                 {review?.reply ? (
-                  <p class="mt-2 text-white">Your response: {review?.reply.content}</p>
+                  <p className="mt-2 text-white">Your response: {review?.reply.content}</p>
                 ) : (
                   <div>
-                  <input type="text" class="mt-2 border-2 border-gray-300 rounded-md p-2 w-full" placeholder="Reply to review" />
-                  <button class="mt-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded-full"
+                  <input type="text" className="mt-2 border-2 border-gray-300 rounded-md p-2 w-full" placeholder="Reply to review" />
+                  <button className="mt-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded-full"
                     onClick={(e) => handleReply(review.is_author_seeker, review.seeker, review.shelter, e)}
                   >
                     Reply
@@ -375,7 +378,7 @@ function Profile() {
   }
 
   return (
-    <div class='w-full h-full'>
+    <div className='w-full h-full'>
       {user && renderProfile()}
     </div>
 
