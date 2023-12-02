@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--padding-mid) var(--padding-extra);
+  width: 100%;
 }
 
 .success {

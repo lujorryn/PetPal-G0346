@@ -52,7 +52,7 @@ function LoginForm() {
   return (
     <div className={styles.wrapper}>
       <Form classes={styles.form} onSubmit={handleSubmit}>
-        <h4>Log In</h4>
+        <h4 className='h4'>Log In</h4>
         {hasError && (
           <p className={styles.error}>Invalid username or password.</p>
         )}

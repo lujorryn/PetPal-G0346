@@ -109,6 +109,7 @@ function SignupForm() {
               value={firstname}
               onChange={(e) => setFirstname(e.target.value)}
               required={false}
+              classes={styles.input}
             />
           </FormField>
 
@@ -119,6 +120,7 @@ function SignupForm() {
               value={lastname}
               onChange={(e) => setLastname(e.target.value)}
               required={false}
+              classes={styles.input}
             />
           </FormField>
           </>) : (
@@ -129,6 +131,7 @@ function SignupForm() {
                 value={firstname}
                 onChange={(e) => setFirstname(e.target.value)}
                 required={false}
+                classes={styles.input}
               />
             </FormField>
           )
@@ -144,6 +147,7 @@ function SignupForm() {
               setHasError(false)
               setHasMissingField(false)
               setEmail(e.target.value)}}
+            classes={styles.input}
           />
         </FormField>
 
@@ -158,6 +162,7 @@ function SignupForm() {
               setHasMissingField(false)
               setPassword(e.target.value)}
             }
+            classes={styles.input}
           />
         </FormField>
 
@@ -174,6 +179,7 @@ function SignupForm() {
               setPassword2(e.target.value)}
             }
             onBlur={handlePassword}
+            classes={styles.input}
           />
         </FormField>
 
