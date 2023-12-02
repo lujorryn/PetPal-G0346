@@ -52,7 +52,10 @@ def seeker_detail_view(request, account_id):
             # If the request is from a shelter, check it has an application with the seeker
             if request.user.role == PetPalUser.Role.SHELTER:
                 try:
-                    Application.objects.filter(shelter=request.user, seeker=seeker)
+                    application = Application.objects.filter(shelter=request.user, seeker=seeker)
+                    if not application:
+                        return Response({'error': 'You are not allowed to see this profile'},
+                                        status=status.HTTP_403_FORBIDDEN)
                 except Application.DoesNotExist:
                     return Response({'error': 'You are not allowed to see this profile'},
                                     status=status.HTTP_403_FORBIDDEN)
@@ -71,7 +74,7 @@ def seeker_detail_view(request, account_id):
             if fav_pets is None:
                 return Response({
                     'msg': 'Seeker details',
-                    'user_data': serializer.data,
+                    'data': serializer.data,
                     'fav_pets': 'No favorites yet!'}, status=status.HTTP_200_OK)
             else:
                 # Serialize the favorite pets
@@ -83,7 +86,7 @@ def seeker_detail_view(request, account_id):
 
                 return Response({
                     'msg': 'Seeker details',
-                    'user_data': serializer.data,
+                    'data': serializer.data,
                     'fav_pets': fav_pet_list}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'You are not allowed to see this profile'}, status=status.HTTP_403_FORBIDDEN)
@@ -94,7 +97,7 @@ def seeker_detail_view(request, account_id):
             serializer = SeekerSerializer(seeker, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response({'msg': 'Update Seeker', 'user_data': serializer.data}, status=status.HTTP_200_OK)
+                return Response({'msg': 'Update Seeker', 'data': serializer.data}, status=status.HTTP_200_OK)
             else:
                 return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -149,6 +152,13 @@ def seeker_favorites_view(request, account_id):
     # Append each pet of the page in data lst
     # page_obj.object_list: a list with pet dictionaries
     for pet in page_obj.object_list:
+        petlisting = PetListing.objects.get(id=pet['id'])
+        pet['photos'] = []
+        for image in petlisting.images.all():
+            pet['photos'].append({
+                    'id': image.pk,
+                    'url': image.image.url
+                })
         data.append(pet)
 
     payload = {

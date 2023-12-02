@@ -87,7 +87,20 @@ def shelter_detail_view(request, account_id):
     if request.method == 'GET':
         # Give details of the shelter
         serializer = ShelterSerializer(shelter, many=False)
-        return Response({'msg': 'Shelter Detail', 'data': serializer.data}, status=status.HTTP_200_OK)
+        # Calculate the average rating out of 5
+        avg_rating = 0
+        count = 0
+        for review in shelter.shelter_comments.all():
+            if (review.is_review and review.rating):
+                avg_rating += review.rating
+                count += 1
+        if count != 0:
+            avg_rating = avg_rating / count
+        else:
+            avg_rating = None
+        data = serializer.data
+        data['avg_rating'] = avg_rating
+        return Response({'msg': 'Shelter Detail', 'data': data}, status=status.HTTP_200_OK)
 
     if request.method == 'PUT':
         # Check that the request is from the shelter themselves

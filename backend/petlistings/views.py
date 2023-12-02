@@ -12,6 +12,52 @@ from accounts.models import Shelter
 from .serializers import PetListingSerializer
 
 # Create your views here.
+'''
+LIST All Petlistings from a Shelter
+ENDPOINT: /api/petlistings/shelter/<str:shelter_email>/
+METHOD: Get
+PERMISSION: User logged in
+SUCCESS:
+'''
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def shelter_petlistings_list_view(request, shelter_email):
+    paginator = PageNumberPagination()
+    paginator.page_size = 6
+    
+    try:
+        all_petlistings = PetListing.objects.filter(owner=User.objects.get(email=shelter_email))
+        paginated_petlistings = paginator.paginate_queryset(all_petlistings, request)
+        data = []
+        for listing in paginated_petlistings:
+            result = {
+                'id': listing.pk,
+                'name': listing.name,
+                'category': listing.category,
+                'breed': listing.breed,
+                'age': listing.age,
+                'gender': listing.gender,
+                'size': listing.size,
+                'status': listing.status,
+                'created_time': listing.created_time,
+                'med_history': listing.med_history,
+                'behaviour': listing.behaviour,
+                'special_needs': listing.special_needs,
+                'description': listing.description,
+                'owner': listing.owner.email,
+            }
+            result['photos'] = []
+            for image in listing.images.all():
+                result['photos'].append({
+                    'id': image.pk,
+                    'url': image.image.url
+                })
+            data.append(result)
+        return paginator.get_paginated_response({'data': data})
+    except:
+        return Response({'error': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
 
 '''
 LIST All Petlistings with or without filter / CREATE New Petlisting
@@ -60,7 +106,7 @@ def petlistings_list_and_create_view(request):
                 
         data = []
         paginator = PageNumberPagination()
-        paginator.page_size = 2
+        paginator.page_size = 6
         
         if owner_list: # Using this method otherwise fails if 2 shelters have the same name
             petlistings = PetListing.objects.filter(**filter).filter(owner__in=owner_list)
