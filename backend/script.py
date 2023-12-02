@@ -38,6 +38,12 @@ def create_initial_data_json():
     petlisting5 = PetListing.objects.create(name="Pumpkin", category="C", breed="N/A", age=5,
                                             gender="M", size="L", med_history="None", behaviour="Friendly",
                                             special_needs="", description="A very cute cat.", owner=shelter3)
+    petlisting6 = PetListing.objects.create(name="Pumpkin Pie", category="C", breed="N/A", age=7,
+                                            gender="F", size="M", med_history="None", behaviour="Friendly",
+                                            special_needs="", description="A very cute cat.", owner=shelter2)
+    petlisting7 = PetListing.objects.create(name="Dori", category="D", breed="N/A", age=1,
+                                            gender="F", size="S", med_history="None", behaviour="Friendly",
+                                            special_needs="", description="A very cute dog.", owner=shelter1)
     
     # Applications
     app1 = Application.objects.create(first_name="John", last_name="Doe", address="123 Main St", phone="123-456-7890",
