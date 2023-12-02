@@ -28,7 +28,7 @@ const DefaultNavMenu = (
 );
 
 function Nav() {
-  const { role } = useAuth();
+  const { userId, role } = useAuth()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)
@@ -74,7 +74,7 @@ function Nav() {
                 <LinkItem to='applications'>Applications</LinkItem>
               </li>
               <li>
-                <LinkItem to='my-blog'>My Blog</LinkItem>
+                <LinkItem to={`blog/${userId}`}>My Blog</LinkItem>
               </li>
               </>
             )}

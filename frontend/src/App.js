@@ -19,7 +19,7 @@ import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
 import ProfileOther from './pages/profile/ProfileOther';
 
-import PetListings from './pages/petlistings/PetListings';
+import PetListings from './pages/petlistings/PetListingsPage';
 import PetDetail from './pages/petlistings/PetDetail';
 import PetDetailEdit from './pages/petlistings/PetDetailEdit';
 
@@ -62,7 +62,7 @@ function App() {
             <Route path='applications' element={<Applications />} />
             <Route path='applications/:appId' element={<ApplicationDetail />} />
 
-            <Route path='my-blog' element={<ShelterBlog />} />
+            <Route path='blog/:userId' element={<ShelterBlog />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>
