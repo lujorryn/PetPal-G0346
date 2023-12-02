@@ -14,7 +14,6 @@ function Profile() {
 
   useEffect(() => {
     if (!token) return navigate('/login')
-    console.log(userId)
     // Fetch user data
     fetch(`${process.env.REACT_APP_API_URL}/api/${role}s/${userId}`, {
       method: 'GET',
@@ -37,7 +36,6 @@ function Profile() {
           const data = await getShelterPets()
           setShelterPets(data)
           const reviews = await getReviews()
-          console.log(reviews)
           setReviews(reviews)
         } else if (role === 'seeker') {
           const data = await getFavPets()
@@ -70,7 +68,6 @@ function Profile() {
             break
           }
         }
-        console.log(allResults)
         return allResults
       } catch (error) {
         console.error(error)
@@ -136,8 +133,6 @@ function Profile() {
     const reviewBox = e.target.closest('.review-box')
     const input = reviewBox.querySelector('input')
     const content = input.value
-    console.log(content)
-    console.log(is_author_seeker, seeker, shelter)
 
     fetch(`${process.env.REACT_APP_API_URL}/api/comments`, {
       method: 'POST',
@@ -356,11 +351,11 @@ function Profile() {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                     </svg>
                   ))}
-                  <p class="ml-2">{review.rating.toFixed(2)} out of 5</p>
+                  <p class="ml-2 text-white">{review.rating.toFixed(2)} out of 5</p>
                 </div>
-                <div class="mt-2">{review.seeker}: {review.content}</div>
+                <div class="mt-2 text-white">{review.seeker}: {review.content}</div>
                 {review?.reply ? (
-                  <p>Your response: {review?.reply.content}</p>
+                  <p class="mt-2 text-white">Your response: {review?.reply.content}</p>
                 ) : (
                   <div>
                   <input type="text" class="mt-2 border-2 border-gray-300 rounded-md p-2 w-full" placeholder="Reply to review" />
