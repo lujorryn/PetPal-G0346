@@ -1,0 +1,7 @@
+.wrapper {
+  padding: var(--padding-wide);
+}
+
+.btn {
+  margin-left: var(--margin-mid);
+}
