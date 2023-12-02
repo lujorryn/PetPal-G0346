@@ -16,7 +16,7 @@ const SearchModal = ({onClick}) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     onClick()
-    navigate(`/petlistings?searchTerm=${searchTerm}`)
+    navigate(`/petlistings?search=${searchTerm}`)
   };
 
   return (
