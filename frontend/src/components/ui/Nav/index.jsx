@@ -74,7 +74,7 @@ function Nav() {
                 <LinkItem to='applications'>Applications</LinkItem>
               </li>
               <li>
-                <LinkItem to='my-pets'>My Pets</LinkItem>
+                <LinkItem to='my-blog'>My Blog</LinkItem>
               </li>
               </>
             )}

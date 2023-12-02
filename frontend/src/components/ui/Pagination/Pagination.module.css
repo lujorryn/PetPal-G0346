@@ -1,0 +1,30 @@
+.wrapper {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  overflow: scroll;
+  justify-content: center;
+}
+
+.wrapper > * {
+  cursor: pointer;
+  color: var(--color-dark);
+}
+
+.index {
+  border: 1px solid var(--color-secondary);
+  padding: 0 var(--padding-narrow);
+}
+
+.index:hover {
+  background-color: var(--color-secondary);
+}
+
+.active {
+  background-color: var(--color-secondary);
+}
+
+.disabled {
+  cursor: default;
+  color: #a0a0a0;
+}
