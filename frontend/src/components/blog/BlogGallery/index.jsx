@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 import CardWrapper from "../../ui/cards/CardWrapper";
 import BlogCard from "../BlogCard";
-import Button from "../../ui/Button";
 
 const API_URL = process.env.REACT_APP_API_URL
 
@@ -13,7 +12,7 @@ function BlogGallery({blogPosts, isOwner}) {
     <div className={styles.wrapper}>
       { blogPosts.length > 0 ? (
         <>
-          {isOwner && <Button classes={styles.btn}><Link to={`create`}>New Blog Post</Link></Button>}
+          {isOwner && <Link to={`create`} className={`${styles.btn} ${styles.default}`}>New Blog Post</Link>}
           <CardWrapper>
             { blogPosts.map( blogPost => {
               const defaultImg = '/images/gallery-1.png'

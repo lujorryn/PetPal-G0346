@@ -30,6 +30,9 @@ import Messages from './pages/messages/Messages';
 import MessageDetail from './pages/messages/MessageDetail';
 
 import ShelterBlog from './pages/blog/ShelterBlog';
+import ShelterBlogCreate from './pages/blog/ShelterBlogCreate';
+import ShelterBlogEdit from './pages/blog/ShelterBlogEdit';
+import ShelterBlogPost from './pages/blog/ShelterBlogPost';
 
 import NotFound from './pages/NotFound';
 
@@ -63,6 +66,9 @@ function App() {
             <Route path='applications/:appId' element={<ApplicationDetail />} />
 
             <Route path='blog/:userId' element={<ShelterBlog />} />
+            <Route path='blog/:userId/create' element={<ShelterBlogCreate />} />
+            <Route path='blog/:userId/post/:postId' element={<ShelterBlogPost />} />
+            <Route path='blog/:userId/post/:postId/edit' element={<ShelterBlogEdit />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>

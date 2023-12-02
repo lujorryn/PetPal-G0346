@@ -3,5 +3,24 @@
 }
 
 .btn {
+  display: inline-block;
   margin-left: var(--margin-mid);
+  padding: var(--btn-padding, var(--btn-padding-default));
+  border-radius: 2rem;
+  font-size: var(--font-size);
+  cursor: pointer;
+  appearance: none;
+  transition: 0.3s;
+  
+  align-self: flex-end;
+}
+
+.default {
+  background-color: var(--btn-bg-color-default);
+  color: var(--btn-txt-color-default);
+}
+
+.btn:hover {
+  background-color: var(--btn-bg-color, var(--btn-txt-color-default));
+  color: var(--btn-txt-color, var(--btn-bg-color-default));
 }
