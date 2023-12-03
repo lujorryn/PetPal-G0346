@@ -29,9 +29,9 @@ def seekers_list_view(request):
 
 
 '''
-VIEW / EDIT / DELETE A Seeker
+VIEW / EDIT A Seeker
 ENDPOINT: /api/seekers/<str:account_id>/
-METHOD: GET, PUT, DELETE
+METHOD: GET, PUT
 PERMISSION:
 SUCCESS:
 '''
@@ -69,12 +69,14 @@ def seeker_detail_view(request, account_id):
                 fav_pets = PetListing.objects.filter(favorited_by=seeker)
             except PetListing.DoesNotExist:
                 fav_pets = None
-
+            data = serializer.data
+            data['first_name'] = seeker.first_name
+            data['last_name'] = seeker.last_name
             # Case if there are no favorite pets
             if fav_pets is None:
                 return Response({
                     'msg': 'Seeker details',
-                    'data': serializer.data,
+                    'data': data,
                     'fav_pets': 'No favorites yet!'}, status=status.HTTP_200_OK)
             else:
                 # Serialize the favorite pets
@@ -86,7 +88,7 @@ def seeker_detail_view(request, account_id):
 
                 return Response({
                     'msg': 'Seeker details',
-                    'data': serializer.data,
+                    'data': data,
                     'fav_pets': fav_pet_list}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'You are not allowed to see this profile'}, status=status.HTTP_403_FORBIDDEN)
@@ -97,6 +99,9 @@ def seeker_detail_view(request, account_id):
             serializer = SeekerSerializer(seeker, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                data = serializer.data
+                data['first_name'] = seeker.first_name
+                data['last_name'] = seeker.last_name
                 return Response({'msg': 'Update Seeker', 'data': serializer.data}, status=status.HTTP_200_OK)
             else:
                 return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

@@ -20,56 +20,46 @@ function ProfileOther() {
     const otherUserId = urlSplit[urlSplit.length - 1]
 
     useEffect(() => {
-        if (otherUserId === userId) {
-            return navigate('/profile')
+        const fetchData = async () => {
+            try {
+                if (otherUserId === userId) {
+                    return navigate('/profile')
+                }
+                const shelterResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/shelters/${otherUserId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                if (shelterResponse.status === 403 || shelterResponse.status === 404) {
+                    const seekerResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/seekers/${otherUserId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    if (seekerResponse.status === 403 || seekerResponse.status === 404) {
+                        navigate('/profile')
+                    } else {
+                        const seekerData = await seekerResponse.json()
+                        setSeeker(seekerData)
+                        setState(2)
+                    }
+                } else {
+                    const shelterData = await shelterResponse.json()
+                    setShelter(shelterData)
+                    if (role === 'seeker') {
+                        setState(1)
+                    } else {
+                        setState(3)
+                    }
+                }
+            } catch (err) {
+                console.error(err)
+            }
         }
-
-        try {
-            fetch(`${process.env.REACT_APP_API_URL}/api/shelters/${otherUserId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-                .then((res) => {
-                    if (res.status === 403 || res.status === 404) {
-                        fetch(`${process.env.REACT_APP_API_URL}/api/seekers/${otherUserId}`, {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        })
-                            .then((res) => {
-                                if (res.status === 403 || res.status === 404) {
-                                    navigate('/profile')
-                                } else {
-                                    return res.json()
-                                }
-                            })
-                            .then((data) => {
-                                setSeeker(data)
-                                setState(2)
-                            })
-                            .catch((err) => {
-                                console.log(err)
-                            })
-                        } else {
-                            return res.json()
-                        }
-                    })
-                    .then((data) => {
-                        setShelter(data)
-                        if (role === 'seeker') {
-                            setState(1)
-                        } else {
-                            setState(3)
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-        } catch (err) {
-            console.log(err)
-        }
+        fetchData()
     }, [token, userId, role, navigate, otherUserId])
+    
+
 
     useEffect(() => {
         const getShelterPets = async () => {
@@ -179,7 +169,7 @@ function ProfileOther() {
                 </div>
             </div>
             <div className='profile-desc'>
-              <p className='font-semibold text-5xl break-all'>Shelter Profile</p>
+              <p className='font-semibold text-5xl break-all'>{shelter?.data.first_name}</p>
               <div className="flex items-center">
                 {shelter?.data.avg_rating === 0 ? (
                     <span>No Rating</span>
@@ -335,7 +325,7 @@ function ProfileOther() {
                 </div>
             </div>
             <div className='profile-desc'>
-                <p className='font-semibold text-5xl break-all'>Seeker Profile</p>
+                <p className='font-semibold text-5xl break-all'>{seeker?.data.first_name} {seeker?.data.last_name}</p>
                 <hr className='line'></hr>
                 <ul className='profile-list'>
                 <li>
@@ -393,7 +383,7 @@ function ProfileOther() {
                     </div>
                 </div>
                 <div className='profile-desc'>
-                <p className='font-semibold text-5xl break-all'>Shelter Profile</p>
+                <p className='font-semibold text-5xl break-all'>{shelter?.data.first_name}</p>
                 <div className="flex items-center">
                     {shelter?.data.avg_rating === 0 ? (
                         <span>No Rating</span>

@@ -75,6 +75,7 @@ function Profile() {
     }
 
     const getShelterPets = async () => {
+      if (!user?.data.email) return
       var nextPage = `${process.env.REACT_APP_API_URL}/api/petlistings/shelter/${user?.data.email}`
       const allResults = []
     
@@ -152,7 +153,6 @@ function Profile() {
       .catch(err => console.log(err))
   }
 
-
   const renderProfile = () => {
     if (role === 'seeker') {
       return (
@@ -167,6 +167,18 @@ function Profile() {
             <p className='font-semibold text-5xl break-all'>Your Profile</p>
             <hr className='line'></hr>
             <ul className='profile-list'>
+              <li>
+                <span className='font-bold'>First Name:</span>
+                <span className='text-gray-700'>
+                  <p>{user?.data.first_name === '' ? 'N/A' : user?.data.first_name}</p>
+                </span>
+              </li>
+              <li>
+                <span className='font-bold'>last Name:</span>
+                <span className='text-gray-700'>
+                  <p>{user?.data.last_name === '' ? 'N/A' : user?.data.last_name}</p>
+                </span>
+              </li>
               <li>
                 <span className='font-bold'>Email:</span>
                 <span className='text-gray-700'>
@@ -213,7 +225,7 @@ function Profile() {
               <p className='text-xl font-bold'>Your Favorites</p>
               <div className='-m-1 flex flex-wrap md:-m-2'>
                 {favPets?.map((pet) => (
-                  <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2'>
+                  <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2' key={pet.id}>
                     <a href={`/petlistings/${pet.id}`} className='w-full block'>
                       <img
                         alt={pet.name}
@@ -263,6 +275,12 @@ function Profile() {
               </div>
               <hr className='line'></hr>
               <ul className='profile-list'>
+                <li>
+                  <span className='font-bold'>Name:</span>
+                  <span className='text-gray-700'>
+                    <p>{user?.data.first_name === '' ? 'N/A' : user?.data.first_name}</p>
+                  </span>
+                </li>
                 <li>
                   <span className='font-bold'>Email:</span>
                   <span className='text-gray-700'>
@@ -322,7 +340,7 @@ function Profile() {
                 </div>
                 <div className='-m-1 flex flex-wrap md:-m-2'>
                   {shelterPets?.map((pet) => (
-                    <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2 flex flex-col items-center'>
+                    <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2 flex flex-col items-center' key={pet.id}>
                       <a href={`/petlistings/${pet.id}/edit`} className='w-full block'>
                         <img
                           alt={pet.name}
@@ -340,7 +358,7 @@ function Profile() {
           <div className="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
             <p className="text-xl font-bold center-text mr-4">My Reviews</p>
             {reviews?.map((review) => (
-              <div className="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
+              <div className="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700" key={review.id}>
                 <div className="flex items-center">
                   {Array.from({ length: review.rating }, (_, index) => (
                     <svg
