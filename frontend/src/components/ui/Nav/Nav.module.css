@@ -98,6 +98,8 @@
   margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .account {
@@ -117,8 +119,13 @@
 .nlist {
   display: flex;
   align-items: center;
+  transition: border 0.1s;
+  border : 2px solid transparent;
 }
 
+.nlist:hover {
+  border: 2px solid black;
+}
 
 .img {
   display: inline-block;

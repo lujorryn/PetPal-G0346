@@ -46,6 +46,9 @@ def notifications_list_view(request):
             'body': notification.body,
             'content_type': notification.content_type.model,
             'object_id': notification.object_id,
+            'created_time': notification.created_time,
+            'creator_avatar': notification.creator.avatar.url if notification.creator.avatar else None,
+            'creator_id': notification.creator.pk,
         }
         if notification.content_type.model == 'petlisting':
             pet_listing_url = reverse('petlistings:pelisting-detail', args=[notification.object_id])
@@ -84,6 +87,9 @@ def notifications_detail_view(request, note_id):
                 'body': notification.body,
                 'content_type': notification.content_type.model,
                 'object_id': notification.object_id,
+                'created_time': notification.created_time,
+                'creator_avatar': notification.creator.avatar.url if notification.creator.avatar else None,
+                'creator_id': notification.creator.pk,
             }
             if notification.content_type.model == 'petlisting':
                 data['status'] = notification.content_object.status

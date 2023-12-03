@@ -40,6 +40,16 @@ class Comment(models.Model):
                 subject = f'You have received a comment from {self.shelter.email}'
                 body = self.content
         notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self)
+        if self.is_review:
+            if self.is_author_seeker:
+                notification.creator = self.seeker
+            else:
+                notification.creator = self.shelter
+        else:
+            if self.is_author_seeker:
+                notification.creator = self.seeker
+            else:
+                notification.creator = self.shelter
         notification.save()
         if self.is_review:
             if self.shelter.is_notif_comment:
