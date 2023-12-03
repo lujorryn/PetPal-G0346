@@ -123,10 +123,34 @@ function PetDetail() {
   }
 
 
+
   const mainContent = (listing, shelter) => {
     const fDate = new Date(listing.created_time).toLocaleDateString();
     const allPhotos = processPhotos(listing.photos);
     const isListingOwner = userId == shelter.id;
+
+    const renderActionBtn = () => {
+      if (isListingOwner) {
+        return (
+          <Button handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>Edit pet</Button>
+        )
+      }
+
+      if (listing.status !== "AV" ) {
+        return (
+          <>
+             <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>contact shelter</Button>
+          </>
+        )
+      }
+      return (
+        <>
+        <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>contact shelter</Button>
+        <Button id="application-form-btn" handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>Application Form</Button>
+        </>
+      )
+
+    }
 
     return (
       <div className="main__wrapper">
@@ -191,9 +215,7 @@ function PetDetail() {
           </div>
 
           <div className="details-item btn-container">
-            {isListingOwner && (
-              <Button handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>Edit pet</Button>
-            )}
+            {renderActionBtn()}
           </div>
         </div>
       </div>
