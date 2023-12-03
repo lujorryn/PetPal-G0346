@@ -1,10 +1,9 @@
 import styles from './Nav.module.css'
 import { useState } from 'react'
+import { formatDistanceToNow } from 'date-fns'
 
 function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort}) {
   const [toggleRead, setToggleRead] = useState(false)
-  console.log('readNotifications', readNotifications)
-  console.log('notifications', notifications)
   const handleToggle = () => {
     setToggleRead(!toggleRead)
   }
@@ -55,6 +54,9 @@ function NotificationNav({onClick, handleClick, notifications, readNotifications
                           {note.body.length > 80 ? `${note.body.substring(0, 80)}...` : note.body}
                           </span>
                         </div>
+                        <div>
+                          <span className='text-xs text-gray-500'>{formatDistanceToNow(new Date(note.created_time))} ago</span>
+                        </div>
                       </div>
                   </div>
                 </li>
@@ -74,6 +76,9 @@ function NotificationNav({onClick, handleClick, notifications, readNotifications
                           <span>
                           {note.body.length > 80 ? `${note.body.substring(0, 80)}...` : note.body}
                           </span>
+                        </div>
+                        <div>
+                          <span className='text-xs text-gray-500'>{formatDistanceToNow(new Date(note.created_time))} ago</span>
                         </div>
                       </div>
                   </div>

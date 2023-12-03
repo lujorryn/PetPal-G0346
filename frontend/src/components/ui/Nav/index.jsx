@@ -80,7 +80,6 @@ function Nav() {
   }
 
   const getNotifications = useCallback(async () => {
-    console.log('getNotifications')
     var nextPage = `${process.env.REACT_APP_API_URL}/api/notifications`
     var notifications = []
     var empty = true
@@ -108,7 +107,6 @@ function Nav() {
   }, [token])
 
   const getReadNotifications = useCallback(async () => {
-    console.log('getReadNotifications')
     var nextPage = `${process.env.REACT_APP_API_URL}/api/notifications?is_read=true`
     var notifications = []
     try {
