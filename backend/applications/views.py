@@ -105,16 +105,20 @@ def applications_list_and_create_view(request):
             listing = PetListing.objects.get(id=data['petlisting_id'])    
         except PetListing.DoesNotExist:
             return Response({'error': 'petlisintg invalid'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if curr_user.seeker_applications.filter(pk=data['petlisting_id']).exists():
-            return Response({'error': 'application already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            if curr_user.seeker_applications.get(petlisting=listing):
+                return Response({'error': 'application already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        except Application.DoesNotExist:
+            pass
+        
         if listing.status != "AV":
             return Response({'error': 'petlisintg unavailable'}, status=status.HTTP_400_BAD_REQUEST)
 
+        if data['petlisting_id'] != data['pet_number']:
+            return Response({'error': 'pet_number must match'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-        new_app = Application.objects.create(
+        new_app = Application(
             first_name=data['first_name'],
             last_name=data['last_name'],
             address=data['address'],
@@ -130,22 +134,7 @@ def applications_list_and_create_view(request):
             shelter=listing.owner,
             petlisting=listing,
         )
-
-
-
-        subject = f'application with id {new_app.pk} created.'
-        body = f'user: {new_app.email}, petlisting: {new_app.petlisting.pk}'
-
-        new_notif = Notification(subject=subject, 
-                                    body=body, 
-                                    content_type=ContentType.objects.get_for_model(Application), 
-                                    object_id=new_app.pk, 
-                                    content_object=new_app)
-        # save initial new_notif 
-        new_notif.save()
-        # save again with valid shelter
-        new_notif.recipients.add(new_app.shelter)
-        new_notif.save()
+        new_app.save()
 
         success_url = f'/api/applications/{new_app.pk}'
         return Response({'redirect_url': success_url}, status=status.HTTP_201_CREATED)
@@ -309,14 +298,14 @@ def application_detail_view(request, app_id):
             return Response({'error':f'invalid user role: {curr_user.role}'}, status=status.HTTP_400_BAD_REQUEST)
 
         put_app.status = new_status
-        put_app.save()
+        put_app.save(update=True)
 
         
-        subject = f'application with id {put_app.pk} got updated.'
-        body = f'updated status: {put_app.status}'
+        subject = f'Application with id {put_app.pk} got updated.'
+        body = f'Updated status: {put_app.status}'
         new_notif = Notification(subject=subject, body=body, 
                                     content_type=ContentType.objects.get_for_model(Application), 
-                                    object_id=put_app.pk, content_object=put_app)
+                                    object_id=put_app.pk, content_object=put_app, creator=curr_user)
         
         new_notif.save()
         # add recipients and save 
