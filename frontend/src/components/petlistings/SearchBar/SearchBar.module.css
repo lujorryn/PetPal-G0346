@@ -1,0 +1,21 @@
+.wrapper {
+  grid-column: 1/-1;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+.form {
+  display: flex;
+  margin: var(--margin-narrow) 0;
+}
+
+.input {
+  border-radius: 2.5rem;
+  padding-left: var(--padding-mid);
+  margin-right: var(--margin-narrow);
+}
+
+.btn:hover {
+  --btn-bg-color: var(--color-primary);
+  --btn-txt-color: var(--color-white);
+}

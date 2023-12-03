@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import SearchIcon from '@mui/icons-material/Search';
 
+import Modal from '../../ui/Modal'
 import Input from '../../ui/form/Input';
 import Button from '../../ui/Button'
 
@@ -13,27 +14,24 @@ const SearchModal = ({onClick}) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSubmit = (e) => {
-    console.log('Search Submit')
     e.preventDefault()
     onClick()
-    navigate(`/search?searchTerm=${searchTerm}`)
+    navigate(`/petlistings?search=${searchTerm}`)
   };
 
   return (
-    <div className={styles.modal} onClick={(e) => {
-        if(e.target.className === `${styles.modal}`) onClick()
-      }}
-    >
+    <Modal closeModal={onClick}>
       <form onSubmit={handleSubmit} className={styles.form}>
         <Input
           name='search__text'
           value={searchTerm}
           placeholder='Search...'
           onChange={(e) => setSearchTerm(e.target.value)}
+          required={false}
         />
         <Button variation='transparent' classes={styles.btn}><SearchIcon className={styles.icon} /></Button>
       </form>
-    </div>
+    </Modal>
   );
 };
 

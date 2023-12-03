@@ -9,6 +9,7 @@ import Layout from './components/ui/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import SignupSuccess from './pages/SignupSuccess';
 
 import Shelters from './pages/shelters/Shelters';
 import Shelter from './pages/shelters/Shelter';
@@ -18,7 +19,7 @@ import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
 import ProfileOther from './pages/profile/ProfileOther';
 
-import PetListings from './pages/petlistings/PetListings';
+import PetListings from './pages/petlistings/PetListingsPage';
 import PetDetail from './pages/petlistings/PetDetail';
 import PetDetailEdit from './pages/petlistings/PetDetailEdit';
 
@@ -28,7 +29,10 @@ import Applications from './pages/applications/Applications';
 import Messages from './pages/messages/Messages';
 import MessageDetail from './pages/messages/MessageDetail';
 
-import Search from './pages/Search';
+import ShelterBlog from './pages/blog/ShelterBlog';
+import ShelterBlogCreate from './pages/blog/ShelterBlogCreate';
+import ShelterBlogEdit from './pages/blog/ShelterBlogEdit';
+import ShelterBlogPost from './pages/blog/ShelterBlogPost';
 
 import NotFound from './pages/NotFound';
 
@@ -41,6 +45,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path='login' element={<Login />} />
             <Route path='signup' element={<SignUp />} />
+            <Route path='success' element={<SignupSuccess />} />
 
             <Route path='shelters' element={<Shelters />} />
             <Route path='shelters/:shelterId' element={<Shelter />} />
@@ -60,7 +65,10 @@ function App() {
             <Route path='applications' element={<Applications />} />
             <Route path='applications/:appId' element={<ApplicationDetail />} />
 
-            <Route path='search' element={<Search />} />
+            <Route path='blog/:userId' element={<ShelterBlog />} />
+            <Route path='blog/:userId/create' element={<ShelterBlogCreate />} />
+            <Route path='blog/:userId/post/:postId' element={<ShelterBlogPost />} />
+            <Route path='blog/:userId/post/:postId/edit' element={<ShelterBlogEdit />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>
