@@ -165,7 +165,7 @@ function ProfileOther() {
             <div className='profile-grid'>
             <div className='profile-img'>
                 <div className='profile-container'>
-                  <img className='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+                  <img className='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
                 </div>
             </div>
             <div className='profile-desc'>
@@ -252,7 +252,7 @@ function ProfileOther() {
                         <img
                           alt={pet.name}
                           className='block w-full h-64 rounded-lg object-cover object-center'
-                          src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '../../../images/logo_ref.png'}
+                          src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '/images/logo_ref.png'}
                         />
                       </a>
                       <p className='text-center'>{pet.name}</p>
@@ -321,7 +321,7 @@ function ProfileOther() {
             <div className='profile-grid'>
             <div className='profile-img'>
                 <div className='profile-container'>
-                    <img className='rounded-full w-full h-full' src={seeker?.data.avatar? `${process.env.REACT_APP_API_URL}${seeker?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+                    <img className='rounded-full w-full h-full' src={seeker?.data.avatar? `${process.env.REACT_APP_API_URL}${seeker?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
                 </div>
             </div>
             <div className='profile-desc'>
@@ -379,7 +379,7 @@ function ProfileOther() {
                 <div className='profile-grid'>
                 <div className='profile-img'>
                     <div className='profile-container'>
-                    <img className='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+                    <img className='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
                     </div>
                 </div>
                 <div className='profile-desc'>
@@ -466,7 +466,7 @@ function ProfileOther() {
                             <img
                             alt={pet.name}
                             className='block w-full h-64 rounded-lg object-cover object-center'
-                            src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '../../../images/logo_ref.png'}
+                            src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '/images/logo_ref.png'}
                             />
                         </a>
                         <p className='text-center'>{pet.name}</p>

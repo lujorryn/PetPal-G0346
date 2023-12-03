@@ -47,7 +47,7 @@ function ProfileEdit() {
   }
 
   const handleDelete = () => {
-    const isConfirmed = window.confirm("Are you sure you want to delete?");
+    const isConfirmed = window.confirm("Are you sure you want to delete?")
 
     if (isConfirmed) {
       fetch(`${process.env.REACT_APP_API_URL}/api/accounts/${userId}`, {
@@ -67,7 +67,7 @@ function ProfileEdit() {
         <div className="profile-grid">
           <div className="profile-img">
             <div className="profile-container">
-              <img className="rounded-full w-full h-full" src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : "../../../images/logo_ref.png"} alt="../../../images/logo_ref.png" />
+              <img className="rounded-full w-full h-full" src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : "/images/logo_ref.png"} alt="/images/logo_ref.png" />
               </div>
             <input type="file" id="profile-image" name="profile-image" accept="image/*"
               onChange={(e) => setAvatar(e.target.files[0])}
@@ -144,7 +144,7 @@ function ProfileEdit() {
         <div className="profile-grid">
           <div className="profile-img">
             <div className="profile-container">
-              <img className="rounded-full w-full h-full" src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : "../../../images/logo_ref.png"} alt="../../../images/logo_ref.png" />
+              <img className="rounded-full w-full h-full" src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : "/images/logo_ref.png"} alt="/images/logo_ref.png" />
               </div>
             <input type="file" id="profile-image" name="profile-image" accept="image/*"
               onChange={(e) => setAvatar(e.target.files[0])}

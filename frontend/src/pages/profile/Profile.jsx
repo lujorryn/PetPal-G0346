@@ -159,7 +159,7 @@ function Profile() {
         <div className='profile-grid'>
           <div className='profile-img'>
               <div className='profile-container'>
-                <img className='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+                <img className='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
               </div>
               <a href='profile/edit' className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Edit Profile</a>
           </div>
@@ -230,7 +230,7 @@ function Profile() {
                       <img
                         alt={pet.name}
                         className='block w-full h-64 object-cover object-center rounded-lg'
-                        src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '../../../images/logo_ref.png'}
+                        src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '/images/logo_ref.png'}
                       />
                     </a>
                   </div>
@@ -246,7 +246,7 @@ function Profile() {
           <div className='profile-grid'>
             <div className='profile-img'>
                 <div className='profile-container'>
-                  <img className='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+                  <img className='rounded-full w-full h-full' src={user?.data.avatar? `${process.env.REACT_APP_API_URL}${user?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
                 </div>
                 <a href='profile/edit' className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Edit Profile</a>
             </div>
@@ -345,7 +345,7 @@ function Profile() {
                         <img
                           alt={pet.name}
                           className='block w-full h-64 rounded-lg object-cover object-center'
-                          src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '../../../images/logo_ref.png'}
+                          src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '/images/logo_ref.png'}
                         />
                       </a>
                       <p className='text-center'>{pet.name}</p>
