@@ -20,7 +20,7 @@ function PetDetail() {
   const navigate = useNavigate();
 
   const breedMap = (b) => {
-    if (b === "N/A") {
+    if (b === "N/A" || b === "") {
       return "not specified";
     } else {
       return b;
