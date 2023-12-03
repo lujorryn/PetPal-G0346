@@ -1,0 +1,38 @@
+.wrapper {
+  position: relative;
+}
+
+.slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.nav {
+  display: flex;
+  column-gap: 1rem;
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.slideIdx {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  opacity: 0.75;
+  transition: ease 0.3s;
+  cursor: pointer;
+}
+
+.slideIdx.active {
+  opacity: 1;
+}
+
+.slideIdx:hover {
+  opacity: 1;
+}

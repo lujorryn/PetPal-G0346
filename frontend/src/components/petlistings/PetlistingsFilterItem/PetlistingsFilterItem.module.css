@@ -1,0 +1,58 @@
+.dropdown {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--margin-mid);
+  border-top: 1px solid var(--color-grey);
+  padding: var(--padding-narrow) 0;
+  color: var(--color-black);
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.caret {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--color-black);
+  transition: 0.3s;
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  padding-left: var(--padding-mid);
+}
+
+.option {
+  margin-top: var(--margin-narrow);
+  display: flex;
+  align-items: center;
+}
+
+.option > *:last-child {
+  margin-left: var(--margin-narrow);
+}
+
+.numinput {
+  width: 80%;
+  margin-left: var(--margin-mid);
+}
+
+.btn {
+  background-color: transparent;
+  color: var(--color-dark);
+  padding: 0;
+  margin-top: 0.5rem;
+  margin-left: var(--margin-mid);
+}
+
+.btn:hover {
+  background-color: transparent;
+}

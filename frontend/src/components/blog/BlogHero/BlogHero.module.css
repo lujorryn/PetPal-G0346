@@ -1,0 +1,18 @@
+.wrapper {
+  height: 25rem;
+  margin: var(--margin-wide);
+  border-radius: 0.5rem;
+  display: flex;
+}
+
+.img {
+  width: 100%;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+@media (max-width: 36rem) {
+  .wrapper {
+    height: 15rem;
+  }
+}
