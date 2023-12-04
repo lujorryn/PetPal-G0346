@@ -41,7 +41,7 @@ class PetListing(models.Model):
         # Create notification
         subject = f'A new Pet listing has been created by {self.owner.email}!'
         body = f'{self.name} is now available for adoption.'
-        notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self)
+        notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self, creator=self.owner)
         notification.save()
         users = PetPalUser.objects.filter(role=PetPalUser.Role.SEEKER, is_notif_petlisting=True)
         notification.recipients.add(*users)

@@ -11,6 +11,7 @@ User = settings.AUTH_USER_MODEL
 class Notification(models.Model):
     subject = models.TextField()
     body = models.TextField(blank=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications_created")
     recipients = models.ManyToManyField(User, related_name="notifications")
     recipients_read = models.ManyToManyField(User, related_name="notifications_read", blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) # Can also be set null depending on interpretation
