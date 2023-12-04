@@ -1,0 +1,32 @@
+.wrapper {
+  grid-row: 3;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--color-grey);
+  margin-right: var(--margin-wide);
+  width: 12rem;
+  padding: var(--padding-mid);
+
+  border-radius: 0.5rem;
+  background-color: white;
+}
+
+.btn {
+  margin-top: var(--margin-mid);
+}
+
+.btn:hover {
+  --btn-bg-color: var(--color-primary);
+  --btn-txt-color: var(--color-white);
+}
+
+/* Tablets and ipads */
+@media (max-width: 52rem) {
+  .wrapper {
+    grid-column: 1/-1;
+    width: 100%;
+  }
+}
+/* Mobile devices */
+@media (max-width: 36rem) {
+}

@@ -12,7 +12,11 @@ function Shelters() {
   useEffect(() => {
     if (!token) return navigate('/login')
 
-    fetch(`${API_URL}/api/shelters`)
+    fetch(`${API_URL}/api/shelters`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then( res => res.json())
     .then( data => console.log(data))
     .catch( err => console.log("Error ", err))

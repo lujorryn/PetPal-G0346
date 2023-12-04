@@ -1,0 +1,17 @@
+.wrapper {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  justify-self: end;
+  margin-bottom: var(--margin-mid);
+}
+
+.select:not(:last-child) {
+  margin-right: var(--margin-narrow);
+}
+
+@media (max-width: 52rem) {
+  .wrapper {
+    grid-column: 1/-1;
+  }
+}

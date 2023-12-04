@@ -1,0 +1,14 @@
+.wrapper {
+  padding: var(--padding-extra);
+  display: grid;
+  grid-template-columns: 15rem 3fr;
+  grid-template-rows: repeat(3,auto);
+  gap: var(--padding-narrow);
+  align-items: start;
+}
+
+@media (max-width: 52rem) { 
+  .wrapper {
+    grid-template-rows: repeat(4, auto);
+  }
+}

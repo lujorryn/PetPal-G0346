@@ -44,6 +44,8 @@ SUCCESS:
 @permission_classes([IsAuthenticated])
 def blogpost_list_view(request, shelter_id):
     if request.method == 'GET':
+        if User.objects.get(pk=shelter_id).role != User.Role.SHELTER:
+            return Response({'error': 'User not a shelter'}, status=status.HTTP_400_BAD_REQUEST)
         blogposts = BlogPost.objects.filter(author=User.objects.get(pk=shelter_id))
         
         data = []

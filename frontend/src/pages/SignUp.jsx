@@ -1,9 +1,8 @@
+import SignupForm from '../components/accounts/SignupForm'
 
 function SignUp() {
   return (
-    <div>
-      Signup
-    </div>
+    <SignupForm />
   )
 }
 

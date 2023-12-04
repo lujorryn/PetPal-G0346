@@ -30,7 +30,7 @@ function Footer() {
 
       <div className={styles.newsletter}>
         <h6 className="h6">Newsletter</h6>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Don't miss out on our exclusive pet insights</p>
 
         {/* Is this form supposed to do anything? */}
         <form id="newsletter_form">

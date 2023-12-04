@@ -1,6 +1,5 @@
 .form {
   width: 50%;
-  min-width: 32rem;
 
   padding: var(--padding-mid) var(--padding-extra);
   border-radius: 0 0 1rem 1rem;

@@ -58,6 +58,17 @@ def shelter_petlistings_list_view(request, shelter_email):
         return Response({'error': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
     
 
+# To also retrieve current_page and total_pages 
+class CustomPaginator(PageNumberPagination):
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'current_page': self.page.number,
+            'total_pages': self.page.paginator.num_pages,
+            'results': data
+        })
 
 '''
 LIST All Petlistings with or without filter / CREATE New Petlisting
@@ -71,8 +82,8 @@ SUCCESS:
 def petlistings_list_and_create_view(request):
     if request.method == 'GET':
         filter = {}
-        allowed_params = ['category', 'age', 'status', 'gender', 'size', 'shelter_email', 'shelter_name', 'name']
-        owner_list = None
+        allowed_params = ['category', 'age', 'status', 'gender', 'size', 'shelter_email', 'name', 'sort_by', 'ascending']
+        sort_by = None
 
         for param in allowed_params:
             param_value = request.GET.get(param, None)
@@ -90,28 +101,33 @@ def petlistings_list_and_create_view(request):
                     return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
                 elif param == 'shelter_email' and not User.objects.filter(email=param_value).exists():
                     return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
-                elif param == 'shelter_name' and not Shelter.objects.filter(first_name=param_value).exists():
-                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
                 elif param == 'name' and param_value.strip() == '':
                     return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'sort_by' and param_value not in ['none', 'name', 'created_time', 'last_updated', 'age']:
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
+                elif param == 'ascending' and param_value not in ['true', 'false']:
+                    return Response({'error': f'Invalid {param}'}, status=status.HTTP_400_BAD_REQUEST)
                 
-                if param != 'shelter_name' and param != 'shelter_email':
+                if param != 'shelter_email' and param != 'sort_by' and param != 'ascending':
                     filter[param] = param_value
+                elif param == 'sort_by' and param_value != 'none':
+                    sort_by = param_value
+                elif param == 'ascending' and sort_by and param_value == 'false':
+                    sort_by = '-' + sort_by
                 elif param == 'shelter_email':
                     filter['owner'] = User.objects.get(email=param_value)
-                else:
-                    owner_list = Shelter.objects.filter(first_name=param_value)
             if param == 'status' and (param_value is None or str(param_value).strip() == ''): # Default status is available
                 filter[param] = 'AV'
                 
         data = []
-        paginator = PageNumberPagination()
+        paginator = CustomPaginator()
         paginator.page_size = 6
         
-        if owner_list: # Using this method otherwise fails if 2 shelters have the same name
-            petlistings = PetListing.objects.filter(**filter).filter(owner__in=owner_list)
+        if sort_by:
+            petlistings = PetListing.objects.filter(**filter).order_by(sort_by)
         else:
             petlistings = PetListing.objects.filter(**filter)
+
         paginated_petlistings = paginator.paginate_queryset(petlistings, request)
         for listing in paginated_petlistings:
             result = {

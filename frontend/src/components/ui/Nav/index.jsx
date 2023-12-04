@@ -7,7 +7,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from '../../../context/AuthContext';
 
 import LinkItem from './LinkItem';
-import SearchModal from '../../search/SearchModal'
+import SearchModal from '../../petlistings/SearchModal'
 import NotificationNav from './NotificationNav';
 import AccountNav from './AccountNav';
 import styles from './Nav.module.css';
@@ -28,7 +28,7 @@ const DefaultNavMenu = (
 );
 
 function Nav() {
-  const { role } = useAuth();
+  const { userId, role } = useAuth()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)
@@ -66,12 +66,17 @@ function Nav() {
           <>
             {role === 'seeker' ? (
               <li>
-                <LinkItem to='applications'>My Application</LinkItem>
+                <LinkItem to='applications'>My Applications</LinkItem>
               </li>
             ) : (
+              <>
               <li>
-                <LinkItem to='applications'>My Pets</LinkItem> {/* where does this link to? */}
+                <LinkItem to='applications'>Applications</LinkItem>
               </li>
+              <li>
+                <LinkItem to={`blog/${userId}`}>My Blog</LinkItem>
+              </li>
+              </>
             )}
             <li>
               <LinkItem to='petlistings'>Adopt</LinkItem>
