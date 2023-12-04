@@ -5,10 +5,10 @@ import CorrespondenceRow from "../../components/applications/correspondence-row/
 import Button from "../../components/ui/Button/index.jsx"
 
 // TODO:
-// 
 // - Get pet name to add to title or message preview 
 // - Put the last_updated time in a fully readable format 
 // - Make Pending/Active buttons change
+// - Change "Find another pet" button different for shelters 
 // - (OK) Make "Find another pet" link to another page
 // - (OK) Make "View" link to actual application page 
 

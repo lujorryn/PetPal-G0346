@@ -34,6 +34,8 @@ function ApplicationDetail() {
      // If there is no token, navigate to the user page 
     if (!token) return navigate('/login'); 
 
+    // TODO: CHECK USER ROLE HERE? 
+
     // Fetch data when component mounts
       fetch(`${process.env.REACT_APP_API_URL}/api/applications/${application_id}`, {
         method: 'GET',
@@ -62,7 +64,7 @@ function ApplicationDetail() {
 
     }, [application]);
 
-    // There is an error 
+    // There is an error (User doesn't have application with that id)
     if (application != null && application.error != undefined) {
       return <NotFound/>;
     }
@@ -100,7 +102,7 @@ function ApplicationDetail() {
     case "EX":
       experienced = true; 
       break;
-    case "None":
+    case "N":
       no_exp = true; 
       break;
     case "I": 
