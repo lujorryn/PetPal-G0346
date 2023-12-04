@@ -1,17 +1,20 @@
 .main__wrapper {
     display: flex;
     justify-content: center;
-    margin-top: 90px;
+    margin-top: 60px;
     margin-bottom: 60px;
 }
 
-
+#back-btn {
+    align-self: flex-start;
+    margin-bottom: 20px;
+}
 
 .details-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 60px;
+    /* gap: 60px; */
     width: 80%;
     max-width: 1000px;
 }
@@ -23,6 +26,7 @@
     border-radius: 20px;
     background-color: #F2F2F2;
     padding: 20px 40px;
+    margin-bottom: 60px;
 }
 
 .btn-container {
