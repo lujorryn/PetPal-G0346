@@ -1,11 +1,14 @@
+
 // Function used to validate application form 
-// TODO: GET THE SHELTER THAT HAS PET_ID
-function validateForm(method, formData, pet_id) {
+function validateForm(method, formData, pet_id, token) {
+
+    // const { token } = useAuth()
 
     console.log("Inside validateForm");
     let error_msg = "";
 
     console.log(formData);
+
 
     // Check that no input is empty
     for (const pair of formData.entries()) {
@@ -138,12 +141,29 @@ function validateForm(method, formData, pet_id) {
     
     // Success: Make a POST request to the backend and navigate to success page.
     // To make a fetch: go to the endpoint /api/petlistings/<int:pet_id> GET to
-    if (method == "POST") {
-        // Fetch post request 
+    // let shelter_id; 
+    let pet_status;
+    let payload;
+    payload = {
+        'first_name': first_name, 
+        'last_name': last_name, 
+        'address': address, 
+        'phone': phone, 
+        'email': email, 
+        'contact_pref': contact_pref, 
+        'pet_number': num_pets, 
+        'has_children': has_children, 
+        'experience': experience_lvl, 
+        'residence_type': housing, 
+        'petlisting_id': pet_id, 
+    }
+
+    if (method == "POST" && error_msg === "") {
+        // Fetch GET request to get shelter_id 
+
+        return payload; 
+                
     } 
-
-
-    
 }
 
 export default validateForm;

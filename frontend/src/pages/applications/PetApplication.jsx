@@ -11,37 +11,59 @@ import validateForm from "./validateForm.jsx"
 //        - Made it so that it navigates back to petlisting (Consider changing it to 404 Not Found)
 // 2. (OK) If a seeker, check that they have not applied to this pet yet.
 //      - If they have applied to this pet, navigate to the applications/:appId page. 
-// 3. Show the form and validate their form inputs. 
+// 3. (OKA) Show the form and validate their form inputs. 
 
 //TODO: 
-// - Handle Submit 
-// - Validate user inputs (Use Formik?)
 // - Navigate to success screen 
+// - GET PET STATUS
 
 /* Component to show an empty form if the seeker has not applied to this pet yet */ 
 function PetApplication () {
 
     // The data in the form is blank 
-    let personal_data = {
-        firstName: '', 
-        lastName: '',
-        address: '', 
-        city: "", 
-        province: "", 
-        postalCode: "", 
-        phoneNum: '', 
-        email: '', 
-        pref_call: '', 
-        pref_text: '', 
-        pref_email: '', 
-        pet_num: '',
-        has_children: '', 
-        experienced: '', 
-        intermediate: '', 
-        no_exp: '', 
-        condo: '', 
-        apt: '', 
-        house: '', 
+    // let personal_data = {
+    //     firstName: '', 
+    //     lastName: '',
+    //     address: '', 
+    //     city: "", 
+    //     province: "", 
+    //     postalCode: "", 
+    //     phoneNum: '', 
+    //     email: '', 
+    //     pref_call: '', 
+    //     pref_text: '', 
+    //     pref_email: '', 
+    //     pet_num: '',
+    //     has_children: '', 
+    //     experienced: '', 
+    //     intermediate: '', 
+    //     no_exp: '', 
+    //     condo: '', 
+    //     apt: '', 
+    //     house: '', 
+    //   };
+  
+      // To test: 
+      let personal_data = {
+        firstName: 'John', 
+        lastName: 'Doe',
+        address: 'Help', 
+        city: "Tampa", 
+        province: "FL", 
+        postalCode: "123214", 
+        phoneNum: '123-123-1234', 
+        email: 'seeker1@example.com', 
+        pref_call: false, 
+        pref_text: false, 
+        pref_email: true, 
+        pet_num: 1,
+        has_children: false, 
+        experienced: true, 
+        intermediate: false, 
+        no_exp: false, 
+        condo: true, 
+        apt: false, 
+        house: false, 
       };
 
     const { token, userId, role } = useAuth()
@@ -50,6 +72,8 @@ function PetApplication () {
     const [applications, setApplications] = useState(null);
     const [formData, setFormData] = useState(personal_data);
     const [errorMsg, setErrorMsg] = useState("");
+    const [validData, setValidData] = useState(null);
+    const [isReady, setIsReady] = useState(false);
 
     const navigate = useNavigate()
 
@@ -99,19 +123,78 @@ function PetApplication () {
 
     }, [applications, pet_id, navigate]);
 
+    // Get the status of the pet 
+    // useEffect(() => {
+    //   fetch(`${process.env.REACT_APP_API_URL}/api/petlistings/${pet_id}`, {
+    //     method: 'GET',
+    //     headers: {
+    //         Authorization: `Bearer ${token}`,
+    //     },
+    //   }).then(response => response.json())
+    //   .then(data => {
+    //     console.log("PET STATUS", data.data.status);
+    //     // TODO TODO TODO PLACE PET STATUS IN FORM DATA 
+    //     }).catch( error => console.log(error));
+    //   });
+
+  useEffect(() => {
+    if (isReady && validData && validData.firstName !== '' /*&& validData.get('first_name') !== undefined*/ ) {
+      console.log("ValidData", validData);
+  
+      let form_data = new FormData();
+  
+      for (var key in validData) {
+        form_data.append(key, validData[key]);
+      }
+  
+      fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // Remove the Content-Type header
+        },
+        body: form_data,
+      }).then(response => {
+        if (!response.ok) {
+          console.log(validData);
+          console.log("I'm deceased");
+        }
+        // return navigate(`/applications/`);
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+  }, [isReady, validData, navigate, token]);
+  
+
     if (!applications || applications == undefined) {
         return <p>Checking applications...</p>;
     }
 
-    var error_msg = "";
     // If Submit, validate form
     const onSubmit = (e) => {
         e.preventDefault()
+
         const formData = new FormData(e.target)
 
-        setErrorMsg(validateForm("POST", formData, pet_id)); 
-        
-        console.log(error_msg);
+        let validation_result = validateForm("POST", formData, pet_id, token)
+
+        if (typeof validation_result === 'string') {
+          setErrorMsg(validation_result);
+        } else {
+          console.log(validation_result);
+          if (validation_result.first_name != '') {
+            console.log("This is validation res", validation_result);
+
+            // // Iterate over entries to test
+            // for (let [key, value] of validation_result.entries()) {
+            //     console.log("THIS IS ENTRY IN PETAPP", key, value);
+            // }
+
+            setValidData(validation_result);
+            setIsReady(true);
+          }
+        }
     }
 
     //applications_data = applications.results.data || [];
