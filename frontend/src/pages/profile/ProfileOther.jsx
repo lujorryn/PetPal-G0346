@@ -20,56 +20,46 @@ function ProfileOther() {
     const otherUserId = urlSplit[urlSplit.length - 1]
 
     useEffect(() => {
-        if (otherUserId === userId) {
-            return navigate('/profile')
+        const fetchData = async () => {
+            try {
+                if (otherUserId === userId) {
+                    return navigate('/profile')
+                }
+                const shelterResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/shelters/${otherUserId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                if (shelterResponse.status === 403 || shelterResponse.status === 404) {
+                    const seekerResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/seekers/${otherUserId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    if (seekerResponse.status === 403 || seekerResponse.status === 404) {
+                        navigate('/profile')
+                    } else {
+                        const seekerData = await seekerResponse.json()
+                        setSeeker(seekerData)
+                        setState(2)
+                    }
+                } else {
+                    const shelterData = await shelterResponse.json()
+                    setShelter(shelterData)
+                    if (role === 'seeker') {
+                        setState(1)
+                    } else {
+                        setState(3)
+                    }
+                }
+            } catch (err) {
+                console.error(err)
+            }
         }
-
-        try {
-            fetch(`${process.env.REACT_APP_API_URL}/api/shelters/${otherUserId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-                .then((res) => {
-                    if (res.status === 403 || res.status === 404) {
-                        fetch(`${process.env.REACT_APP_API_URL}/api/seekers/${otherUserId}`, {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        })
-                            .then((res) => {
-                                if (res.status === 403 || res.status === 404) {
-                                    navigate('/profile')
-                                } else {
-                                    return res.json()
-                                }
-                            })
-                            .then((data) => {
-                                setSeeker(data)
-                                setState(2)
-                            })
-                            .catch((err) => {
-                                console.log(err)
-                            })
-                        } else {
-                            return res.json()
-                        }
-                    })
-                    .then((data) => {
-                        setShelter(data)
-                        if (role === 'seeker') {
-                            setState(1)
-                        } else {
-                            setState(3)
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-        } catch (err) {
-            console.log(err)
-        }
+        fetchData()
     }, [token, userId, role, navigate, otherUserId])
+    
+
 
     useEffect(() => {
         const getShelterPets = async () => {
@@ -165,30 +155,30 @@ function ProfileOther() {
             case 3:
                 return renderShelterShelter()
             default:
-                navigate('/profile')
+                return navigate('/profile')
         }
     }
 
     const renderSeekerShelter = () => {
         return (
         <div>
-            <div class='profile-grid'>
-            <div class='profile-img'>
-                <div class='profile-container'>
-                  <img class='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+            <div className='profile-grid'>
+            <div className='profile-img'>
+                <div className='profile-container'>
+                  <img className='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
                 </div>
             </div>
-            <div class='profile-desc'>
-              <p class='font-semibold text-5xl break-all'>Shelter Profile</p>
-              <div class="flex items-center">
+            <div className='profile-desc'>
+              <p className='font-semibold text-5xl break-all'>{shelter?.data.first_name}</p>
+              <div className="flex items-center">
                 {shelter?.data.avg_rating === 0 ? (
                     <span>No Rating</span>
                 ) : (
-                    <div class="flex items-center">
+                    <div className="flex items-center">
                     {Array.from({ length: shelter?.data.avg_rating }, (_, index) => (
                         <svg
                         key={index}
-                        class="w-4 h-4 text-yellow-300 me-1"
+                        className="w-4 h-4 text-yellow-300 me-1"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -201,65 +191,68 @@ function ProfileOther() {
                     </div>
                 )}
                 </div>
-              <hr class='line'></hr>
-              <ul class='profile-list'>
+              <hr className='line'></hr>
+              <ul className='profile-list'>
                 <li>
-                  <span class='font-bold'>Email:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Email:</span>
+                  <span className='text-gray-700'>
                     <a href={`mailto:${shelter?.data.email}`}>{shelter?.data.email}</a>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Adress:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Adress:</span>
+                  <span className='text-gray-700'>
                     <p>{shelter?.data.address === '' ? 'N/A' : shelter?.data.address}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Postal Code:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Postal Code:</span>
+                  <span className='text-gray-700'>
                     <p>{shelter?.data.postal_code === '' ? 'N/A' : shelter?.data.postal_code}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>City:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>City:</span>
+                  <span className='text-gray-700'>
                     <p>{shelter?.data.city === '' ? 'N/A' : shelter?.data.city}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Province:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Province:</span>
+                  <span className='text-gray-700'>
                     <p>{shelter?.data.province === '' ? 'N/A' : shelter?.data.province}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Phone:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Phone:</span>
+                  <span className='text-gray-700'>
                     <p>{shelter?.data.phone === '' ? 'N/A' : shelter?.data.phone}</p>
                   </span>
                 </li>
                 <li>
-                  <span class='font-bold'>Mission Statement:</span>
-                  <span class='text-gray-700'>
+                  <span className='font-bold'>Mission Statement:</span>
+                  <span className='text-gray-700'>
                     <p>{shelter?.data.description === '' ? 'N/A' : shelter?.data.description}</p>
                   </span>
                 </li>
+                <li>
+                  <a href={`/blog/${otherUserId}`} className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Shelter Blog</a>
+                </li>
               </ul>
             </div>
-            <div class='profile-favs'>
-              <div class='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
-                <div class='shelter-pet-list'>
-                  <p class='text-xl font-bold center-text mr-4'>Listed Pets</p>
+            <div className='profile-favs'>
+              <div className='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
+                <div className='shelter-pet-list'>
+                  <p className='text-xl font-bold center-text mr-4'>Listed Pets</p>
                 </div>
                 <div className='-m-1 flex flex-wrap md:-m-2'>
                   {shelterPets?.map((pet) => (
-                    <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2 flex flex-col items-center'>
+                    <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2 flex flex-col items-center' key={pet.id}>
                       <a href={`/petlistings/${pet.id}`} className='w-full block'>
                         <img
                           alt={pet.name}
                           className='block w-full h-64 rounded-lg object-cover object-center'
-                          src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '../../../images/logo_ref.png'}
+                          src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '/images/logo_ref.png'}
                         />
                       </a>
                       <p className='text-center'>{pet.name}</p>
@@ -269,15 +262,15 @@ function ProfileOther() {
               </div>
             </div>
           </div>
-          <div class="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
-                <p class="text-xl font-bold center-text mr-4">Shelter Reviews</p>
+          <div className="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
+                <p className="text-xl font-bold center-text mr-4">Shelter Reviews</p>
                 {shelterReviews?.map((review) => (
-                <div class="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
-                    <div class="flex items-center">
+                <div className="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700" key={review.id}>
+                    <div className="flex items-center">
                     {Array.from({ length: review.rating }, (_, index) => (
                         <svg
                         key={index}
-                        class="w-4 h-4 text-yellow-300 me-1"
+                        className="w-4 h-4 text-yellow-300 me-1"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -286,11 +279,11 @@ function ProfileOther() {
                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                         </svg>
                     ))}
-                    <p class="mt-2 text-white">{review.rating.toFixed(2)} out of 5</p>
+                    <p className="mt-2 text-white">{review.rating.toFixed(2)} out of 5</p>
                     </div>
-                    <div class="mt-2 text-white">{review.seeker}: {review.content}</div>
+                    <div className="mt-2 text-white">{review.seeker}: {review.content}</div>
                     {review?.reply ? (
-                    <p class="mt-2 text-white">Shelter's response: {review?.reply.content}</p>
+                    <p className="mt-2 text-white">Shelter's response: {review?.reply.content}</p>
                     ) : (
                     <div>
                     </div>
@@ -298,25 +291,25 @@ function ProfileOther() {
                 </div>
                 ))}
           </div>
-          <div class="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
-            <form class="review-box mx-auto block rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700" onSubmit={handleSubmitReview}>
-                <label for="review" class="text-base text-neutral-600 dark:text-neutral-200 mb-2">
+          <div className="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
+            <form className="review-box mx-auto block rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700" onSubmit={handleSubmitReview}>
+                <label htmlFor="review" className="text-base text-neutral-600 dark:text-neutral-200 mb-2">
                     Leave a review:
                 </label>
-                <textarea id="review" name="review" class="w-full px-3 py-4 border rounded-lg mb-4" placeholder="Leave your review here" required></textarea>
-                <label for="rating" class="text-base text-neutral-600 dark:text-neutral-200 mb-2">
+                <textarea id="review" name="review" className="w-full px-3 py-4 border rounded-lg mb-4" placeholder="Leave your review here" required></textarea>
+                <label htmlFor="rating" className="text-base text-neutral-600 dark:text-neutral-200 mb-2">
                     Rating:
                 </label>
-                <p class="text-base text-neutral-600 dark:text-neutral-200" id="rating-display">{Array.from({ length: rating }, (_, index) => (
-                    <span class="text-yellow-300" key={index}>⭐</span>
+                <p className="text-base text-neutral-600 dark:text-neutral-200" id="rating-display">{Array.from({ length: rating }, (_, index) => (
+                    <span className="text-yellow-300" key={index}>⭐</span>
                 ))}</p>
-                <input type="range" id="rating" name="rating" min="1" max="5" step="1" value={rating} class="w-full mb-4" onChange={(e) => setRating(e.target.value)}></input>
+                <input type="range" id="rating" name="rating" min="1" max="5" step="1" value={rating} className="w-full mb-4" onChange={(e) => setRating(e.target.value)}></input>
                 {is_reviewed ? (
-                    <p class="text-base text-neutral-600 dark:text-neutral-200 mb-2">You have already reviewed this shelter.</p>
+                    <p className="text-base text-neutral-600 dark:text-neutral-200 mb-2">You have already reviewed this shelter.</p>
                 ) : (
                     <div></div>
                 )}
-                <button type="submit" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Leave a review</button>
+                <button type="submit" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Leave a review</button>
             </form>
             </div>
         </div>
@@ -325,54 +318,54 @@ function ProfileOther() {
 
     const renderShelterSeeker = () => {
         return (
-            <div class='profile-grid'>
-            <div class='profile-img'>
-                <div class='profile-container'>
-                    <img class='rounded-full w-full h-full' src={seeker?.data.avatar? `${process.env.REACT_APP_API_URL}${seeker?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+            <div className='profile-grid'>
+            <div className='profile-img'>
+                <div className='profile-container'>
+                    <img className='rounded-full w-full h-full' src={seeker?.data.avatar? `${process.env.REACT_APP_API_URL}${seeker?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
                 </div>
             </div>
-            <div class='profile-desc'>
-                <p class='font-semibold text-5xl break-all'>Seeker Profile</p>
-                <hr class='line'></hr>
-                <ul class='profile-list'>
+            <div className='profile-desc'>
+                <p className='font-semibold text-5xl break-all'>{seeker?.data.first_name} {seeker?.data.last_name}</p>
+                <hr className='line'></hr>
+                <ul className='profile-list'>
                 <li>
-                    <span class='font-bold'>Email:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Email:</span>
+                    <span className='text-gray-700'>
                     <a href={`mailto:${seeker?.data.email}`}>{seeker?.data.email}</a>
                     </span>
                 </li>
                 <li>
-                    <span class='font-bold'>Adress:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Adress:</span>
+                    <span className='text-gray-700'>
                     <p>{seeker?.data.address === '' ? 'N/A' : seeker?.data.address}</p>
                     </span>
                 </li>
                 <li>
-                    <span class='font-bold'>Postal Code:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Postal Code:</span>
+                    <span className='text-gray-700'>
                     <p>{seeker?.data.postal_code === '' ? 'N/A' : seeker?.data.postal_code}</p>
                     </span>
                 </li>
                 <li>
-                    <span class='font-bold'>City:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>City:</span>
+                    <span className='text-gray-700'>
                     <p>{seeker?.data.city === '' ? 'N/A' : seeker?.data.city}</p>
                     </span>
                 </li>
                 <li>
-                    <span class='font-bold'>Province:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Province:</span>
+                    <span className='text-gray-700'>
                     <p>{seeker?.data.province === '' ? 'N/A' : seeker?.data.province}</p>
                     </span>
                 </li>
                 <li>
-                    <span class='font-bold'>Phone:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Phone:</span>
+                    <span className='text-gray-700'>
                     <p>{seeker?.data.phone === '' ? 'N/A' : seeker?.data.phone}</p>
                     </span>
                 </li>
                 <li>
-                    <a class='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-full' href='applications'>Seeker Applications</a>
+                    <a className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-full' href='applications'>Seeker Applications</a>
                 </li>
                 </ul>
             </div>
@@ -383,23 +376,23 @@ function ProfileOther() {
     const renderShelterShelter = () => {
         return (
             <div>
-                <div class='profile-grid'>
-                <div class='profile-img'>
-                    <div class='profile-container'>
-                    <img class='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '../../../images/logo_ref.png'} alt='../../../images/logo_ref.png' />
+                <div className='profile-grid'>
+                <div className='profile-img'>
+                    <div className='profile-container'>
+                    <img className='rounded-full w-full h-full' src={shelter?.data.avatar? `${process.env.REACT_APP_API_URL}${shelter?.data.avatar}` : '/images/logo_ref.png'} alt='/images/logo_ref.png' />
                     </div>
                 </div>
-                <div class='profile-desc'>
-                <p class='font-semibold text-5xl break-all'>Shelter Profile</p>
-                <div class="flex items-center">
+                <div className='profile-desc'>
+                <p className='font-semibold text-5xl break-all'>{shelter?.data.first_name}</p>
+                <div className="flex items-center">
                     {shelter?.data.avg_rating === 0 ? (
                         <span>No Rating</span>
                     ) : (
-                        <div class="flex items-center">
+                        <div className="flex items-center">
                         {Array.from({ length: shelter?.data.avg_rating }, (_, index) => (
                             <svg
                             key={index}
-                            class="w-4 h-4 text-yellow-300 me-1"
+                            className="w-4 h-4 text-yellow-300 me-1"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="currentColor"
@@ -412,65 +405,68 @@ function ProfileOther() {
                         </div>
                     )}
                     </div>
-                <hr class='line'></hr>
-                <ul class='profile-list'>
+                <hr className='line'></hr>
+                <ul className='profile-list'>
                     <li>
-                    <span class='font-bold'>Email:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Email:</span>
+                    <span className='text-gray-700'>
                         <a href={`mailto:${shelter?.data.email}`}>{shelter?.data.email}</a>
                     </span>
                     </li>
                     <li>
-                    <span class='font-bold'>Adress:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Adress:</span>
+                    <span className='text-gray-700'>
                         <p>{shelter?.data.address === '' ? 'N/A' : shelter?.data.address}</p>
                     </span>
                     </li>
                     <li>
-                    <span class='font-bold'>Postal Code:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Postal Code:</span>
+                    <span className='text-gray-700'>
                         <p>{shelter?.data.postal_code === '' ? 'N/A' : shelter?.data.postal_code}</p>
                     </span>
                     </li>
                     <li>
-                    <span class='font-bold'>City:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>City:</span>
+                    <span className='text-gray-700'>
                         <p>{shelter?.data.city === '' ? 'N/A' : shelter?.data.city}</p>
                     </span>
                     </li>
                     <li>
-                    <span class='font-bold'>Province:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Province:</span>
+                    <span className='text-gray-700'>
                         <p>{shelter?.data.province === '' ? 'N/A' : shelter?.data.province}</p>
                     </span>
                     </li>
                     <li>
-                    <span class='font-bold'>Phone:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Phone:</span>
+                    <span className='text-gray-700'>
                         <p>{shelter?.data.phone === '' ? 'N/A' : shelter?.data.phone}</p>
                     </span>
                     </li>
                     <li>
-                    <span class='font-bold'>Mission Statement:</span>
-                    <span class='text-gray-700'>
+                    <span className='font-bold'>Mission Statement:</span>
+                    <span className='text-gray-700'>
                         <p>{shelter?.data.description === '' ? 'N/A' : shelter?.data.description}</p>
                     </span>
                     </li>
+                    <li>
+                        <a href={`/blog/${otherUserId}`} className='bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full'>Shelter Blog</a>
+                    </li>
                 </ul>
                 </div>
-                <div class='profile-favs'>
-                <div class='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
-                    <div class='shelter-pet-list'>
-                    <p class='text-xl font-bold center-text mr-4'>Listed Pets</p>
+                <div className='profile-favs'>
+                <div className='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
+                    <div className='shelter-pet-list'>
+                    <p className='text-xl font-bold center-text mr-4'>Listed Pets</p>
                     </div>
                     <div className='-m-1 flex flex-wrap md:-m-2'>
                     {shelterPets?.map((pet) => (
-                        <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2 flex flex-col items-center'>
+                        <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2 flex flex-col items-center' key={pet.id}>
                         <a href={`/petlistings/${pet.id}`} className='w-full block'>
                             <img
                             alt={pet.name}
                             className='block w-full h-64 rounded-lg object-cover object-center'
-                            src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '../../../images/logo_ref.png'}
+                            src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '/images/logo_ref.png'}
                             />
                         </a>
                         <p className='text-center'>{pet.name}</p>
@@ -480,15 +476,15 @@ function ProfileOther() {
                 </div>
                 </div>
             </div>
-            <div class="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
-                <p class="text-xl font-bold center-text mr-4">Shelter Reviews</p>
+            <div className="container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4">
+                <p className="text-xl font-bold center-text mr-4">Shelter Reviews</p>
                 {shelterReviews?.map((review) => (
-                <div class="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
-                    <div class="flex items-center">
+                <div className="review-box mx-auto flex items-center flex-col rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700" key={review.id}>
+                    <div className="flex items-center">
                     {Array.from({ length: review.rating }, (_, index) => (
                         <svg
                         key={index}
-                        class="w-4 h-4 text-yellow-300 me-1"
+                        className="w-4 h-4 text-yellow-300 me-1"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -497,11 +493,11 @@ function ProfileOther() {
                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                         </svg>
                     ))}
-                    <p class="mt-2 text-white">{review.rating.toFixed(2)} out of 5</p>
+                    <p className="mt-2 text-white">{review.rating.toFixed(2)} out of 5</p>
                     </div>
-                    <div class="mt-2 text-white">{review.seeker}: {review.content}</div>
+                    <div className="mt-2 text-white">{review.seeker}: {review.content}</div>
                     {review?.reply ? (
-                    <p class="mt-2 text-white">Shelter's response: {review?.reply.content}</p>
+                    <p className="mt-2 text-white">Shelter's response: {review?.reply.content}</p>
                     ) : (
                     <div>
                     </div>
@@ -514,7 +510,7 @@ function ProfileOther() {
     }
 
     return (
-        <div class='w-full h-full'>
+        <div className='w-full h-full'>
             {renderProfile()}
         </div>
     )

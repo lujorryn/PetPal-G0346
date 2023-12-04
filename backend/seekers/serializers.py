@@ -7,7 +7,7 @@ class SeekerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seeker
         fields = ['email', 'address', 'city', 'province', 'postal_code', 'phone', 'avatar',
-                  'is_notif_comment', 'is_notif_status', 'is_notif_petlisting']
+                  'is_notif_comment', 'is_notif_status', 'is_notif_petlisting', 'first_name', 'last_name']
 
 
 class FavPetSerializer(serializers.ModelSerializer):

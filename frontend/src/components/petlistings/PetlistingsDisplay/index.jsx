@@ -26,7 +26,7 @@ function PetlistingsDisplay({data, setPage}) {
                 return <Card 
                   key={result.id}
                   to={`/petlistings/${result.id}`} 
-                  imgSrc={result.photos.length > 0 ? `${API_URL}${result.photos[0]}` : defaultImg} 
+                  imgSrc={result.photos.length > 0 ? `${API_URL}${result.photos[0].url}` : defaultImg} 
                   text={result.name}
                 />
               })}

@@ -64,9 +64,9 @@ def shelters_list_view(request):
 
 
 '''
-VIEW / EDIT / DELETE A shelter
+VIEW / EDIT A shelter
 ENDPOINT: /api/shelters/<int:account_id>/
-METHOD: GET, PUT, DELETE
+METHOD: GET, PUT
 PERMISSION:
 SUCCESS:
 '''
@@ -101,6 +101,7 @@ def shelter_detail_view(request, account_id):
             avg_rating = None
         data = serializer.data
         data['avg_rating'] = avg_rating
+        data['first_name'] = shelter.first_name
         return Response({'msg': 'Shelter Detail', 'data': data}, status=status.HTTP_200_OK)
 
     if request.method == 'PUT':
