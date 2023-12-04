@@ -29,7 +29,7 @@ def shelters_list_view(request):
 
     # -- Pagination --
     # Picks how many shelters to show per page
-    paginator = Paginator(shelters, per_page=2)
+    paginator = Paginator(shelters, per_page=9)
     # Retrieve page number
     page_num = request.GET.get("page", 1)
     # Get shelters from that page number
@@ -41,6 +41,7 @@ def shelters_list_view(request):
         data.append({
             'id': shelter.pk,
             'email': shelter.email,
+            'name': shelter.first_name,
             'address': shelter.address,
             'city': shelter.city,
             'province': shelter.province,
@@ -63,9 +64,9 @@ def shelters_list_view(request):
 
 
 '''
-VIEW / EDIT / DELETE A shelter
+VIEW / EDIT A shelter
 ENDPOINT: /api/shelters/<int:account_id>/
-METHOD: GET, PUT, DELETE
+METHOD: GET, PUT
 PERMISSION:
 SUCCESS:
 '''
@@ -100,6 +101,7 @@ def shelter_detail_view(request, account_id):
             avg_rating = None
         data = serializer.data
         data['avg_rating'] = avg_rating
+        data['first_name'] = shelter.first_name
         return Response({'msg': 'Shelter Detail', 'data': data}, status=status.HTTP_200_OK)
 
     if request.method == 'PUT':

@@ -48,7 +48,7 @@ export const AuthProvider = ({children}) => {
     navigate('/')
   }
 
-  const logout = () => {
+  const logout = (dest='/login') => {
     setToken(null)
     setUserId(null)
     setRole(null)
@@ -56,7 +56,7 @@ export const AuthProvider = ({children}) => {
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('userId')
     localStorage.removeItem('role')
-    navigate('/login')
+    navigate(dest, { replace: true })
   }
 
   return(

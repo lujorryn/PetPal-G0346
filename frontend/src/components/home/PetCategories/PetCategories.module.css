@@ -1,0 +1,7 @@
+.wrapper {
+  width: 100%;
+  margin-top: var(--margin-wide);
+  padding: var(--margin-wide);
+  
+  background-color: var(--color-tertiary);
+}

@@ -1,10 +1,8 @@
-import { Link } from 'react-router-dom'
+import SignupSuccessMessage from "../components/accounts/SignupSuccessMessage"
 
 function SignupSuccess() {
   return (
-    <div>
-      Signup Success
-    </div>
+    <SignupSuccessMessage />
   );
 }
 

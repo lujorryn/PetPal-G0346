@@ -1,0 +1,78 @@
+.wrapper {
+  flex: 1;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-mid) var(--padding-extra);
+}
+
+.form {
+  width: 32rem;
+}
+
+.input {
+  color: black;
+}
+
+/* SEEKER/SHELTER TABS  */
+.rolegroup {
+  width: 32rem;
+  display: flex;
+}
+
+.role {
+  flex-basis: 50%;
+  padding: var(--padding-narrow);
+  border-radius: 1rem 1rem 0 0;
+
+  text-align: center;
+
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.active {
+  background-color: var(--color-primary);
+}
+
+.error {
+  margin: var(--margin-mid) 0;
+  padding: var(--padding-narrow);
+  padding-left: var(--margin-mid);
+
+  border: 1.5px red solid;
+  border-radius: 0.5rem;
+  background-color: var(--color-warning);
+}
+
+.instr {
+  text-align: center;
+  margin-bottom: var(--margin-mid);
+}
+
+.btn {
+  margin-top: var(--margin-wide);
+}
+
+.link {
+  color: var(--color-white);
+  text-decoration: underline;
+}
+
+/* Tablets and ipads */
+@media (max-width: 52rem) { 
+  .form, .rolegroup{
+    width: 70%;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 36rem) {
+  .form, .rolegroup {
+    width: 100%;
+  }
+}

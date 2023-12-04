@@ -1,7 +1,7 @@
 
 function NotFound() {
   return (
-    <div>404 - NotFound</div>
+    <div style={{padding: 'var(--padding-wide)'}}>404 - NotFound</div>
   )
 }
 

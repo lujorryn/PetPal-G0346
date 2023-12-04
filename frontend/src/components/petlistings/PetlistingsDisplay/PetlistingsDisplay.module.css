@@ -1,0 +1,14 @@
+.wrapper {
+  grid-column: 2;
+  grid-row: 3;
+  border-radius: 0.5rem;
+  padding: var(--padding-mid);
+  background-color: var(--color-tertiary);
+}
+
+@media (max-width: 52rem) {
+  .wrapper {
+    grid-column: 1/-1;
+    grid-row: 4;
+  }
+}
