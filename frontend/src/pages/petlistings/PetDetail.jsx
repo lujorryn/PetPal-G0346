@@ -7,6 +7,7 @@ import '../../styles/global.css';
 import './PetDetail.css';
 
 import Button from '../../components/ui/Button';
+import { containerClasses } from '@mui/material';
 
 
 function PetDetail() {
@@ -131,22 +132,29 @@ function PetDetail() {
 
     const renderActionBtn = () => {
       if (isListingOwner) {
+        // return edit button
         return (
           <Button handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>Edit pet</Button>
         )
       }
-
+      
+      const shelterContact = `/messages/${shelter.id}`
       if (listing.status !== "AV" ) {
         return (
+          // contact shelter btn
           <>
-             <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>contact shelter</Button>
+             <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(shelterContact)}}>contact shelter</Button>
           </>
         )
       }
+      
       return (
+        // returning:
+        // contact shelter btn
+        // application form btn
         <>
-        <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>contact shelter</Button>
-        <Button id="application-form-btn" handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>Application Form</Button>
+        <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(shelterContact)}}>contact shelter</Button>
+        <Button id="application-form-btn" handleClick={() => {navigate(`/applications`)}}>Application Form</Button>
         </>
       )
 
