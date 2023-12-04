@@ -79,6 +79,22 @@ function Nav() {
     }
   }
 
+  const handleDelete = (id) => {
+    try {
+      fetch(`${process.env.REACT_APP_API_URL}/api/notifications/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(() => {
+        getNotifications()
+        getReadNotifications()
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const getNotifications = useCallback(async () => {
     var nextPage = `${process.env.REACT_APP_API_URL}/api/notifications`
     var notifications = []
@@ -200,7 +216,7 @@ function Nav() {
               ) : (
                 <NotificationsIcon className={styles.icon} onClick={handleNotificationClick} />
               )}
-              { isNotificationOpen && <NotificationNav onClick={handleNotificationClick} handleClick={handleClick} notifications={notifications} readNotifications={readNotifications} sortDesc={sortDesc} handleSort={handleSort}/> }
+              { isNotificationOpen && <NotificationNav onClick={handleNotificationClick} handleClick={handleClick} notifications={notifications} readNotifications={readNotifications} sortDesc={sortDesc} handleSort={handleSort} handleDelete={handleDelete} /> }
             </li>
             <li>
               <AccountCircleIcon className={styles.icon} onClick={handleAccountClick} />

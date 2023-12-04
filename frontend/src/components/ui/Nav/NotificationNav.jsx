@@ -2,11 +2,24 @@ import styles from './Nav.module.css'
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 
-function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort}) {
+function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort, handleDelete}) {
   const [toggleRead, setToggleRead] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const notificationsPerPage = 2
+
   const handleToggle = () => {
     setToggleRead(!toggleRead)
   }
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
+
+  const totalPages = Math.ceil((toggleRead ? readNotifications : notifications).length / notificationsPerPage)
+  const visibleNotifications = (toggleRead ? readNotifications : notifications).slice(
+    (currentPage - 1) * notificationsPerPage,
+    currentPage * notificationsPerPage
+  )
 
   return (
     <div className={styles.notification}>
@@ -37,55 +50,50 @@ function NotificationNav({onClick, handleClick, notifications, readNotifications
         </label>
         <span>{sortDesc ? 'Descending' : 'Ascending'}</span>
       </div>
-          <ul>
-            { toggleRead ? (
-              readNotifications.map( (note) => (
-                <li key={note.id}  className={styles.acctlink} onClick={() => handleClick(note.id)}>
-                  <div className={styles.nlist}>
-                    <a href={`/profile/${note.creator_id}`}>
-                      <img className={styles.img} src={note?.creator_avatar ? `${process.env.REACT_APP_API_URL}/${note.creator_avatar}` : "/images/logo_ref.png"} alt="" />
-                    </a>
-                      <div className='flex-col cursor-pointer' onClick={(e) => {e.stopPropagation(); handleClick(note.id, note.content_type, note.object_id)}}>
-                        <div>
-                          <span className='font-bold'>{note.subject}</span>
-                        </div>
-                        <div>
-                          <span>
-                          {note.body.length > 80 ? `${note.body.substring(0, 80)}...` : note.body}
-                          </span>
-                        </div>
-                        <div>
-                          <span className='text-xs text-gray-500'>{formatDistanceToNow(new Date(note.created_time))} ago</span>
-                        </div>
-                      </div>
-                  </div>
-                </li>
-              ))
-            ) : (
-              notifications.map( (note) => (
-                <li key={note.id}  className={styles.acctlink} onClick={() => handleClick(note.id)}>
-                  <div className={styles.nlist}>
-                    <a href={`/profile/${note.creator_id}`} className='m-2'>
-                      <img className={styles.img} src={note?.creator_avatar ? `${process.env.REACT_APP_API_URL}/${note.creator_avatar}` : "/images/logo_ref.png"} alt="" />
-                    </a>
-                      <div className='flex-col cursor-pointer' onClick={(e) => {e.stopPropagation(); handleClick(note.id, note.content_type, note.object_id)}}>
-                        <div>
-                          <span className='font-bold'>{note.subject}</span>
-                        </div>
-                        <div>
-                          <span>
-                          {note.body.length > 80 ? `${note.body.substring(0, 80)}...` : note.body}
-                          </span>
-                        </div>
-                        <div>
-                          <span className='text-xs text-gray-500'>{formatDistanceToNow(new Date(note.created_time))} ago</span>
-                        </div>
-                      </div>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
+      <ul>
+        {visibleNotifications.map((note) => (
+          <li key={note.id} className={styles.acctlink} onClick={() => handleClick(note.id)}>
+            <div className={styles.nlist}>
+              <a href={`/profile/${note.creator_id}`} className="m-2">
+                <img
+                  className={styles.img}
+                  src={note?.creator_avatar ? `${process.env.REACT_APP_API_URL}/${note.creator_avatar}` : "/images/logo_ref.png"}
+                  alt=""
+                />
+              </a>
+              <div className='flex-col cursor-pointer' onClick={(e) => { e.stopPropagation(); handleClick(note.id, note.content_type, note.object_id) }}>
+                <div>
+                  <span className='font-bold'>{note.subject}</span>
+                </div>
+                <div>
+                  <span>
+                    {note.body.length > 80 ? `${note.body.substring(0, 80)}...` : note.body}
+                  </span>
+                </div>
+                <div>
+                  <span className='text-xs text-gray-500'>{formatDistanceToNow(new Date(note.created_time))} ago</span>
+                </div>
+              </div>
+              <button className="m-2" onClick={(e) => { e.stopPropagation(); handleDelete(note.id) }}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div className="pagination flex justify-center m-4">
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`pagination-btn ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} border border-gray-300 px-4 py-2 rounded-md mr-2 focus:outline-none focus:ring focus:border-blue-300`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
