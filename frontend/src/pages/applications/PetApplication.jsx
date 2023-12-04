@@ -70,10 +70,11 @@ function PetApplication () {
 
     // States to store information
     const [applications, setApplications] = useState(null);
-    const [formData, setFormData] = useState(personal_data);
     const [errorMsg, setErrorMsg] = useState("");
     const [validData, setValidData] = useState(null);
     const [isReady, setIsReady] = useState(false);
+    const [isReadOnly, setIsReadOnly] = useState(false);
+    const [firstFetchError, setFirstFetchError] = useState(false);
 
     const navigate = useNavigate()
 
@@ -123,22 +124,26 @@ function PetApplication () {
 
     }, [applications, pet_id, navigate]);
 
-    // Get the status of the pet 
-    // useEffect(() => {
-    //   fetch(`${process.env.REACT_APP_API_URL}/api/petlistings/${pet_id}`, {
-    //     method: 'GET',
-    //     headers: {
-    //         Authorization: `Bearer ${token}`,
-    //     },
-    //   }).then(response => response.json())
-    //   .then(data => {
-    //     console.log("PET STATUS", data.data.status);
-    //     // TODO TODO TODO PLACE PET STATUS IN FORM DATA 
-    //     }).catch( error => console.log(error));
-    //   });
+    // Check to see the status of the pet
+    useEffect(() => {
+      fetch(`${process.env.REACT_APP_API_URL}/api/petlistings/${pet_id}`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+      }).then(response => response.json())
+      .then(data => {
+        console.log("PET STATUS", data.data.status);
+        if (data.data.status != 'AV') {
+          setErrorMsg("You can only apply for pets with Status: Available");
+          setIsReadOnly(true);
+          setFirstFetchError(true); // Set the error flag
+        }
+        }).catch( error => console.log(error));
+      });
 
   useEffect(() => {
-    if (isReady && validData && validData.firstName !== '' /*&& validData.get('first_name') !== undefined*/ ) {
+    if (isReady && validData && validData.firstName !== '' && !firstFetchError) {
       console.log("ValidData", validData);
   
       let form_data = new FormData();
@@ -151,7 +156,6 @@ function PetApplication () {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          // Remove the Content-Type header
         },
         body: form_data,
       }).then(response => {
@@ -159,7 +163,7 @@ function PetApplication () {
           console.log(validData);
           console.log("I'm deceased");
         }
-        // return navigate(`/applications/`);
+        // return navigate(`/applications/`); TODO, NAVIGATE TO SUCCESS PAGE
       }).catch(error => {
         console.log(error);
       });
@@ -186,11 +190,6 @@ function PetApplication () {
           if (validation_result.first_name != '') {
             console.log("This is validation res", validation_result);
 
-            // // Iterate over entries to test
-            // for (let [key, value] of validation_result.entries()) {
-            //     console.log("THIS IS ENTRY IN PETAPP", key, value);
-            // }
-
             setValidData(validation_result);
             setIsReady(true);
           }
@@ -203,7 +202,7 @@ function PetApplication () {
         // <div>Application Detail {application_id} </div>
         <div className="main__container">
           <ApplicationForm 
-            readOnly={false} 
+            readOnly={isReadOnly} 
             is_disabled={false} 
             data={personal_data} 
             button_text={"Submit"} 
