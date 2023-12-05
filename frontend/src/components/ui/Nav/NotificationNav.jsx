@@ -1,5 +1,4 @@
 import styles from './Nav.module.css'
-import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 
 function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort, handleDelete, currentPage, handlePageChange, toggleRead, handleToggle}) {
