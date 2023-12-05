@@ -43,7 +43,7 @@ function NotificationNav({onClick, handleClick, notifications, readNotifications
       </div>
       <ul>
         {visibleNotifications.map((note) => (
-          <li key={note.id} className={styles.acctlink} onClick={() => handleClick(note.id, note.application_id)}>
+          <li key={note.id} className={styles.acctlink} onClick={() => handleClick(note.id, note.content_type, note.object_id, note.application_id)}>
             <div className={styles.nlist}>
               <a href={`/profile/${note.creator_id}`} className="m-2">
                 <img
