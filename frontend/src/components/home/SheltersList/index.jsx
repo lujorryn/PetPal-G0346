@@ -38,7 +38,7 @@ function SheltersList() {
         {shelters.map((shelter, i) => (
           <div key={i} className={styles.container}>
             <img src={shelter.avatar ? `${API_URL}${shelter.avatar}` : defaultImageSrc} alt={shelter.name} />
-            <Link to={`/shelters/${shelter.id}`} className={styles.overlay}>
+            <Link to={`/profile/${shelter.id}`} className={styles.overlay}>
               <p className={styles.text}>{shelter.name}</p>
             </Link>
           </div>
