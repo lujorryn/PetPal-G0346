@@ -33,6 +33,17 @@ def blogpost_create_view(request):
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+class CustomPaginator(PageNumberPagination):
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'current_page': self.page.number,
+            'total_pages': self.page.paginator.num_pages,
+            'results': data
+        })
+
 '''
 LIST All blogposts of a shelter
 ENDPOINT: /api/blogposts/shelter/<int:shelter_id>
@@ -49,8 +60,8 @@ def blogpost_list_view(request, shelter_id):
         blogposts = BlogPost.objects.filter(author=User.objects.get(pk=shelter_id))
         
         data = []
-        paginator = PageNumberPagination()
-        paginator.page_size = 2
+        paginator = CustomPaginator()
+        paginator.page_size = 5
         paginated_blogposts = paginator.paginate_queryset(blogposts, request)
 
         for blogpost in paginated_blogposts:

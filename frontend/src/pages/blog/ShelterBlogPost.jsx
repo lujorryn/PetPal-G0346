@@ -49,7 +49,7 @@ function ShelterBlogPost() {
 
   return (
     <div>
-      <BlogHero imgSrc={blogPost.image}/>
+      <BlogHero imgSrc={blogPost.image} userId={userId}/>
       <BlogContent 
         title={blogPost.title}
         author={blogPost.author}
@@ -58,6 +58,7 @@ function ShelterBlogPost() {
         content_list={blogPost.content ? blogPost.content.split('\n') : []}
         isOwner={isOwner}
         handleDelete={handleDelete}
+        userId={userId}
       />
     </div>
   )

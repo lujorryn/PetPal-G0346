@@ -5,6 +5,17 @@
   display: flex;
 }
 
+.linkwrapper {
+  margin-top: var(--margin-wide);
+  margin-left: var(--margin-wide);
+}
+
+.link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .img {
   width: 100%;
   border-radius: 0.5rem;
