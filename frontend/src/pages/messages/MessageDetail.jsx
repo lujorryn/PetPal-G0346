@@ -57,7 +57,13 @@ function MessageDetail() {
             Authorization: `Bearer ${token}`
           }
         })
+
+        if (!res.ok) {
+          navigate('/404')
+          break
+        }
         const data = await res.json()
+        
         results.push(...data.data)
         if (data.page.has_next) {
           nextPage = `${process.env.REACT_APP_API_URL}/api/comments/applications/${id}?page=${pageNum + 1}`
