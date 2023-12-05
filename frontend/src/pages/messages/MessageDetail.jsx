@@ -141,7 +141,7 @@ function MessageDetail() {
           .sort((a, b) => new Date(a.created_time) - new Date(b.created_time))
           .map((message) => (
             role === 'seeker' ? message.is_author_seeker ? (
-              <div className="message-self">
+              <div className="message-self" key={message.id}>
                 <div className="mt-4 mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white">
                   {message.content}
                 </div>
@@ -150,7 +150,7 @@ function MessageDetail() {
                 </a>
               </div>
             ) : (
-              <div className="message-other">
+              <div className="message-other" key={message.id}>
                 <a href={`/profile/${message.shelter_id}`}>
                   <img className="rounded-full h-[3rem] w-[3rem] mt-4" src={otherUser?.avatar ? `${process.env.REACT_APP_API_URL}/${otherUser?.avatar}` : "/images/logo_ref.png"} alt="/images/logo_ref.png"/>
                 </a>
@@ -159,7 +159,7 @@ function MessageDetail() {
                 </div>
               </div>
             ) : message.is_author_seeker ? (
-              <div className="message-other">
+              <div className="message-other" key={message.id}>
                 <a href={`/profile/${message.seeker_id}`}>
                   <img className="rounded-full h-[3rem] w-[3rem] mt-4" src={otherUser?.avatar ? `${process.env.REACT_APP_API_URL}/${otherUser?.avatar}` : "/images/logo_ref.png"} alt="/images/logo_ref.png"/>
                 </a>
@@ -168,7 +168,7 @@ function MessageDetail() {
                 </div>
               </div>
             ) : (
-              <div className="message-self">
+              <div className="message-self" key={message.id}>
                 <div className="mt-4 mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white">
                   {message.content}
                 </div>
