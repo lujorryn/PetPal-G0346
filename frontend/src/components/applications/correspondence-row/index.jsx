@@ -4,7 +4,12 @@ import Button from '../../ui/Button/index.jsx'
 // Component for an application or message row 
 
 function CorrespondenceRow ({subject, from, preview, timestamp, handleViewBtn, is_app=false, is_seeker=true, 
-                            handleWDBtn, handleAcceptBtn=null}) {
+                            handleWDBtn, handleAcceptBtn=null, isHidden}) {
+    // Do not render if the row is meant to be hidden. 
+    if (isHidden) {
+        return null;
+        }
+    
     return (
         <div class="msg-row"> 
             <div class="msg-info">
