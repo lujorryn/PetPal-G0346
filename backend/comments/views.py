@@ -127,6 +127,8 @@ def comment_detail_view(request, msg_id):
             "shelter": comment.shelter.email,
             "is_review": comment.is_review,
             "application": comment.application.pk,
+            "shelter_id": comment.shelter.pk,
+            "seeker_id": comment.seeker.pk,
         }
         return Response({'data': data}, status=status.HTTP_200_OK)
     except:
@@ -173,6 +175,8 @@ def comments_all_applications_list_view(request):
                     "shelter": comment.shelter.email,
                     "is_review": comment.is_review,
                     "application": comment.application.pk,
+                    "shelter_id": comment.shelter.pk,
+                    "seeker_id": comment.seeker.pk,
                 })
 
         payload = {
@@ -222,6 +226,8 @@ def comments_application_list_view(request, app_id):
                 "shelter": comment.shelter.email,
                 "is_review": comment.is_review,
                 "application": comment.application.pk,
+                "shelter_id": comment.shelter.pk,
+                "seeker_id": comment.seeker.pk,
             })
 
         payload = {
@@ -238,6 +244,7 @@ def comments_application_list_view(request, app_id):
         return Response({'error': 'Application does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 '''
+
 LIST All Comments of a Shelter
 ENDPOINT: /api/comments/shelter/<int:shelter_id>
 METHOD: GET
