@@ -139,22 +139,26 @@ function PetDetail() {
       }
 
       const shelterContact = `/messages/${shelter.id}`
-      if (listing.status !== "AV") {
+      if (role === "seeker") {
+        if (listing.status !== "AV") {
+          return (
+            // contact shelter btn
+            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
+          )
+        }
+  
         return (
+          // returning:
           // contact shelter btn
-          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
+          // application form btn
+          <>
+            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
+            <Button id="application-form-btn" handleClick={() => { navigate(`/applications`) }}>Application Form</Button>
+          </>
         )
+      } else {
+        return <></>
       }
-
-      return (
-        // returning:
-        // contact shelter btn
-        // application form btn
-        <>
-          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
-          <Button id="application-form-btn" handleClick={() => { navigate(`/applications`) }}>Application Form</Button>
-        </>
-      )
 
     }
 
