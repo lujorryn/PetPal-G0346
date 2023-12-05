@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import CorrespondenceRow from "../../components/applications/correspondence-row/index.jsx"
 import Button from "../../components/ui/Button/index.jsx"
-import { withdrawApp, denyApp } from "./withdrawDenyApp.jsx";
+import { withdrawApp, denyApp, acceptApp } from "./withdrawDenyApp.jsx";
 
 // TODO:
 // - Put the last_updated time in a fully readable format 
 // - Make Pending/Active buttons change (PUT OFF)
+// - Test acceptApp() 
 
 // "Applications" component
 // This renders all of the applications associated with the user. 
@@ -77,7 +78,6 @@ function Applications() {
 
   // Button to deny or withdraw an application 
   const onWithdrawDenyBtn = (event) => {
-
     // To get application id, get .msg-preview
     let msgRow = event.target.closest('.msg-row');
     let app_id;
@@ -109,6 +109,30 @@ function Applications() {
     }
   }
 
+  // Function to accept application. NEEDS TESTING. 
+  const onAcceptBtn = (event) => {
+    // To get application id, get .msg-preview
+    let msgRow = event.target.closest('.msg-row');
+    let app_id;
+
+    if (msgRow) {
+      // Find the "msg-preview" element within the "msg-row"
+      const msgPreview = msgRow.querySelector('.msg-preview');
+      console.log(msgPreview);
+      // Get the application ID from msgContext
+      const msgContent = msgPreview.textContent;
+      app_id = parseInt(msgContent.match(/\d+/)[0]);
+
+      if (role === 'shelter') {
+        acceptApp(token, app_id);
+        console.log("Accepted an app");
+  
+        return window.location.reload();
+      }
+    }
+  }
+
+
   return (
     <div className="main__wrapper">
       <div className="title-row">
@@ -136,6 +160,8 @@ function Applications() {
             handleViewBtn={() => navigate(`/applications/${application.id}/`)} 
             handleWDBtn={onWithdrawDenyBtn}
             is_app={true}
+            is_seeker={ role === 'shelter' ? true: false}
+            handleAcceptBtn={ role === 'shelter' ? onAcceptBtn : null}
             />
         ))}
       </div>

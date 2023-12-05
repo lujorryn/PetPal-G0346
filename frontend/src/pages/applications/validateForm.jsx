@@ -148,7 +148,7 @@ function validateForm(method, formData, pet_id, token) {
         'experience': experience_lvl, 
         'residence_type': housing, 
         'petlisting_id': pet_id,
-        'status': "A", 
+        'status': "P", 
     }
 
     if (method == "POST" && error_msg === "") {
