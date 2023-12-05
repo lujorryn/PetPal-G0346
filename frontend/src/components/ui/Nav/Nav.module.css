@@ -94,8 +94,22 @@
   display: flex;
   flex-direction: column;
   z-index: 10;
-  max-height: 250px;
   overflow-y: auto;
+}
+.notification {
+  width: 28rem;
+}
+
+@media (max-width: 448px) {
+  .account,
+  .notification {
+    width: 100%; /* Set the width to 100% for smaller screens */
+    max-height: 80vh; /* Set a maximum height to prevent overflow */
+    position: fixed; /* Change position to fixed */
+    left: 0; /* Set to left to cover the whole screen */
+    right: 0; /* Set to right to cover the whole screen */
+    top: 30; /* Set to top to cover the whole screen */
+  }
 }
 
 .account {
@@ -108,9 +122,7 @@
   color: var(--text-grey);
 }
 
-.notification {
-  width: 28rem;
-}
+
 
 .nlist {
   display: flex;

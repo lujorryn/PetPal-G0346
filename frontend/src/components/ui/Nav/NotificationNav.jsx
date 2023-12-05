@@ -2,18 +2,10 @@ import styles from './Nav.module.css'
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 
-function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort, handleDelete}) {
-  const [toggleRead, setToggleRead] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort, handleDelete, currentPage, handlePageChange, toggleRead, handleToggle}) {
+
+
   const notificationsPerPage = 2
-
-  const handleToggle = () => {
-    setToggleRead(!toggleRead)
-  }
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page)
-  }
 
   const totalPages = Math.ceil((toggleRead ? readNotifications : notifications).length / notificationsPerPage)
   const visibleNotifications = (toggleRead ? readNotifications : notifications).slice(
