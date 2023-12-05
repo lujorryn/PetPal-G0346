@@ -32,7 +32,7 @@ function CorrespondenceRow ({subject, from, preview, timestamp, handleViewBtn, i
                     <Button classes={"btn withdraw-btn"} children={"Withdraw App"} handleClick={handleWDBtn}/>
                     ) : (
                     <>
-                        <Button classes={"btn"} children={"Accept App"} handleClick={handleAcceptBtn}/>
+                        <Button classes={"btn accept-btn"} children={"Accept App"} handleClick={handleAcceptBtn}/>
                         <br></br>
                         <Button classes={"btn withdraw-btn"} children={"Deny App"} handleClick={handleWDBtn}/>
                     </>

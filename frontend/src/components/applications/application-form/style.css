@@ -120,6 +120,11 @@
     color: var(--btn-txt-color, var(--btn-bg-color-default));
   }
 
+#error-message {
+    color: red; 
+    font-weight: bold;
+}
+
 @media (max-width: 830px) {
     .form-row {
         flex-direction: column;
