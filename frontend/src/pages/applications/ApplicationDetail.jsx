@@ -7,8 +7,6 @@ import NotFound from "../NotFound.jsx";
 
 // TODO:
 // - Show 404 not found page if there is an error message
-// - Possbile api response values for preferences, experience, and residence are 
-// - Omit City/Province/PostalCode on the application? 
 
 // "ApplicationDetail" Component
 // This renders the details of a specific application 
