@@ -6,6 +6,7 @@ from petlistings.models import PetListing
 from notifications.models import Notification
 # from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 User = settings.AUTH_USER_MODEL
 
 # Create your models here.
@@ -35,3 +36,17 @@ class Application(models.Model):
     shelter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="shelter_applications")
     petlisting = models.ForeignKey(PetListing, on_delete=models.CASCADE, related_name="applications")
     notification = GenericRelation(Notification)
+    
+    def save(self, update=False, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Create notification
+
+        if not update:
+            # If update is true, handle this in the view
+            # this view should only be called when creating a new application
+            subject = 'A new application has been submitted for ' + self.petlisting.name + '!'
+            body = 'By ' + self.seeker.email
+            notification = Notification(subject=subject, body=body, content_type=ContentType.objects.get_for_model(self), object_id=self.pk, content_object=self, creator=self.seeker)
+            notification.save()
+            notification.recipients.add(self.shelter)
+            notification.save()
