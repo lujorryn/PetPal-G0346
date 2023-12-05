@@ -143,6 +143,10 @@ svg {
     align-items: center;
 }
 
+#address {
+    color: black;
+}
+
 .heart-icon {
     margin-left: auto;
 }

@@ -142,12 +142,10 @@ function PetDetail() {
       if (listing.status !== "AV" ) {
         return (
           // contact shelter btn
-          <>
-             <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(shelterContact)}}>contact shelter</Button>
-          </>
+          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(shelterContact)}}>contact shelter</Button>
         )
       }
-      
+
       return (
         // returning:
         // contact shelter btn
@@ -163,7 +161,7 @@ function PetDetail() {
     return (
       <div className="main__wrapper">
         <div className="details-container">
-        <Button handleClick={() => {navigate(`/petlistings`)}} btnId="back-btn">back to all listings</Button>
+        <Button handleClick={() => {navigate(`/petlistings`)}} btnId="back-btn">view all listings</Button>
           <div className="details-item pet-details-card">
             <div className="pet-profile-container">
               <div className="pet-profile-photos">
