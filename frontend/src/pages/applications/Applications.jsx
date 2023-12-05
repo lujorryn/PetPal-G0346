@@ -5,12 +5,13 @@ import CorrespondenceRow from "../../components/applications/correspondence-row/
 import Button from "../../components/ui/Button/index.jsx"
 import { withdrawApp, denyApp, acceptApp } from "./withdrawDenyApp.jsx";
 
-// TODO:
-// - Put the last_updated time in a fully readable format 
-// - Make Pending/Active buttons change (PUT OFF)
-// - Test acceptApp() 
+//TODO:
+// - Sort and filter
+//    - created_time / last_updated
+//      descending only
+// - Pagination
 
-// "Applications" component
+// "Applications" List component
 // This renders all of the applications associated with the user. 
 function Applications() {
 
@@ -20,6 +21,7 @@ function Applications() {
   // States to store information
   const [applications, setApplications] = useState(null);
   const navigate = useNavigate()
+  const [showClosed, setShowClosed] = useState(false); 
 
   // Individual applications 
   var applications_data = []; 
@@ -69,7 +71,7 @@ function Applications() {
 
     }, [applications]);
 
-  // Return a loading state if data is not yet available
+  // Loading msg
   if (!applications) {
     return <p>Loading applications...</p>;
   }
@@ -95,8 +97,6 @@ function Applications() {
       withdrawApp(token, app_id);
       console.log("Withdrew App");
 
-      // TODO: Make a " App Withdrawn" Text appear? 
-      // return navigate(`/applications/`);
       return window.location.reload();
 
 
@@ -109,7 +109,7 @@ function Applications() {
     }
   }
 
-  // Function to accept application. NEEDS TESTING. 
+  // Function to accept application.
   const onAcceptBtn = (event) => {
     // To get application id, get .msg-preview
     let msgRow = event.target.closest('.msg-row');
@@ -132,6 +132,19 @@ function Applications() {
     }
   }
 
+  // Handle the tabs 
+  const handleActiveClick = () => {
+    setShowClosed(false);
+  };
+
+  const handleClosedClick = () => {
+    setShowClosed(true);
+  };
+
+  // Format date function 
+  function formatDate(date) {
+    return new Date(date).toLocaleString();
+  }
 
   return (
     <div className="main__wrapper">
@@ -141,8 +154,8 @@ function Applications() {
       </div>
       <div className="msg-container">
         <div className="msg-nav">
-          <button id="inbox" className="msg-nav-item active"> All Applications </button>
-          {/* <button id="inbox" className="msg-nav-item"> Closed </button> */}
+          <button id="inbox" className={`msg-nav-item ${!showClosed ? 'active': ''}`} onClick={handleActiveClick}> Active Apps </button>
+          <button id="inbox" className={`msg-nav-item ${showClosed ? 'active': ''}`} onClick={handleClosedClick}> All </button>
         </div>
         {applications_data.map(application => (
           <CorrespondenceRow 
@@ -150,18 +163,19 @@ function Applications() {
             subject={application.first_name} 
             from={application.email} 
             preview={
-              application.status == 'W' ? `Application #${application.id} Withdrawn` : 
-              application.status == 'A' ? `Application #${application.id} Accepted` : 
-              application.status == "D" ? `Application #${application.id} Denied` : 
-              application.status == "P" ? `Application #${application.id} Pending`:
+              application.status === 'W' ? `Application #${application.id} Withdrawn` : 
+              application.status === 'A' ? `Application #${application.id} Accepted` : 
+              application.status === "D" ? `Application #${application.id} Denied` : 
+              application.status === "P" ? `Application #${application.id} Pending`:
               `Application #${application.id}`
             }  
-            timestamp={application.last_updated}
+            timestamp={formatDate(application.last_updated)}
             handleViewBtn={() => navigate(`/applications/${application.id}/`)} 
             handleWDBtn={onWithdrawDenyBtn}
             is_app={true}
             is_seeker={ role === 'shelter' ? true: false}
             handleAcceptBtn={ role === 'shelter' ? onAcceptBtn : null}
+            isHidden={!showClosed && (application.status === 'W' || application.status === 'D')}
             />
         ))}
       </div>
