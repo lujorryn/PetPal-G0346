@@ -115,9 +115,6 @@ def applications_list_and_create_view(request):
         if listing.status != "AV":
             return Response({'error': 'petlisintg unavailable'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if data['petlisting_id'] != data['pet_number']:
-            return Response({'error': 'pet_number must match'}, status=status.HTTP_400_BAD_REQUEST)
-
         new_app = Application(
             first_name=data['first_name'],
             last_name=data['last_name'],
