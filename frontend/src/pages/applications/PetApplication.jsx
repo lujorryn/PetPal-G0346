@@ -160,10 +160,11 @@ function PetApplication () {
         body: form_data,
       }).then(response => {
         if (!response.ok) {
-          console.log(validData);
-          console.log("I'm deceased");
+          // console.log(validData);
+          console.log("Error with application POST request");
+        } else {
+          return navigate(`/petlistings/application-success`, { replace: true });
         }
-        // return navigate(`/applications/`); TODO, NAVIGATE TO SUCCESS PAGE
       }).catch(error => {
         console.log(error);
       });

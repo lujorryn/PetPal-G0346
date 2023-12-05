@@ -1,4 +1,3 @@
-
 // Function used to validate application form 
 function validateForm(method, formData, pet_id, token) {
 
@@ -149,7 +148,7 @@ function validateForm(method, formData, pet_id, token) {
         'experience': experience_lvl, 
         'residence_type': housing, 
         'petlisting_id': pet_id,
-        'status': "AV", 
+        'status': "A", 
     }
 
     if (method == "POST" && error_msg === "") {
