@@ -49,7 +49,7 @@ function PetDetailEdit() {
         setShelterData(listingOwner);
         setInitialListingData(petlisting);
 
-        console.log("first init", initialListing)
+        // console.log("first init", petlisting)
       } catch (err) {
         setErr(err.message);
         console.log("Uh oh =>", err);
@@ -157,6 +157,19 @@ function PetDetailEdit() {
         }
         return 'PE'
 
+      case 'category':
+        string = string.toLowerCase();
+        if (['d', 'dog'].includes(string)) {
+            return 'D';
+        }
+        if (['c', 'cat'].includes(string)) {
+            return 'C';
+        }
+        if (['o', 'other'].includes(string)) {
+            return 'C';
+        }
+        return 'O';
+
       default:
         return string;
 
@@ -166,22 +179,25 @@ function PetDetailEdit() {
 
 
   const mainContent = (listing, shelter) => {
-    console.log(listing)
+    // console.log(listing)
     const fDate = new Date(listing.created_time).toLocaleDateString();
     
     const isListingOwner = userId == shelter.id;
     
+
+
     const sendPut = async (e) => {
       e.preventDefault();
-      
-      for (let i=0; i<photoObjects.length; i++) {
+      for (let i=0; i<photoUrls.length; i++) {
         const formData = new FormData();
         for (const key in listingData) {
           if (listingData.hasOwnProperty(key)) {
             formData.append(key, stringToCode(key));
           }
         }
-        formData.append("photos", photoObjects[i]);
+        if (i < photoObjects.length) {
+          formData.append("photos", photoObjects[i]);
+        }
         try {
           const response = await fetch(listingUrl, {
             method: 'PUT',
@@ -192,9 +208,9 @@ function PetDetailEdit() {
             body: formData,
           });
           if (!response.ok) {
-            console.log(response)
+            // console.log(response)
             const sd = await response.json();
-            console.log(sd);
+            // console.log(sd);
             console.error('File upload failed:', response.error);
           } else {
             console.log('File uploaded successfully.');
@@ -238,6 +254,8 @@ function PetDetailEdit() {
     const handlePetChange = async (event) => {
       let { name, value } = event.target;
       listingData[name] = value;
+      console.log(listingData)
+
       setListingData({ ...listingData });
     }
 
@@ -251,36 +269,7 @@ function PetDetailEdit() {
       if (!kfile) {
         return;
       }
-      
-      // const formData = new FormData();
-      // for (const key in listingData) {
-      //   if (listingData.hasOwnProperty(key)) {
-      //     formData.append(key, listingData[key]);
-      //   }
-      // }
-      
-      // formData.append("photos", kfile);
-      // try {
-      //   const response = await fetch(listingUrl, {
-      //     method: 'PUT',
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //       // 'Content-Type': "application/json",
-      //     },
-      //     body: formData,
-      //   });
-      //   if (!response.ok) {
-      //     console.log(response)
-      //     const sd = await response.json();
-      //     console.log(sd);
-      //     console.error('File upload failed:', response.error);
-      //   } else {
-      //     console.log('File uploaded successfully.');
-      //   }
-      // } catch (error) {
-      //   console.error('Error during file upload:', error.message);
-      // }
-
+    
       const objectUrl = URL.createObjectURL(kfile);
       setPhotoUrls([...photoUrls, objectUrl])
       setPhotoObjects([...photoObjects, kfile])
@@ -299,7 +288,7 @@ function PetDetailEdit() {
                 </div>
                 <div className="photo-row">
                   {photoUrls.map((photo, i) => (
-                    <button key={i} onClick={(e) => {console.log(`${i} clicked`); setSelectedPhoto(i); e.preventDefault()}}
+                    <button key={i} onClick={(e) => {setSelectedPhoto(i); e.preventDefault()}}
                       className={`photo small-photo ${selectedPhoto === i ? 'selected' : ''}`}
                     ><img src={photoUrls[i]} alt=""></img></button>
                   ))}
@@ -342,6 +331,10 @@ function PetDetailEdit() {
                   <div className="row">
                     <label htmlFor="pet-status" className="key">Status:</label>
                     <input id="pet-status" className="value" name="status" value={listing.status} onChange={handlePetChange} />
+                  </div>
+                  <div className="row">
+                    <label htmlFor="category" className="key">Category:</label>
+                    <input id="category" className="value" name="category" value={listing.category} onChange={handlePetChange} />
                   </div>
                 </div>
               </div>

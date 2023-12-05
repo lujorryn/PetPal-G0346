@@ -15,7 +15,7 @@ function PetDetailCreate() {
   const [listingData, setListingData] = useState({});
   const sampleListing = {
     name: "",
-    category: "O",
+    category: "",
     breed: "",
     age: "",
     gender: "",
@@ -52,7 +52,7 @@ function PetDetailCreate() {
       try {
         const listingOwner = await getShelterById(userId);
         setShelterData(listingOwner);
-        console.log(listingOwner);
+        // console.log(listingOwner);
       } catch (err) {
         setErr(err.message);
         console.log("Uh oh =>", err);
@@ -119,60 +119,73 @@ function PetDetailCreate() {
     return [defaultPhoto];
   }
 
-  const stringToCode = (key) => {
-    let string = listingData[key];
-    switch (key) {
-      case 'age':
-        return parseInt(string)
+    const stringToCode = (key) => {
+        let string = listingData[key];
+        switch (key) {
+            case 'age':
+                return parseInt(string)
 
-      case 'gender':
-        string = string.toLowerCase()
-        if (['male', 'm'].includes(string)) {
-          return 'M'
-        }
-        if (['female', 'f'].includes(string)) {
-          return 'F'
-        }
-        if (['unknown', 'other', 'x'].includes(string)) {
-          return 'X'
-        }
-        return 'X'
+            case 'gender':
+                string = string.toLowerCase()
+                if (['male', 'm'].includes(string)) {
+                    return 'M'
+                }
+                if (['female', 'f'].includes(string)) {
+                    return 'F'
+                }
+                if (['unknown', 'other', 'x'].includes(string)) {
+                    return 'X'
+                }
+                return 'X'
 
-      case 'size':
-        string = string.toLowerCase()
-        if (['large', 'l'].includes(string)) {
-          return 'L'
-        }
-        if (['medium', 'm'].includes(string)) {
-          return 'M'
-        }
-        if (['small', 's'].includes(string)) {
-          return 'S'
-        }
-        return 'S'
+            case 'size':
+                string = string.toLowerCase()
+                if (['large', 'l'].includes(string)) {
+                    return 'L'
+                }
+                if (['medium', 'm'].includes(string)) {
+                    return 'M'
+                }
+                if (['small', 's'].includes(string)) {
+                    return 'S'
+                }
+                return 'S'
 
-      case 'status':
-        string = string.toLowerCase();
-        if (['pending', 'pe'].includes(string)) {
-          return 'PE'
-        }
-        if (['available', 'av'].includes(string)) {
-          return 'AV'
-        }
-        if (['withdrawn', 'wi'].includes(string)) {
-          return 'WI'
-        }
-        if (['adopted', 'ad'].includes(string)) {
-          return 'AD'
-        }
-        return 'PE'
+            case 'status':
+                string = string.toLowerCase();
+                if (['pending', 'pe'].includes(string)) {
+                    return 'PE'
+                }
+                if (['available', 'av'].includes(string)) {
+                    return 'AV'
+                }
+                if (['withdrawn', 'wi'].includes(string)) {
+                    return 'WI'
+                }
+                if (['adopted', 'ad'].includes(string)) {
+                    return 'AD'
+                }
+                return 'PE'
 
-      default:
-        return string;
+            case 'category':
+                string = string.toLowerCase();
+                if (['d', 'dog'].includes(string)) {
+                    return 'D';
+                }
+                if (['c', 'cat'].includes(string)) {
+                    return 'C';
+                }
+                if (['o', 'other'].includes(string)) {
+                    return 'O';
+                }
+                return 'O';
 
-    } // end of switch(key)
+            default:
+                return string;
 
-  } // end of string to code()
+        } // end of switch(key)
+
+    } // end of string to code()
 
 
   const mainContent = (listing, shelter) => {
@@ -181,29 +194,21 @@ function PetDetailCreate() {
 
     const sendPost = async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-      for (const key in listingData) {
-        if (listingData.hasOwnProperty(key)) {
-            if (key==="photos") {
-                formData.append(key, stringToCode(key));
-            }
-        }
-      }
       let url = `${process.env.REACT_APP_API_URL}/api/petlistings`;
       let pk = 0;
       let method = 'POST'
 
-
-
-      for (let i=0; i < photoObjects.length; i++) {
+      for (let i=0; i < photoUrls.length; i++) {
         const newFormData = new FormData();
         for (const key in listingData) {
             if (listingData.hasOwnProperty(key)) {
                 newFormData.append(key, stringToCode(key));
             }
         }
-        newFormData.append("photos", photoObjects[i]);
-        console.log("listing data being sent", photoObjects)
+        if (i < photoObjects.length) {
+            newFormData.append("photos", photoObjects[i]);
+        }
+
         try {
             const response = await fetch(url, {
                 method: method,
@@ -214,9 +219,9 @@ function PetDetailCreate() {
                 body: newFormData,
             });
             if (!response.ok) {
-                console.log(response)
+                // console.log(response)
                 const sd = await response.json();
-                console.log("json:::", sd);
+                // console.log("json:::", sd);
                 console.error('File upload failed:', response.error);
             } else {
                 const oj = await response.json();
@@ -260,7 +265,7 @@ function PetDetailCreate() {
       setPhotoUrls([...photoUrls, objectUrl])
       setPhotoObjects([...photoObjects, kfile])
       setSelectedPhoto(photoUrls.length)
-      console.log("photos", photoUrls)
+    //   console.log("photos", photoUrls)
     }
 
     return (
@@ -275,7 +280,7 @@ function PetDetailCreate() {
                 </div>
                 <div className="photo-row">
                   {photoUrls.map((photo, i) => (
-                    <button key={i} onClick={(e) => {console.log(`${i} clicked`); setSelectedPhoto(i); e.preventDefault(); }}
+                    <button key={i} onClick={(e) => {setSelectedPhoto(i); e.preventDefault(); }}
                       className={`photo small-photo ${selectedPhoto === i ? 'selected' : ''}`}
                     ><img src={photoUrls[i]} alt=""></img></button>
                   ))}
@@ -318,6 +323,10 @@ function PetDetailCreate() {
                   <div className="row">
                     <label htmlFor="pet-status" className="key">Status:</label>
                     <input id="pet-status" className="value" name="status" value={listing.status} onChange={handlePetChange} />
+                  </div>
+                  <div className="row">
+                    <label htmlFor="category" className="key">Category:</label>
+                    <input id="category" className="value" name="category" value={listing.category} onChange={handlePetChange} />
                   </div>
                 </div>
               </div>

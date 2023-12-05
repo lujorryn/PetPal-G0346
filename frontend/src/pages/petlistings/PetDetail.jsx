@@ -206,6 +206,10 @@ function PetDetail() {
                     <div className="key">Status:</div>
                     <div id="pet-status" className="value">{statusMap[listing.status]}</div>
                   </div>
+                  <div className="row">
+                    <div className="key">Category:</div>
+                    <div id="category" className="value">{listing.category}</div>
+                  </div>
                 </div>
               </div>
             </div>
