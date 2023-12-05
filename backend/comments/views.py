@@ -66,9 +66,10 @@ def comment_create_view(request):
                 return Response({'error': 'Shelter does not own this petlisting'}, status=status.HTTP_400_BAD_REQUEST)
             new_comment = Comment(content=content, is_author_seeker=is_author_seeker, seeker=application.seeker, shelter=application.petlisting.owner, is_review=is_review, application=application)
             new_comment.save()
+            new_comment.application = application
             # Update application last_updated
             application.last_updated = new_comment.created_time
-            application.save()
+            application.save(update=True)
             data = {
                 "To": new_comment.seeker.email if new_comment.is_author_seeker else new_comment.shelter.email,
                 "From": new_comment.shelter.email if new_comment.is_author_seeker else new_comment.seeker.email,
@@ -127,6 +128,8 @@ def comment_detail_view(request, msg_id):
             "shelter": comment.shelter.email,
             "is_review": comment.is_review,
             "application": comment.application.pk,
+            "shelter_id": comment.shelter.pk,
+            "seeker_id": comment.seeker.pk,
         }
         return Response({'data': data}, status=status.HTTP_200_OK)
     except:
@@ -173,6 +176,8 @@ def comments_all_applications_list_view(request):
                     "shelter": comment.shelter.email,
                     "is_review": comment.is_review,
                     "application": comment.application.pk,
+                    "shelter_id": comment.shelter.pk,
+                    "seeker_id": comment.seeker.pk,
                 })
 
         payload = {
@@ -222,6 +227,8 @@ def comments_application_list_view(request, app_id):
                 "shelter": comment.shelter.email,
                 "is_review": comment.is_review,
                 "application": comment.application.pk,
+                "shelter_id": comment.shelter.pk,
+                "seeker_id": comment.seeker.pk,
             })
 
         payload = {
@@ -238,6 +245,7 @@ def comments_application_list_view(request, app_id):
         return Response({'error': 'Application does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 '''
+
 LIST All Comments of a Shelter
 ENDPOINT: /api/comments/shelter/<int:shelter_id>
 METHOD: GET

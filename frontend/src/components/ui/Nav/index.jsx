@@ -39,6 +39,17 @@ function Nav() {
   const [readNotifications, setReadNotifications] = useState([])
   const [sortDesc, setSortDesc] = useState(true)
   const navigate = useNavigate()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [toggleRead, setToggleRead] = useState(false)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
+
+  const handleToggle = () => {
+    setToggleRead(!toggleRead)
+    handlePageChange(1)
+  }
 
   const handleSort = () => {
     setSortDesc(!sortDesc)
@@ -54,9 +65,10 @@ function Nav() {
       }
       return new Date(b.created_time) - new Date(a.created_time)
     })
+    handlePageChange(1)
   }
   
-  const handleClick = (id, type, objectId) => {
+  const handleClick = (id, type, objectId, applicaitonId) => {
     try {
       fetch(`${process.env.REACT_APP_API_URL}/api/notifications/${id}`, {
         method: 'PUT',
@@ -67,8 +79,10 @@ function Nav() {
         getNotifications()
         if (type === 'applications') {
           navigate('/applications/' + objectId)
-        } else if (type === 'comment') {
-          navigate('/messages/' + objectId)
+        } else if (type === 'comment' && applicaitonId) {
+          navigate('/messages/' + applicaitonId)
+        } else if (type === 'comment' && !applicaitonId) {
+          navigate('/profile')
         } else {
           navigate('/petlistings/' + objectId)
         }
@@ -153,6 +167,7 @@ function Nav() {
     setIsAccountOpen(false)
   }
   const handleNotificationClick = () => {
+    getNotifications()
     setIsSearchOpen(false)
     setIsNotificationOpen(!isNotificationOpen) 
     setIsAccountOpen(false)
@@ -216,7 +231,10 @@ function Nav() {
               ) : (
                 <NotificationsIcon className={styles.icon} onClick={handleNotificationClick} />
               )}
-              { isNotificationOpen && <NotificationNav onClick={handleNotificationClick} handleClick={handleClick} notifications={notifications} readNotifications={readNotifications} sortDesc={sortDesc} handleSort={handleSort} handleDelete={handleDelete} /> }
+              { isNotificationOpen && <NotificationNav onClick={handleNotificationClick} handleClick={handleClick} notifications={notifications} readNotifications={readNotifications} sortDesc={sortDesc} 
+              handleSort={handleSort} handleDelete={handleDelete} currentPage={currentPage} handlePageChange={handlePageChange}
+              toggleRead={toggleRead} handleToggle={handleToggle}
+              /> }
             </li>
             <li>
               <AccountCircleIcon className={styles.icon} onClick={handleAccountClick} />

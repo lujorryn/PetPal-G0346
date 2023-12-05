@@ -7,6 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.urls import reverse
 
 from .models import Notification
+from comments.models import Comment
 
 # Create your views here.
 
@@ -40,6 +41,7 @@ def notifications_list_view(request):
     
     data = []
     for notification in paginated_notifications:
+        comment = notification.content_object
         result = {
             'id': notification.pk,
             'subject': notification.subject,
@@ -49,7 +51,12 @@ def notifications_list_view(request):
             'created_time': notification.created_time,
             'creator_avatar': notification.creator.avatar.url if notification.creator.avatar else None,
             'creator_id': notification.creator.pk,
+            
         }
+        # if the comment has an application, add the application id to the result
+        if notification.content_type.model == 'comment':
+            if comment.application:
+                result['application_id'] = comment.application.pk
         if notification.content_type.model == 'petlisting':
             pet_listing_url = reverse('petlistings:pelisting-detail', args=[notification.object_id])
             result['link'] = pet_listing_url

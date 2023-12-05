@@ -1,19 +1,10 @@
 import styles from './Nav.module.css'
-import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 
-function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort, handleDelete}) {
-  const [toggleRead, setToggleRead] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+function NotificationNav({onClick, handleClick, notifications, readNotifications, sortDesc, handleSort, handleDelete, currentPage, handlePageChange, toggleRead, handleToggle}) {
+
+
   const notificationsPerPage = 2
-
-  const handleToggle = () => {
-    setToggleRead(!toggleRead)
-  }
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page)
-  }
 
   const totalPages = Math.ceil((toggleRead ? readNotifications : notifications).length / notificationsPerPage)
   const visibleNotifications = (toggleRead ? readNotifications : notifications).slice(
@@ -52,7 +43,7 @@ function NotificationNav({onClick, handleClick, notifications, readNotifications
       </div>
       <ul>
         {visibleNotifications.map((note) => (
-          <li key={note.id} className={styles.acctlink} onClick={() => handleClick(note.id)}>
+          <li key={note.id} className={styles.acctlink} onClick={() => handleClick(note.id, note.content_type, note.object_id, note.application_id)}>
             <div className={styles.nlist}>
               <a href={`/profile/${note.creator_id}`} className="m-2">
                 <img
@@ -61,7 +52,7 @@ function NotificationNav({onClick, handleClick, notifications, readNotifications
                   alt=""
                 />
               </a>
-              <div className='flex-col cursor-pointer' onClick={(e) => { e.stopPropagation(); handleClick(note.id, note.content_type, note.object_id) }}>
+              <div className='flex-col cursor-pointer' onClick={(e) => { e.stopPropagation(); handleClick(note.id, note.content_type, note.object_id, note.application_id) }}>
                 <div>
                   <span className='font-bold'>{note.subject}</span>
                 </div>
@@ -83,12 +74,12 @@ function NotificationNav({onClick, handleClick, notifications, readNotifications
           </li>
         ))}
       </ul>
-      <div className="pagination flex justify-center m-4">
+      <div className="flex flex-wrap justify-center m-4">
         {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
           <button
             key={page}
             onClick={() => handlePageChange(page)}
-            className={`pagination-btn ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} border border-gray-300 px-4 py-2 rounded-md mr-2 focus:outline-none focus:ring focus:border-blue-300`}
+            className={`pagination-btn ${currentPage === page ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} border border-gray-300 px-4 py-2 rounded-md mb-4 mr-4 focus:outline-none focus:ring focus:border-blue-300`}
           >
             {page}
           </button>
