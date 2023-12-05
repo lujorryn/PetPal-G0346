@@ -43,7 +43,7 @@ function PetDetailEdit() {
         setListingData(petlisting);
         const allPhotos = processPhotos(petlisting.photos);
         setPhotoUrls(allPhotos);
-        
+
 
         const listingOwner = await getListingOwner(petlisting.owner);
         setShelterData(listingOwner);
@@ -160,13 +160,13 @@ function PetDetailEdit() {
       case 'category':
         string = string.toLowerCase();
         if (['d', 'dog'].includes(string)) {
-            return 'D';
+          return 'D';
         }
         if (['c', 'cat'].includes(string)) {
-            return 'C';
+          return 'C';
         }
         if (['o', 'other'].includes(string)) {
-            return 'C';
+          return 'C';
         }
         return 'O';
 
@@ -181,14 +181,14 @@ function PetDetailEdit() {
   const mainContent = (listing, shelter) => {
     // console.log(listing)
     const fDate = new Date(listing.created_time).toLocaleDateString();
-    
+
     const isListingOwner = userId == shelter.id;
-    
+
 
 
     const sendPut = async (e) => {
       e.preventDefault();
-      for (let i=0; i<photoUrls.length; i++) {
+      for (let i = 0; i < photoUrls.length; i++) {
         const formData = new FormData();
         for (const key in listingData) {
           if (listingData.hasOwnProperty(key)) {
@@ -220,7 +220,7 @@ function PetDetailEdit() {
         } // end of try catch
 
       } // end of for 
-      
+
       navigate(`/petlistings/${petId}`)
     } // end of sendput()
 
@@ -269,7 +269,7 @@ function PetDetailEdit() {
       if (!kfile) {
         return;
       }
-    
+
       const objectUrl = URL.createObjectURL(kfile);
       setPhotoUrls([...photoUrls, objectUrl])
       setPhotoObjects([...photoObjects, kfile])
@@ -288,7 +288,7 @@ function PetDetailEdit() {
                 </div>
                 <div className="photo-row">
                   {photoUrls.map((photo, i) => (
-                    <button key={i} onClick={(e) => {setSelectedPhoto(i); e.preventDefault()}}
+                    <button key={i} onClick={(e) => { setSelectedPhoto(i); e.preventDefault() }}
                       className={`photo small-photo ${selectedPhoto === i ? 'selected' : ''}`}
                     ><img src={photoUrls[i]} alt=""></img></button>
                   ))}
@@ -347,7 +347,7 @@ function PetDetailEdit() {
               <div className="date">Published: {fDate}</div>
             </label>
             <textarea value={listing.description} required id="pet-description" name="description" className="description-content" onChange={handlePetChange}>
-              
+
             </textarea>
           </div>
 

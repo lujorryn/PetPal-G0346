@@ -28,7 +28,7 @@ function PetDetail() {
     }
   }
   const statusMap = {
-    "AV": "Available", 
+    "AV": "Available",
     "AD": "Adopted",
     "PE": "Pending",
     "WI": "Withdrawn"
@@ -104,7 +104,7 @@ function PetDetail() {
       return ownerShelter;
     }
 
-    
+
 
     fetchAllData();
     // end of useEffect()
@@ -134,15 +134,15 @@ function PetDetail() {
       if (isListingOwner) {
         // return edit button
         return (
-          <Button handleClick={() => {navigate(`/petlistings/${petId}/edit`)}}>Edit pet</Button>
+          <Button handleClick={() => { navigate(`/petlistings/${petId}/edit`) }}>Edit pet</Button>
         )
       }
-      
+
       const shelterContact = `/messages/${shelter.id}`
-      if (listing.status !== "AV" ) {
+      if (listing.status !== "AV") {
         return (
           // contact shelter btn
-          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(shelterContact)}}>contact shelter</Button>
+          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
         )
       }
 
@@ -151,8 +151,8 @@ function PetDetail() {
         // contact shelter btn
         // application form btn
         <>
-        <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => {navigate(shelterContact)}}>contact shelter</Button>
-        <Button id="application-form-btn" handleClick={() => {navigate(`/applications`)}}>Application Form</Button>
+          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
+          <Button id="application-form-btn" handleClick={() => { navigate(`/applications`) }}>Application Form</Button>
         </>
       )
 
@@ -161,7 +161,7 @@ function PetDetail() {
     return (
       <div className="main__wrapper">
         <div className="details-container">
-        <Button handleClick={() => {navigate(`/petlistings`)}} btnId="back-btn">view all listings</Button>
+          <Button handleClick={() => { navigate(`/petlistings`) }} btnId="back-btn">view all listings</Button>
           <div className="details-item pet-details-card">
             <div className="pet-profile-container">
               <div className="pet-profile-photos">
@@ -170,8 +170,8 @@ function PetDetail() {
                 </div>
                 <div className="photo-row">
                   {allPhotos.map((photo, i) => (
-                    <button key={i} onClick={() => {setSelectedPhoto(i)}}
-                    className={`photo small-photo ${selectedPhoto === i ? 'selected' : ''}`}
+                    <button key={i} onClick={() => { setSelectedPhoto(i) }}
+                      className={`photo small-photo ${selectedPhoto === i ? 'selected' : ''}`}
                     ><img src={allPhotos[i]} alt=""></img></button>
                   ))}
                 </div>
