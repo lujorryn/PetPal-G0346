@@ -10,11 +10,22 @@ import Button from '../../components/ui/Button';
 
 
 
-function PetDetailEdit() {
+function PetDetailCreate() {
   const { token, userId, role } = useAuth();
-  const [listingData, setListingData] = useState([]);
-  const [initialListing, setInitialListingData] = useState({});
-  const [shelterData, setShelterData] = useState([]);
+  const [listingData, setListingData] = useState({});
+  const sampleListing = {
+    name: "",
+    category: "O",
+    breed: "",
+    age: "",
+    gender: "",
+    size: "",
+    status: "",
+    med_history: "none",
+    description: "",
+    // not provided
+  }
+  const [shelterData, setShelterData] = useState(sampleListing);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
@@ -22,13 +33,13 @@ function PetDetailEdit() {
   const [photoObjects, setPhotoObjects] = useState([]);
 
 
-  const { petId } = useParams();
   const navigate = useNavigate();
 
-  const listingUrl = `${process.env.REACT_APP_API_URL}/api/petlistings/${petId}`;
+  const listingUrl = `${process.env.REACT_APP_API_URL}/api/petlistings`;
 
   // upon page load: fetch petlisting and shelter
   useEffect(() => {
+    setListingData(sampleListing);
     const getReqContent = {
       method: "GET",
       headers: {
@@ -39,17 +50,9 @@ function PetDetailEdit() {
 
     const fetchAllData = async () => {
       try {
-        const petlisting = await getPetlisting();
-        setListingData(petlisting);
-        const allPhotos = processPhotos(petlisting.photos);
-        setPhotoUrls(allPhotos);
-        
-
-        const listingOwner = await getListingOwner(petlisting.owner);
+        const listingOwner = await getShelterById(userId);
         setShelterData(listingOwner);
-        setInitialListingData(petlisting);
-
-        console.log("first init", initialListing)
+        console.log(listingOwner);
       } catch (err) {
         setErr(err.message);
         console.log("Uh oh =>", err);
@@ -58,14 +61,21 @@ function PetDetailEdit() {
       setLoading(false);
     }
 
-    const getPetlisting = async () => {
-      const res = await fetch(listingUrl, getReqContent);
+    const getShelterById = async (id) => {
+        if (role !== "shelter") {
+            throw new Error("you're not not a shelter")
+            return;
+        }
+        
+        let shelterUrl = `${process.env.REACT_APP_API_URL}/api/shelters/${id}`;
+        const res = await fetch(shelterUrl, getReqContent);
 
-      if (res.status !== 200) {
-        throw new Error(res.statusText);
-      }
-      const listing = await res.json();
-      return listing.data;
+        if (res.status != 200) {
+          throw new Error(res.statusText);
+        }
+
+        const shelter = await res.json();
+        return shelter.data;
     }
 
     const getListingOwner = async (email) => {
@@ -166,73 +176,66 @@ function PetDetailEdit() {
 
 
   const mainContent = (listing, shelter) => {
-    console.log(listing)
     const fDate = new Date(listing.created_time).toLocaleDateString();
-    
-    const isListingOwner = userId == shelter.id;
-    
-    const sendPut = async (e) => {
-      e.preventDefault();
-      
-      for (let i=0; i<photoObjects.length; i++) {
-        const formData = new FormData();
-        for (const key in listingData) {
-          if (listingData.hasOwnProperty(key)) {
-            formData.append(key, stringToCode(key));
-          }
-        }
-        formData.append("photos", photoObjects[i]);
-        try {
-          const response = await fetch(listingUrl, {
-            method: 'PUT',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              // 'Content-Type': "application/json",
-            },
-            body: formData,
-          });
-          if (!response.ok) {
-            console.log(response)
-            const sd = await response.json();
-            console.log(sd);
-            console.error('File upload failed:', response.error);
-          } else {
-            console.log('File uploaded successfully.');
-          }
-        } catch (error) {
-          console.error('Error during file upload:', error.message);
-        } // end of try catch
+        
 
-      } // end of for 
-      
-      navigate(`/petlistings/${petId}`)
-    } // end of sendput()
+    const sendPost = async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      for (const key in listingData) {
+        if (listingData.hasOwnProperty(key)) {
+            if (key==="photos") {
+                formData.append(key, stringToCode(key));
+            }
+        }
+      }
+      let url = `${process.env.REACT_APP_API_URL}/api/petlistings`;
+      let pk = 0;
+      let method = 'POST'
+
+
+
+      for (let i=0; i < photoObjects.length; i++) {
+        const newFormData = new FormData();
+        for (const key in listingData) {
+            if (listingData.hasOwnProperty(key)) {
+                newFormData.append(key, stringToCode(key));
+            }
+        }
+        newFormData.append("photos", photoObjects[i]);
+        console.log("listing data being sent", photoObjects)
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                Authorization: `Bearer ${token}`,
+                // 'Content-Type': "application/json",
+                },
+                body: newFormData,
+            });
+            if (!response.ok) {
+                console.log(response)
+                const sd = await response.json();
+                console.log("json:::", sd);
+                console.error('File upload failed:', response.error);
+            } else {
+                const oj = await response.json();
+                console.log('File uploaded successfully.', oj);
+                pk = oj.data.pk;
+            }
+        } catch (error) {
+            console.error('Error during file upload:', error.message);
+            }
+            method = "PUT"
+            url = `${process.env.REACT_APP_API_URL}/api/petlistings/${pk}`;
+      } // end of for
+      navigate(`/petlistings`)
+    } // end of sendPost()
 
     const renderActionBtn = () => {
-      if (isListingOwner) {
-        // return save button
         return (
-          <Button handleClick={sendPut}>Save</Button>
-        )
-      }
-
-      const shelterContact = `/messages/${shelter.id}`
-      if (listing.status !== "AV") {
-        // contact shelter btn
-        return (
-          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
-        )
-      }
-
-      return (
-        // returning:
-        // contact shelter btn
-        // application form btn
-        <>
-          <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
-          <Button id="application-form-btn" handleClick={() => { navigate(`/applications`) }}>Application Form</Button>
-        </>
-      )
+            <Button handleClick={sendPost}>Save</Button>
+            )
     }
 
     const handlePetChange = async (event) => {
@@ -247,50 +250,23 @@ function PetDetailEdit() {
     }
 
     const handleFileChange = async (event) => {
+    
       const kfile = event.target.files[0];
       if (!kfile) {
         return;
       }
-      
-      // const formData = new FormData();
-      // for (const key in listingData) {
-      //   if (listingData.hasOwnProperty(key)) {
-      //     formData.append(key, listingData[key]);
-      //   }
-      // }
-      
-      // formData.append("photos", kfile);
-      // try {
-      //   const response = await fetch(listingUrl, {
-      //     method: 'PUT',
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //       // 'Content-Type': "application/json",
-      //     },
-      //     body: formData,
-      //   });
-      //   if (!response.ok) {
-      //     console.log(response)
-      //     const sd = await response.json();
-      //     console.log(sd);
-      //     console.error('File upload failed:', response.error);
-      //   } else {
-      //     console.log('File uploaded successfully.');
-      //   }
-      // } catch (error) {
-      //   console.error('Error during file upload:', error.message);
-      // }
 
       const objectUrl = URL.createObjectURL(kfile);
       setPhotoUrls([...photoUrls, objectUrl])
       setPhotoObjects([...photoObjects, kfile])
       setSelectedPhoto(photoUrls.length)
+      console.log("photos", photoUrls)
     }
 
     return (
       <form className="main__wrapper">
         <div className="details-container">
-          <Button handleClick={() => { navigate(`/petlistings/${petId}`) }} btnId="back-btn">back to listing</Button>
+          <Button handleClick={() => { navigate(`/petlistings`) }} btnId="back-btn">back to listing</Button>
           <div className="details-item pet-details-card">
             <div className="pet-profile-container">
               <div className="pet-profile-photos">
@@ -299,7 +275,7 @@ function PetDetailEdit() {
                 </div>
                 <div className="photo-row">
                   {photoUrls.map((photo, i) => (
-                    <button key={i} onClick={(e) => {console.log(`${i} clicked`); setSelectedPhoto(i); e.preventDefault()}}
+                    <button key={i} onClick={(e) => {console.log(`${i} clicked`); setSelectedPhoto(i); e.preventDefault(); }}
                       className={`photo small-photo ${selectedPhoto === i ? 'selected' : ''}`}
                     ><img src={photoUrls[i]} alt=""></img></button>
                   ))}
@@ -316,12 +292,12 @@ function PetDetailEdit() {
               <div className="pet-profile-details edit-mode">
                 <div className="pet-profile-header edit-mode">
                   <input className="title" name="name" value={listing.name} onChange={handlePetChange} placeholder="pet name" required />
-                  <input id="address" className="address" name="address" value={shelter.address} onChange={handleShelterChange} placeholder='shelter address' />
+                  <input readOnly id="address" className="address" name="address" value={shelter.address} onChange={handleShelterChange} placeholder='shelter address' />
                 </div>
                 <div className="pet-profile-info">
                   <div className="row">
                     <label htmlFor="shelter" className="key">Shelter:</label>
-                    <input name="email" className="value" value={shelter.email} onChange={handleShelterChange} placeholder='shelter email' />
+                    <input readOnly name="email" className="value" value={shelter.email} onChange={handleShelterChange} placeholder='shelter email' />
                   </div>
                   <div className="row">
                     <label htmlFor="size" className="key">Size:</label>
@@ -377,4 +353,4 @@ function PetDetailEdit() {
   // end of PetDetail()
 }
 
-export default PetDetailEdit
+export default PetDetailCreate

@@ -171,6 +171,7 @@ def petlistings_list_and_create_view(request):
             
             pet_listing.refresh_from_db()
             serializer = PetListingSerializer(instance=pet_listing)
+            print(serializer.data)
             return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
 
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
