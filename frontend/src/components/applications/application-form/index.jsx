@@ -98,14 +98,13 @@ function ApplicationForm({readOnly, is_disabled, data, button_text, handleClick,
 
                 {!is_disabled ? (
                     <span>
-                        {/* <Button classes={"btn"} children={
-                        <input className="btn" type="submit" value={button_text} disabled={is_disabled} />
-                            } handleClick={handleClick}/> */}
                          <input id="submit-app-btn" className="btn" type="submit" value={button_text} disabled={is_disabled} />
                     </span>
 
                     ) : (
-                    <Button classes={"btn"} children={button_text} handleClick={handleClick}/>
+                    <span>
+                        <Button classes={"btn"} children={button_text} handleClick={handleClick}/>
+                    </span>
                 )}
             </div>
         </form>

@@ -156,3 +156,8 @@
 #number-of-pets {
     width: 60px;
 }
+
+#withdraw-link {
+    float: right;
+    clear: both;
+}
