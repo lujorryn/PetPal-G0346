@@ -57,8 +57,9 @@ def applications_list_and_create_view(request):
             all_apps = all_apps.order_by('-created_time')
 
 
-        paginator = PageNumberPagination()
-        paginator.page_size = 10
+        # Modified to support pagination
+        paginator = CustomPaginator()
+        paginator.page_size = 1
 
         paginated_apps = paginator.paginate_queryset(all_apps, request)
 
@@ -201,6 +202,18 @@ def validate_data(data) -> (bool, str):
             return (ok, err)
     
     return (ok, err)
+
+# To also retrieve current_page and total_pages (ADDED)
+class CustomPaginator(PageNumberPagination):
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'current_page': self.page.number,
+            'total_pages': self.page.paginator.num_pages,
+            'results': data
+        })
 
 
 '''

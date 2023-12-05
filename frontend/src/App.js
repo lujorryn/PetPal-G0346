@@ -23,6 +23,8 @@ import PetDetailEdit from './pages/petlistings/PetDetailEdit';
 
 import ApplicationDetail from './pages/applications/ApplicationDetail';
 import Applications from './pages/applications/Applications';
+import PetApplication from './pages/applications/PetApplication'
+import ApplicationSuccess from './pages/applications/ApplicationSuccess'
 
 import Messages from './pages/messages/Messages';
 import MessageDetail from './pages/messages/MessageDetail';
@@ -59,6 +61,8 @@ function App() {
             <Route path='messages/:applicationId' element={<MessageDetail />} />
             <Route path='applications' element={<Applications />} />
             <Route path='applications/:appId' element={<ApplicationDetail />} />
+            <Route path='petlistings/:petId/apply' element={ <PetApplication/> }/>
+            <Route path='petlistings/application-success' element={ <ApplicationSuccess/> }/>
 
             <Route path='blog/:userId' element={<ShelterBlog />} />
             <Route path='blog/:userId/create' element={<ShelterBlogCreate />} />
