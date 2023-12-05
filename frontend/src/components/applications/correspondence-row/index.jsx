@@ -23,18 +23,28 @@ function CorrespondenceRow ({subject, from, preview, timestamp, handleViewBtn, i
                 <div class="msg-time"> {timestamp} </div>
             </div>
             <div class="btn-container">
-                {is_app ? (
-                    <div className="btn-container">
-                        <Button classes={"btn"} children={"View"} handleClick={handleViewBtn}/>
+            {is_app ? (
+                /* This if 'switch' is true */
+                <div className="btn-container">
+                    <Button classes={"btn"} children={"View"} handleClick={handleViewBtn}/>
+                    <br></br>
+                    {!is_seeker ? (
+                    <Button classes={"btn withdraw-btn"} children={"Withdraw App"} handleClick={handleWDBtn}/>
+                    ) : (
+                    <>
+                        <Button classes={"btn"} children={"Accept App"} handleClick={handleAcceptBtn}/>
                         <br></br>
-                        <Button classes={"btn withdraw-btn"} children={"Withdraw App"} handleClick={handleWDBtn}/>
-                    </div>
+                        <Button classes={"btn withdraw-btn"} children={"Deny App"} handleClick={handleWDBtn}/>
+                    </>
+                    )}
+                </div>
                 ) : (
-                    <div className='btn-container'>
-                        <Button classes={"btn"} children={"View"} handleClick={handleViewBtn}/>
-                    </div>
-                    )
-                }
+                /* else this */
+                <div className="btn-container">
+                    <Button classes={"btn"} children={"View"} handleClick={handleViewBtn}/>
+                </div>
+                )}
+
             </div>
         </div>
     ); 
