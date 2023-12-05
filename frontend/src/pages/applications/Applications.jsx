@@ -6,10 +6,8 @@ import Button from "../../components/ui/Button/index.jsx"
 import { withdrawApp, denyApp } from "./withdrawDenyApp.jsx";
 
 // TODO:
-// - Get pet name to add to title or message preview 
 // - Put the last_updated time in a fully readable format 
-// - Make Pending/Active buttons change
-// - HANDLE WITHDRAW/DENY BUTTON 
+// - Make Pending/Active buttons change (PUT OFF)
 
 // "Applications" component
 // This renders all of the applications associated with the user. 
@@ -98,14 +96,15 @@ function Applications() {
       console.log("Withdrew App");
 
       // TODO: Make a " App Withdrawn" Text appear? 
+      // return navigate(`/applications/`);
+      return window.location.reload();
 
-      return navigate(`/applications/`);
 
     } else if (role === 'shelter') {
       denyApp(token, app_id);
       console.log("Denied an app");
 
-      return navigate(`/applications/`);
+      return window.location.reload();
 
     }
   }
@@ -118,15 +117,21 @@ function Applications() {
       </div>
       <div className="msg-container">
         <div className="msg-nav">
-          <button id="inbox" className="msg-nav-item active"> Pending </button>
-          <button id="inbox" className="msg-nav-item"> Approved </button>
+          <button id="inbox" className="msg-nav-item active"> All Applications </button>
+          {/* <button id="inbox" className="msg-nav-item"> Closed </button> */}
         </div>
         {applications_data.map(application => (
           <CorrespondenceRow 
             key={application.id} 
             subject={application.first_name} 
             from={application.email} 
-            preview={`Application #${application.id}`}  
+            preview={
+              application.status == 'W' ? `Application #${application.id} Withdrawn` : 
+              application.status == 'A' ? `Application #${application.id} Accepted` : 
+              application.status == "D" ? `Application #${application.id} Denied` : 
+              application.status == "P" ? `Application #${application.id} Pending`:
+              `Application #${application.id}`
+            }  
             timestamp={application.last_updated}
             handleViewBtn={() => navigate(`/applications/${application.id}/`)} 
             handleWDBtn={onWithdrawDenyBtn}
