@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import CorrespondenceRow from "../../components/applications/correspondence-row/index.jsx"
 import Button from "../../components/ui/Button/index.jsx"
+import { withdrawApp, denyApp } from "./withdrawDenyApp.jsx";
 
 // TODO:
 // - Get pet name to add to title or message preview 
 // - Put the last_updated time in a fully readable format 
 // - Make Pending/Active buttons change
-// - Change "Find another pet" button different for shelters 
-// - (OK) Make "Find another pet" link to another page
-// - (OK) Make "View" link to actual application page 
+// - HANDLE WITHDRAW/DENY BUTTON 
 
 // "Applications" component
 // This renders all of the applications associated with the user. 
@@ -42,8 +41,6 @@ function Applications() {
     }).then(response => response.json())
       .then(data => {
         setApplications(data); 
-        // console.log("After setApplication");
-        // console.log(application);
       })
       .catch(error => console.log(error)); 
 
@@ -80,12 +77,43 @@ function Applications() {
   
   applications_data = applications.results.data || [];
 
+  // Button to deny or withdraw an application 
+  const onWithdrawDenyBtn = (event) => {
+
+    // To get application id, get .msg-preview
+    let msgRow = event.target.closest('.msg-row');
+    let app_id;
+
+    if (msgRow) {
+      // Find the "msg-preview" element within the "msg-row"
+      const msgPreview = msgRow.querySelector('.msg-preview');
+      console.log(msgPreview);
+      // Get the application ID from msgContext
+      const msgContent = msgPreview.textContent;
+      app_id = parseInt(msgContent.match(/\d+/)[0]);
+    }
+
+    if (role === 'seeker' && app_id != undefined) {
+      withdrawApp(token, app_id);
+      console.log("Withdrew App");
+
+      // TODO: Make a " App Withdrawn" Text appear? 
+
+      return navigate(`/applications/`);
+
+    } else if (role === 'shelter') {
+      denyApp(token, app_id);
+      console.log("Denied an app");
+
+      return navigate(`/applications/`);
+
+    }
+  }
+
   return (
     <div className="main__wrapper">
       <div className="title-row">
         <p class="page-title"> My Applications </p>
-        {/* Maybe use button component instead */}
-        {/* <a id="new-btn" className="btn">Find another pet</a> */}
         <span id="new-btn"><Button classes={"btn"} children={"Find another pet"} handleClick={() => navigate("/petlistings")}/> </span>
       </div>
       <div className="msg-container">
@@ -98,9 +126,11 @@ function Applications() {
             key={application.id} 
             subject={application.first_name} 
             from={application.email} 
-            preview={"Application"} 
+            preview={`Application #${application.id}`}  
             timestamp={application.last_updated}
-            handleClick={() => navigate(`/applications/${application.id}/`)} 
+            handleViewBtn={() => navigate(`/applications/${application.id}/`)} 
+            handleWDBtn={onWithdrawDenyBtn}
+            is_app={true}
             />
         ))}
       </div>

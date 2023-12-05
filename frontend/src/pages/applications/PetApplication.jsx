@@ -14,8 +14,8 @@ import validateForm from "./validateForm.jsx"
 // 3. (OKA) Show the form and validate their form inputs. 
 
 //TODO: 
-// - Navigate to success screen 
-// - GET PET STATUS
+// - (OK) Navigate to success screen 
+// - (OK) GET PET STATUS
 
 /* Component to show an empty form if the seeker has not applied to this pet yet */ 
 function PetApplication () {

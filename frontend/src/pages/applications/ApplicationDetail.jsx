@@ -152,7 +152,6 @@ function ApplicationDetail() {
   }
 
   return (
-    // <div>Application Detail {application_id} </div>
     <div className="main__container">
       <ApplicationForm 
         readOnly={true} 
