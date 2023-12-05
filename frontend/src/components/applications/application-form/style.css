@@ -104,6 +104,27 @@
     margin-bottom: 30px;
 }
 
+#submit-app-btn {
+    display: inline-block;
+    padding: var(--btn-padding, var(--btn-padding-default));
+    border-radius: 2rem;
+    font-size: var(--font-size);
+    cursor: pointer;
+    appearance: none;
+    transition: 0.3s;
+    color: #f7f9f0;
+}
+
+#submit-app-btn:hover {
+    background-color: var(--btn-bg-color, var(--btn-txt-color-default));
+    color: var(--btn-txt-color, var(--btn-bg-color-default));
+  }
+
+#error-message {
+    color: red; 
+    font-weight: bold;
+}
+
 @media (max-width: 830px) {
     .form-row {
         flex-direction: column;
@@ -139,4 +160,9 @@
 
 #number-of-pets {
     width: 60px;
+}
+
+#withdraw-link {
+    float: right;
+    clear: both;
 }

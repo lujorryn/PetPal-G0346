@@ -120,6 +120,15 @@ main {
     background-color: var(--color-primary);
 }
 
+.withdraw-btn {
+    background-color: #FF5733;
+}
+
+.accept-btn {
+    background-color: #B3DA65;
+    color: white;
+}
+
 @media (max-width: 800px) {
     .main__wrapper {
         width: 100%;

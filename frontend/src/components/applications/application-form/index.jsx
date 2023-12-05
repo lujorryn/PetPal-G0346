@@ -1,153 +1,111 @@
 import './style.css';
 import Button from '../../ui/Button/index.jsx'
+import TextInput from '../application-input/text-input.jsx'
+import RadioInput from '../application-input/radio-input.jsx'
 
 // Component for the application form 
 
-function ApplicationForm({readOnly, is_disabled, data, button_text, handleClick}) {
+function ApplicationForm({readOnly, is_disabled, data, button_text, handleClick, on_submit="", error=""}) {
     return (
-        <form className='form-container' aria-readonly={readOnly} required> 
+        <form className='form-container' aria-readonly={readOnly} onSubmit={on_submit} required> 
             <div className='form-content'>
                 <div className='title'> My Application </div>
+                <div id='error-message'> <i>{error}</i></div>
                 {/* Row for first and last names */}
                 <div className='form-row'> 
                     {/* First name field */}
                     <div className='full-input group-5'>
-                        <label for="first-name"> First Name: </label>
-                        <span>
-                            <input type='text' name='first-name' id='first-name' readonly={readOnly} value={data.firstName} required/>
-                        </span>
+                        <TextInput label_for={'first-name'} field_name={'First Name:'} readOnly={readOnly} value={data.firstName}/>
                     </div>
                     {/* Last name field */}
                     <div className='full-input group-5'>
-                        <label for='last-name'> Last Name: </label>
-                        <span>
-                            <input type='text' name='last-name' id='last-name' readonly={readOnly} value={data.lastName} required/>
-                        </span>
+                        <TextInput label_for={'last-name'} field_name={'Last Name:'} readOnly={readOnly} value={data.lastName}/>
                     </div>
                 </div>
                 {/* Row for address */}
                 <div className='form-row'>
                     <div className='full-input'>
-                        <label for='address'> Address: </label>
-                        <span>
-                            <input type='text' name='address' id='address' readonly={readOnly} value={data.address} required/>
-                        </span>
+                        <TextInput label_for={'address'} field_name={'Address:'} readOnly={readOnly} value={data.address}/>
                     </div>
                 </div>
                 {/* Row for City, Province, and Postal Code */}
                 <div className='form-row'>
                     <div className='full-input group-4'>
-                        <label for='city'> City: </label>
-                        <span>
-                            <input type='text' name='city' id='city' readonly={readOnly} value={data.city} required/>
-                        </span>
+                        <TextInput label_for={'city'} field_name={'City:'} readOnly={readOnly} value={data.city}/>
                     </div>
                     <div className='full-input group-2'>
-                        <label for="province">Province:</label>
-                        <span>
-                            <input type="text" name="province" id="province" readonly={readOnly} value={data.province} required/>
-                        </span>
+                        <TextInput label_for={'province'} field_name={'Province:'} readOnly={readOnly} value={data.province}/>
                     </div>
                     <div className='full-input group-4'>
-                        <label for="postal-code">Postal Code:</label>
-                        <span>
-                            <input type="text" name="postal-code" id="postal-code" readonly={readOnly} value={data.postalCode} required/> 
-                        </span>
+                        <TextInput label_for={'postal-code'} field_name={'Postal Code:'} readOnly={readOnly} value={data.postalCode}/>
                     </div>
                 </div>
                 {/* Row for phone number */}
-                <div class="form-row">
-                    <div class="full-input group-5">
-                        <label for="phone">Phone Number:</label>
-                        <span>
-                            <input type="tel" name="phone" id="phone" required readonly={readOnly} value={data.phoneNum} /> 
-                        </span>
+                <div className="form-row">
+                    <div className="full-input group-5">
+                        <TextInput label_for={'phone'} field_name={'Phone Number:'} readOnly={readOnly} value={data.phoneNum} type={"tel"}/>
                     </div>
                 </div>
                 {/* <!-- email --> */}
-                <div class="form-row">
-                    <div class="full-input group-5">
-                        <label for="user-email">Email:</label>
-                        <span>
-                            <input type="email" name="user-email" id="user-email" readonly={readOnly} require value={data.email}/> 
-                        </span>
+                <div className="form-row">
+                    <div className="full-input group-5">
+                        <TextInput label_for={'user-email'} field_name={'Email:'} readOnly={readOnly} value={data.email} type={"email"}/>
                     </div>
                 </div>
                 {/* <!-- contact preference --> */}
-                <div class="form-group">
-                    <label for="contact-preference">How do you prefer to be contacted?</label>
-                    <div class="form-row radio-group">
-                        <div> 
-                            <input type="radio" id="phone-call" name="contact-preference" value="phone-call" disabled={is_disabled} checked={data.pref_call}/> 
-                            <label for="phone-call">Phone Call</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="text" name="contact-preference" value="text" disabled={is_disabled} checked={data.pref_text}/> 
-                            <label for="text">Text</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="email" name="contact-preference" value="email" disabled={is_disabled} checked={data.pref_email}/> 
-                            <label for="email">Email</label>
-                        </div>
+                <div className="form-group">
+                    <label htmlFor="contact-preference">How do you prefer to be contacted?</label>
+                    <div className="form-row radio-group">
+                        <RadioInput label_for={'phone-call'} field_name={"Phone Call"} name={"contact-preference"} is_disabled={is_disabled} is_checked={data.pref_call}/>
+                        <RadioInput label_for={'text'} field_name={"Text"} name={"contact-preference"} is_disabled={is_disabled} is_checked={data.pref_text}/>
+                        <RadioInput label_for={'email'} field_name={"Email"} name={"contact-preference"} is_disabled={is_disabled} is_checked={data.pref_email}/>
                     </div>
                 </div>
                 {/* <!-- number of pets --> */}
-                <div class="form-row">
-                    <label for="number-of-pets">Number of pets in the household:</label>
-                    <input type="number" id="number-of-pets" name="number-of-pets" min="0" required readonly={readOnly} value={data.pet_num}/> 
+                <div className="form-row">
+                    <TextInput label_for={"number-of-pets"} field_name={"Number of pets in the household:"} readOnly={readOnly} value={data.pet_num} type={'number'}/>
                 </div>
                 {/* <!-- children --> */}
-                <div class="form-row">
+                <div className="form-row">
                     <label>Do you have any children at home?</label>
                     <div>
-                        <input type="radio" id="yes" name="children" value="yes" required disabled={is_disabled} checked={data.has_children}/>
-                        <label for="yes">Yes</label>
-                        <input type="radio" id="no" name="children" value="no" required disabled={is_disabled} checked={!data.has_children}/> 
-                        <label for="no">No</label>
+                        <RadioInput label_for={'yes'} field_name={"Yes"} name={"children"} is_disabled={is_disabled} is_checked={data.has_children}/>
+                        <RadioInput label_for={'no'} field_name={"No"} name={"children"} is_disabled={is_disabled} is_checked={!data.has_children}/>
                     </div>
                 </div>
                     {/* <!-- pet experience level --> */}
-                    <div class="form-group">
-                    <label for="pet-experience">Choose which one best describes your experience with pets:</label>
-                    <div class="form-row radio-group">
-                        <div>
-                            <input type="radio" id="experienced" name="pet-experience" value="experienced" required disabled={is_disabled} checked={data.experienced}/>
-                            <label for="experienced">Experienced</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="intermediate" name="pet-experience" value="intermediate" disabled={is_disabled} checked={data.intermediate}/>
-                            <label for="intermediate">Intermediate</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="no-experience" name="pet-experience" value="no-experience" disabled={is_disabled} checked={data.no_exp}/>
-                            <label for="no-experience">No Experience</label>
-                        </div>
+                    <div className="form-group">
+                    <label htmlFor="pet-experience">Choose which one best describes your experience with pets:</label>
+                    <div className="form-row radio-group">
+                        <RadioInput label_for={'experienced'} field_name={"Experienced"} name={"pet-experience"} is_disabled={is_disabled} is_checked={data.experienced}/>
+                        <RadioInput label_for={'intermediate'} field_name={"Intermediate"} name={"pet-experience"} is_disabled={is_disabled} is_checked={data.intermediate}/>
+                        <RadioInput label_for={'no-experience'} field_name={"No Experience"} name={"pet-experience"} is_disabled={is_disabled} is_checked={data.no_exp}/>
                     </div>
                 </div>
                 {/* <!-- housing type --> */}
-                <div class="form-group">
-                    <label for="pet-experience">What type of residence do you currently live in?</label>
-                    <div class="form-row radio-group">
-                        <div>
-                            <input type="radio" id="condo" name="housing-type" value="Condo" required disabled={is_disabled} checked={data.condo}></input>
-                            <label for="condo">Condo</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="apartment" name="housing-type" value="Apartment" disabled={is_disabled} checked={data.apt}></input>
-                            <label for="apartment">Apartment</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="house" name="housing-type" value="House" disabled={is_disabled} checked={data.house}></input>
-                            <label for="house">House</label>
-                        </div>
+                <div className="form-group">
+                    <label htmlFor="pet-experience">What type of residence do you currently live in?</label>
+                    <div className="form-row radio-group">
+                        <RadioInput label_for={'condo'} field_name={"Condo"} name={"housing-type"} is_disabled={is_disabled} is_checked={data.condo}/>
+                        <RadioInput label_for={'apartment'} field_name={"Apartment"} name={"housing-type"} is_disabled={is_disabled} is_checked={data.apt}/>
+                        <RadioInput label_for={'house'} field_name={"House"} name={"housing-type"} is_disabled={is_disabled} is_checked={data.house}/>
                     </div>
                 </div>
-                
             </div>
+            <div className="btn-row">
+                {/* <input id="submit-btn" className="btn" type="submit" value="Submit" />
+                <Button classes={"btn"} children={button_text} handleClick={handleClick}/> */}
 
-            <div class="btn-row">
-                {/* <input id="submit-btn" class="btn" type="submit" value="Submit" /> */}
-                <Button classes={"btn"} children={button_text} handleClick={handleClick}/>
+                {!is_disabled ? (
+                    <span>
+                         <input id="submit-app-btn" className="btn" type="submit" value={button_text} disabled={is_disabled} />
+                    </span>
+
+                    ) : (
+                    <span>
+                        <Button classes={"btn"} children={button_text} handleClick={handleClick}/>
+                    </span>
+                )}
             </div>
         </form>
 
