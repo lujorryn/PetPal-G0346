@@ -1,0 +1,43 @@
+.message-box {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    max-height: 60vh;
+    align-items: center;
+    gap: 1rem;
+    overflow-y: auto;
+}
+
+.message-self {
+    display: grid;
+    grid-template-columns: auto 3rem;
+    align-self: flex-end;
+    margin-left: 3rem;
+}
+
+.message-other {
+    display: grid;
+    grid-template-columns: 3rem auto;
+    align-self: flex-start;
+    margin-right: 3rem;
+}
+
+.message-form {
+    width: 60%;
+}
+
+/* Mobile devices */
+@media (max-width: 52rem) {
+    .message-box {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        height: 100%;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .message-form {
+        width: 90%;
+    }
+}

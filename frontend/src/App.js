@@ -12,8 +12,6 @@ import SignUp from './pages/SignUp';
 import SignupSuccess from './pages/SignupSuccess';
 
 import Shelters from './pages/shelters/Shelters';
-import Shelter from './pages/shelters/Shelter';
-import ShelterEdit from './pages/shelters/ShelterEdit';
 
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
@@ -48,8 +46,6 @@ function App() {
             <Route path='success' element={<SignupSuccess />} />
 
             <Route path='shelters' element={<Shelters />} />
-            <Route path='shelters/:shelterId' element={<Shelter />} />
-            <Route path='shelters/:shelterId/edit' element={<ShelterEdit />} />
 
             <Route path='profile' element={<Profile />} />
             <Route path='profile/edit' element={<ProfileEdit />} />
@@ -60,8 +56,7 @@ function App() {
             <Route path='petlistings/:petId/edit' element={<PetDetailEdit />} />
 
             <Route path='messages' element={<Messages />} />
-            <Route path='messages/:recipientId' element={<MessageDetail />} />
-
+            <Route path='messages/:applicationId' element={<MessageDetail />} />
             <Route path='applications' element={<Applications />} />
             <Route path='applications/:appId' element={<ApplicationDetail />} />
 
