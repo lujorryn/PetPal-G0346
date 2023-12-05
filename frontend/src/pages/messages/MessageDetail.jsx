@@ -59,6 +59,7 @@ function MessageDetail() {
         })
 
         if (!res.ok) {
+          console.error('Error fetching messages')
           navigate('/404')
           break
         }
@@ -79,7 +80,7 @@ function MessageDetail() {
     catch (err) {
       console.log(err)
     }
-  }, [token, fetchSelf, fetchOtherUser])
+  }, [token, fetchSelf, fetchOtherUser, navigate])
 
   useEffect(() => {
     if (!token) return navigate('/login')

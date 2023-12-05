@@ -66,9 +66,10 @@ def comment_create_view(request):
                 return Response({'error': 'Shelter does not own this petlisting'}, status=status.HTTP_400_BAD_REQUEST)
             new_comment = Comment(content=content, is_author_seeker=is_author_seeker, seeker=application.seeker, shelter=application.petlisting.owner, is_review=is_review, application=application)
             new_comment.save()
+            new_comment.application = application
             # Update application last_updated
             application.last_updated = new_comment.created_time
-            application.save()
+            application.save(update=True)
             data = {
                 "To": new_comment.seeker.email if new_comment.is_author_seeker else new_comment.shelter.email,
                 "From": new_comment.shelter.email if new_comment.is_author_seeker else new_comment.seeker.email,

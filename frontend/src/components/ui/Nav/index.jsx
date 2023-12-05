@@ -56,7 +56,7 @@ function Nav() {
     })
   }
   
-  const handleClick = (id, type, objectId) => {
+  const handleClick = (id, type, objectId, applicaitonId) => {
     try {
       fetch(`${process.env.REACT_APP_API_URL}/api/notifications/${id}`, {
         method: 'PUT',
@@ -67,8 +67,10 @@ function Nav() {
         getNotifications()
         if (type === 'applications') {
           navigate('/applications/' + objectId)
-        } else if (type === 'comment') {
-          navigate('/messages/' + objectId)
+        } else if (type === 'comment' && applicaitonId) {
+          navigate('/messages/' + applicaitonId)
+        } else if (type === 'comment' && !applicaitonId) {
+          navigate('/profile')
         } else {
           navigate('/petlistings/' + objectId)
         }
@@ -153,6 +155,7 @@ function Nav() {
     setIsAccountOpen(false)
   }
   const handleNotificationClick = () => {
+    getNotifications()
     setIsSearchOpen(false)
     setIsNotificationOpen(!isNotificationOpen) 
     setIsAccountOpen(false)
