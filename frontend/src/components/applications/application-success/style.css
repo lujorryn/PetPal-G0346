@@ -1,0 +1,33 @@
+.thanks-card {
+    width: 80%;
+    max-width: 1000px;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.thanks-card a {
+    text-decoration: underline;
+}
+
+.img-container {
+    margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+    .thanks-card {
+        align-items: flex-start;
+        width: 100%;
+    }
+    h2 {
+        font-size: 40px;
+    }
+    h4 {
+        font-size: 20px;
+    }
+}

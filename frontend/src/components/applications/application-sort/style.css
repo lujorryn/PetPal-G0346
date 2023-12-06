@@ -1,0 +1,8 @@
+.app-sort-btn {
+    color: green; 
+    float: right;
+}
+
+.app-sort-btn:hover {
+    color: #e1ad01;
+  }
