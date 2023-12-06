@@ -20,7 +20,7 @@ function PetDetailCreate() {
         age: "",
         gender: "",
         size: "",
-        status: "",
+        status: "AV",
         med_history: "none",
         description: "",
         // not provided
@@ -321,12 +321,42 @@ function PetDetailCreate() {
                                         <input name="gender" className="value" value={listing.gender} onChange={handlePetChange} />
                                     </div>
                                     <div className="row">
-                                        <label htmlFor="pet-status" className="key">Status:</label>
-                                        <input id="pet-status" className="value" name="status" value={listing.status} onChange={handlePetChange} />
-                                    </div>
-                                    <div className="row">
-                                        <label htmlFor="category" className="key">Category:</label>
-                                        <input id="category" className="value" name="category" value={listing.category} onChange={handlePetChange} />
+                                        <label className="key">Category:</label>
+                                            <div className="value form-radio-labels">
+                                                <label>
+                                                    <input
+                                                        className='form-radio-input'
+                                                        type="radio"
+                                                        name="category"
+                                                        value="dog"
+                                                        checked={listing.category === 'dog'}
+                                                        onChange={handlePetChange}
+                                                    />
+                                                    Dog
+                                                </label>
+                                                <label>
+                                                    <input
+                                                        className='form-radio-input'
+                                                        type="radio"
+                                                        name="category"
+                                                        value="cat"
+                                                        checked={listing.category === 'cat'}
+                                                        onChange={handlePetChange}
+                                                    />
+                                                    Cat
+                                                </label>
+                                                <label>
+                                                    <input
+                                                        className='form-radio-input'
+                                                        type="radio"
+                                                        name="category"
+                                                        value="other"
+                                                        checked={listing.category === 'other'}
+                                                        onChange={handlePetChange}
+                                                    />
+                                                    Other
+                                                </label>
+                                            </div>
                                     </div>
                                 </div>
                             </div>
