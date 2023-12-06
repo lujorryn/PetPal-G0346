@@ -15,7 +15,7 @@ import getQueryString from "./queryStringHelper.jsx";
 function Applications() {
 
   // Destructure auth variables
-  const { token, userId, role } = useAuth()
+  const { token, userId, role } = useAuth();
 
   // States
   const [applications, setApplications] = useState(null);
@@ -85,14 +85,19 @@ function Applications() {
 
   }, [page, claimNext, sortCreatedTime, searchTerm]);
 
+  // Reset page num if new search term is invoked, not helping though. 
+  useEffect( () => {
+    setPage(1);
+  }, [searchTerm]);
+
   // Send query to the backend
   useEffect(() => {
     if(query !== '') {
       setEndPoint(`/api/applications?${query}`);
       console.log('This is the endpoint:',`/api/applications?${query}` );
     }
-    else setEndPoint(`/api/applications`)
-  }, [query])
+    else setEndPoint(`/api/applications`);
+  }, [query]);
 
 
   // Loading msg
@@ -156,7 +161,6 @@ function Applications() {
       }
     }
   }
-
 
   // Render component
   if (applications != null) {

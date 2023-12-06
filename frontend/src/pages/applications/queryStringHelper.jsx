@@ -3,11 +3,11 @@
 function getQueryString(searchTerm, page, sortCreatedTime) {
 
   let query_string = '';
+  let name = '';
 
   // Check search terms 
   if (searchTerm) {
       const parseSearchArr = searchTerm.split(' ');
-      let name = '';
     
       for (let i in parseSearchArr) {
         switch (parseSearchArr[i]) {
@@ -65,25 +65,26 @@ function getQueryString(searchTerm, page, sortCreatedTime) {
             break;
         }
       }
-
-      // Check for page num 
-      if (page > 1) {
-        query_string += query_string !== '' ? `&page=${page}` : `page=${page}`;
-      }
-
-      // Check for sorting
-      if (sortCreatedTime === false) {
-        // If the query string is not empty, add '&', else don't
-        query_string += query_string !== '' ? '&sort=last_updated' : 'sort=last_updated';
-
-      } else if (sortCreatedTime === true) {
-        query_string += query_string !== '' ? '&sort=last_created' : 'sort=last_created';
-      }
-    
-      if (name !== '') {
-        query_string += query_string !== '' ? `&name=${name}` : `name=${name}`;
-      }
     }
+
+    // Check for page num 
+    if (page > 1) {
+      query_string += query_string !== '' ? `&page=${page}` : `page=${page}`;
+    }
+
+    // Check for sorting
+    if (sortCreatedTime === false) {
+      // If the query string is not empty, add '&', else don't
+      query_string += query_string !== '' ? '&sort=last_updated' : 'sort=last_updated';
+
+    } else if (sortCreatedTime === true) {
+      query_string += query_string !== '' ? '&sort=last_created' : 'sort=last_created';
+    }
+  
+    if (name !== '') {
+      query_string += query_string !== '' ? `&name=${name}` : `name=${name}`;
+    }
+    
 
     console.log("This is query_string", query_string);
 
