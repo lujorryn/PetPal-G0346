@@ -7,6 +7,7 @@ import '../../styles/global.css';
 import './PetDetail.css';
 
 import Button from '../../components/ui/Button';
+import { containerClasses } from '@mui/material';
 
 
 function PetDetail() {
@@ -137,12 +138,12 @@ function PetDetail() {
         )
       }
 
-      const shelterPage = `/profile/${shelter.id}`
+      const shelterContact = `/messages/${shelter.id}`
       if (role === "seeker") {
         if (listing.status !== "AV") {
           return (
             // contact shelter btn
-            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterPage) }}>view shelter</Button>
+            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
           )
         }
   
@@ -151,7 +152,7 @@ function PetDetail() {
           // contact shelter btn
           // application form btn
           <>
-            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterPage) }}>view shelter</Button>
+            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
             <Button id="application-form-btn" handleClick={() => { navigate(`/petlistings/${petId}/apply`) }}>Application Form</Button>
           </>
         )
@@ -228,7 +229,7 @@ function PetDetail() {
             </div>
           </div>
 
-          <div className="details-item pl-btn-container">
+          <div className="details-item btn-container">
             {renderActionBtn()}
           </div>
         </div>
