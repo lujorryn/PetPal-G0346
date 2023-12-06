@@ -10,22 +10,22 @@ function ApplicationsList({applications, status, setStatus, role}) {
       <div className={styles.statusgroup}>
         <button
           className={`${styles.status} ${
-            status === '' ? styles.active : ''
+            appStatus === '' ? styles.active : ''
           } h6`}
           onClick={() => {
-            setStatus('')
             setAppStatus('')
+            setStatus('')
           }}
         >
           All
         </button>
         <button
           className={`${styles.status} ${
-            status === 'P' ? styles.active : ''
+            appStatus === 'P' ? styles.active : ''
           } h6`}
           onClick={() => {
-            setStatus('P')
             setAppStatus('P')
+            setStatus('P')
           }}
         >
           Pending
