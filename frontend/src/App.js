@@ -12,6 +12,8 @@ import SignUp from './pages/SignUp';
 import SignupSuccess from './pages/SignupSuccess';
 
 import Shelters from './pages/shelters/Shelters';
+import Shelter from './pages/shelters/Shelter';
+import ShelterEdit from './pages/shelters/ShelterEdit';
 
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
@@ -20,7 +22,6 @@ import ProfileOther from './pages/profile/ProfileOther';
 import PetListings from './pages/petlistings/PetListingsPage';
 import PetDetail from './pages/petlistings/PetDetail';
 import PetDetailEdit from './pages/petlistings/PetDetailEdit';
-import PetDetailCreate from './pages/petlistings/PetDetailCreate';
 
 import ApplicationDetail from './pages/applications/ApplicationDetail';
 import Applications from './pages/applications/Applications';
@@ -36,6 +37,7 @@ import ShelterBlogEdit from './pages/blog/ShelterBlogEdit';
 import ShelterBlogPost from './pages/blog/ShelterBlogPost';
 
 import NotFound from './pages/NotFound';
+import ApplicationExists from './components/applications/application-exists';
 
 function App() {
   return (
@@ -65,6 +67,7 @@ function App() {
             <Route path='applications/:appId' element={<ApplicationDetail />} />
             <Route path='petlistings/:petId/apply' element={ <PetApplication/> }/>
             <Route path='petlistings/application-success' element={ <ApplicationSuccess/> }/>
+            <Route path='petlistings/already-applied' element={ <ApplicationExists/> }/>
 
             <Route path='blog/:userId' element={<ShelterBlog />} />
             <Route path='blog/:userId/create' element={<ShelterBlogCreate />} />
