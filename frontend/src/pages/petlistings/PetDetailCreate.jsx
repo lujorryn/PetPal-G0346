@@ -354,7 +354,7 @@ function PetDetailCreate() {
                     <div className="details-item pet-details-card">
                         <label htmlFor="pet-description" className="description-header">
                             <div className="title">Description</div>
-                            <div className="date">Published: {fDate}</div>
+                            <div className="date">being published today</div>
                         </label>
                         <textarea value={listing.description} required id="pet-description" name="description" className="description-content" onChange={handlePetChange}>
 
