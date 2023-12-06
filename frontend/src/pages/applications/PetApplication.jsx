@@ -21,49 +21,26 @@ import validateForm from "./validateForm.jsx"
 function PetApplication () {
 
     // The data in the form is blank 
-    // let personal_data = {
-    //     firstName: '', 
-    //     lastName: '',
-    //     address: '', 
-    //     city: "", 
-    //     province: "", 
-    //     postalCode: "", 
-    //     phoneNum: '', 
-    //     email: '', 
-    //     pref_call: '', 
-    //     pref_text: '', 
-    //     pref_email: '', 
-    //     pet_num: '',
-    //     has_children: '', 
-    //     experienced: '', 
-    //     intermediate: '', 
-    //     no_exp: '', 
-    //     condo: '', 
-    //     apt: '', 
-    //     house: '', 
-    //   };
-  
-      // To test: 
-      let personal_data = {
-        firstName: 'John', 
-        lastName: 'Doe',
-        address: 'Help', 
-        city: "Tampa", 
-        province: "FL", 
-        postalCode: "123214", 
-        phoneNum: '123-123-1234', 
-        email: 'seeker1@example.com', 
-        pref_call: false, 
-        pref_text: false, 
-        pref_email: true, 
-        pet_num: 1,
-        has_children: false, 
-        experienced: true, 
-        intermediate: false, 
-        no_exp: false, 
-        condo: true, 
-        apt: false, 
-        house: false, 
+    let personal_data = {
+        firstName: '', 
+        lastName: '',
+        address: '', 
+        city: "", 
+        province: "", 
+        postalCode: "", 
+        phoneNum: '', 
+        email: '', 
+        pref_call: '', 
+        pref_text: '', 
+        pref_email: '', 
+        pet_num: '',
+        has_children: '', 
+        experienced: '', 
+        intermediate: '', 
+        no_exp: '', 
+        condo: '', 
+        apt: '', 
+        house: '', 
       };
 
     const { token, userId, role } = useAuth()
@@ -89,11 +66,11 @@ function PetApplication () {
         console.log("PetApplication useEffect"); 
   
        // If there is no token, navigate to the user page
-       // If the user is a shelter, redirect to Home 
+       // If the user is a shelter, redirect to 404-not-found
        if (!token) {
         return navigate('/login'); 
        } else if (role === 'shelter') {
-        return navigate('/');
+        return navigate('404-not-found');
        }
          
       // Fetch data when component mounts
@@ -196,8 +173,6 @@ function PetApplication () {
           }
         }
     }
-
-    //applications_data = applications.results.data || [];
 
     return (
         // <div>Application Detail {application_id} </div>

@@ -49,7 +49,7 @@ function validateForm(method, formData, pet_id, token) {
     } else {
         switch (contact_pref) {
             case "phone-call":
-              contact_pref = 'C';
+              contact_pref = 'P';
               break;
             case "text":
                 contact_pref = 'T';
@@ -101,10 +101,10 @@ function validateForm(method, formData, pet_id, token) {
               experience_lvl = 'EX';
               break;
             case "intermediate":
-                experience_lvl = 'I';
+                experience_lvl = 'IN';
                 break;
             case "no-experience":
-                experience_lvl = 'N';
+                experience_lvl = 'NE';
                 break;
             default:
               error_msg = 'Invalid experience level';

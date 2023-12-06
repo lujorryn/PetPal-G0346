@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import CorrespondenceRow from "../../components/applications/correspondence-row/index.jsx"
 import Button from "../../components/ui/Button/index.jsx"
@@ -7,6 +7,9 @@ import { withdrawApp, denyApp, acceptApp } from "./updateAppStatus.jsx";
 import Pagination from "../../components/ui/Pagination/index.jsx";
 import ApplicationDisplay from "../../components/applications/application-display/index.jsx"
 import ApplicationSort from "../../components/applications/application-sort/index.jsx";
+import SearchBar from "../../components/applications/application-searchbar/index.jsx";
+import getQueryString from "./queryStringHelper.jsx";
+
 
 // Component for the list applications page
 function Applications() {
@@ -17,13 +20,18 @@ function Applications() {
   // States
   const [applications, setApplications] = useState(null);
   const navigate = useNavigate();
-  const [endPoint, setEndPoint] = useState(`/api/applications`)
   const [page, setPage] = useState(1); 
   const [ sortCreatedTime, setSortCreatedTime ] = useState(true); 
 
-  // If there are no apps in the current window, 
-  // See if there are more in other windows. 
-  const [claimNext, setClaimNext] = useState('')
+  // If there are no apps in the current window, see if there are more in other windows. 
+  const [claimNext, setClaimNext] = useState('');
+
+  // Search bar states
+  const [searchParams, _] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search'));
+  const [endPoint, setEndPoint] = useState(`/api/applications`);
+  const [query, setQuery] = useState('')
+
 
   // Get data
   useEffect(() => {
@@ -44,42 +52,17 @@ function Applications() {
 
     }, [token, endPoint, navigate]);
 
-  // Change endpoint if page changes or sorting changes
-  let query_string = '';
+  // Listen for search parameters
   useEffect(() => {
-    // console.log("This is app page:", page);
-    // if (page > 1) {
-    //   setEndPoint(prevEndPoint => `/api/applications?page=${page}`);
-    // } else {
-    //   setEndPoint(prevEndPoint => `/api/applications`);
-    // }
+    const searchTerm = searchParams.get('search')
+    setSearchTerm(searchTerm)
+  }, [searchParams]);
 
-    // Check for page number
-    if (page > 1) {
-      query_string += query_string + `?page=${page}`;
-    }
 
-    // Check for sorting
-    if (sortCreatedTime === false) {
-      // If the query string is not empty, use '&'; otherwise, use '?'
-      query_string += query_string !== '' ? '&' : '?';
-      query_string += `sort=last_updated`;
-
-    } else if (sortCreatedTime === true) {
-      query_string += query_string !== '' ? '&' : '?';
-      query_string += `sort=last_created`;
-    }
-
-    console.log("THIS IS THE QUERY STRING", query_string);
-
-    // Join the query strings together
-    if ( query_string !== '?'){
-      setEndPoint(prevEndPoint => `/api/applications${query_string}`);
-    } else {
-      setEndPoint(prevEndPoint => `/api/applications`);
-    }
-
-    // Jump to the next page if there's no applications to show 
+  // Get query string
+  let query_string;
+  useEffect(() => {
+    // Jump to the next page if there's no applications to show. Maybe move this up. 
     if (claimNext == true){
       if (applications.next != null && page < applications.total_pages && page > 0) {
         console.log(applications.next); 
@@ -87,14 +70,37 @@ function Applications() {
         setClaimNext(false);
       }
     }
+  
+    // Get string for query
+    query_string = getQueryString(searchTerm, page, sortCreatedTime);
 
-  }, [page, claimNext, sortCreatedTime]);
+    // Set endpoints
+    // if ( query_string !== ''){
+    //   setEndPoint(prevEndPoint => `/api/applications?${query_string}`);
+    // } else {
+    //   setEndPoint(prevEndPoint => `/api/applications`);
+    // }
+
+    setQuery(query_string);
+
+  }, [page, claimNext, sortCreatedTime, searchTerm]);
+
+  // Send query to the backend
+  useEffect(() => {
+    if(query !== '') {
+      setEndPoint(`/api/applications?${query}`);
+      console.log('This is the endpoint:',`/api/applications?${query}` );
+    }
+    else setEndPoint(`/api/applications`)
+  }, [query])
+
 
   // Loading msg
   if (!applications) {
     return <p>Loading applications...</p>;
   }
   
+
   // Handles button to deny or withdraw an application 
   const onWithdrawDenyBtn = (event) => {
     // To get application id, get .msg-preview
@@ -113,6 +119,7 @@ function Applications() {
     if (role === 'seeker' && app_id != undefined) {
       withdrawApp(token, app_id);
       console.log("Withdrew App");
+      setPage(1); 
 
       return window.location.reload();
 
@@ -125,6 +132,7 @@ function Applications() {
 
     }
   }
+
 
   // Function to accept application.
   const onAcceptBtn = (event) => {
@@ -149,10 +157,12 @@ function Applications() {
     }
   }
 
+
   // Render component
   if (applications != null) {
     return (
       <div className="main__wrapper">
+        <SearchBar searchTerm={searchTerm}/>
         <ApplicationSort setSortCreatedTime={setSortCreatedTime} sortCreatedTime={sortCreatedTime} />
         <ApplicationDisplay 
           applications={applications} 
