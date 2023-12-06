@@ -228,7 +228,7 @@ function PetDetail() {
             </div>
           </div>
 
-          <div className="details-item btn-container">
+          <div className="details-item pl-btn-container">
             {renderActionBtn()}
           </div>
         </div>
