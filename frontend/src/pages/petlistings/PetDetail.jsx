@@ -137,12 +137,12 @@ function PetDetail() {
         )
       }
 
-      const shelterContact = `/messages/${shelter.id}`
+      const shelterPage = `/profile/${shelter.id}`
       if (role === "seeker") {
         if (listing.status !== "AV") {
           return (
             // contact shelter btn
-            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
+            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterPage) }}>view shelter</Button>
           )
         }
   
@@ -151,7 +151,7 @@ function PetDetail() {
           // contact shelter btn
           // application form btn
           <>
-            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
+            <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterPage) }}>view shelter</Button>
             <Button id="application-form-btn" handleClick={() => { navigate(`/petlistings/${petId}/apply`) }}>Application Form</Button>
           </>
         )
