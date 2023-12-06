@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 
 from django.core.paginator import Paginator
 from applications.models import Application
@@ -311,3 +312,46 @@ def comments_shelter_list_view(request, shelter_id):
         return Response(payload, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response({'error': 'Shelter does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    
+'''
+LIST All Comments of a for a user
+ENDPOINT: /api/comments/user
+METHOD: GET
+PERMISSION: User logged in
+'''
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def comments_user_list_view(request):
+    try:
+        user = request.user
+        # get user's applications
+        if user.role == 'SHELTER':
+            applications = user.shelter_applications.all()
+        else:
+            applications = user.seeker_applications.all()
+        print(applications)
+        data = []
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        for application in applications:
+            # get latest comment
+            comment = application.comment_set.all().order_by('-created_time').first()
+            temp = {
+                'application_id': application.pk,
+                'recipient_email': application.seeker.email if user.role == 'SHELTER' else application.petlisting.owner.email,
+                'pet_name': application.petlisting.name,
+            }
+            if comment:
+                temp['comment_id'] = comment.pk
+                temp['content'] = comment.content
+                temp['created_time'] = comment.created_time
+                temp['is_review'] = comment.is_review
+                temp['is_author_seeker'] = comment.is_author_seeker
+                temp['seeker'] = comment.seeker.email
+                temp['shelter'] = comment.shelter.email
+                temp['rating'] = comment.rating
+            data.append(temp)
+        paginated_data = paginator.paginate_queryset(data, request)
+        return paginator.get_paginated_response(paginated_data)
+    except:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
