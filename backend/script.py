@@ -46,13 +46,13 @@ def create_initial_data_json():
                                             special_needs="", description="A very cute dog.", owner=shelter1)
     
     # Applications
-    app1 = Application.objects.create(first_name="John", last_name="Doe", address="123 Main St", phone="123-456-7890",
+    app1 = Application.objects.create(first_name="Bob", last_name="Smith", address="123 Main St", phone="123-456-7890",
                                       email="seeker1@example.com", contact_pref="E", pet_number=1, has_children=False,
                                       experience="EX", residence_type="C", status="P", seeker=seeker1, shelter=shelter1, petlisting=petlisting1)
-    app2 = Application.objects.create(first_name="John", last_name="Doe", address="123 Main St", phone="123-456-7890",
+    app2 = Application.objects.create(first_name="Bob", last_name="Smith", address="123 Main St", phone="123-456-7890",
                                       email="seeker1@example.com", contact_pref="E", pet_number=2, has_children=False,
                                       experience="EX", residence_type="C", status="P", seeker=seeker1, shelter=shelter2, petlisting=petlisting2)
-    app3 = Application.objects.create(first_name="Jane", last_name="Doe", address="123 Main St", phone="123-456-7890",
+    app3 = Application.objects.create(first_name="Dan", last_name="Smith", address="123 Main St", phone="123-456-7890",
                                       email="seeker2@example.com", contact_pref="E", pet_number=2, has_children=False,
                                       experience="EX", residence_type="C", status="P", seeker=seeker2, shelter=shelter2, petlisting=petlisting2)
     
