@@ -14,7 +14,7 @@ function Applications() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [sortOption, setSortOption] = useState(searchParams.get('sort_by') || 'created_time')
-  const [status, setStatus] = useState(searchParams.get('status') || '');
+  const [status, setStatus] = useState('');
   const [page, setPage] = useState(1)
 
   const [query, setQuery] = useState('')
@@ -24,7 +24,7 @@ function Applications() {
     headers: {
       Authorization: `Bearer ${token}`
     }
-  }, [status, sortOption], search, false)
+  }, [sortOption], search, false)
 
   const next = data?.next
   const prev = data?.previous
@@ -33,13 +33,11 @@ function Applications() {
 
   useEffect(() => {
     let queryString = '';
+    if(page > 1) queryString = queryString + (queryString !== '' ? `&page=${page}`:`page=${page}`)
     if(status) {
       queryString = queryString + (queryString !== '' ? `&status=${status}` : `status=${status}`)
-      searchParams.set('status', status)
-    } else {
-      searchParams.delete('status')
-    }
-    if(page > 1) queryString = queryString + (queryString !== '' ? `&page=${page}`:`page=${page}`)
+      setQuery(queryString)
+    } 
     if(sortOption) {
       queryString = queryString + (queryString !== '' ? `&sort_by=${sortOption}`:`sort_by=${sortOption}`)
       searchParams.set('sort_by', sortOption)
@@ -91,7 +89,6 @@ function Applications() {
         applications={data ? data.results.data : []}
         status={status}
         setStatus={setStatus}
-        // setSearch={setSearch}
         role={role}
       />
       <Pagination next={next} prev={prev} curr={curr} total_pages={total_pages} setPage={setPage}/>
