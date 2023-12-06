@@ -11,23 +11,23 @@ function CorrespondenceRow ({subject, from, preview, timestamp, handleViewBtn, i
         }
     
     return (
-        <div class="msg-row"> 
-            <div class="msg-info">
+        <div className="msg-row"> 
+            <div className="msg-info">
                 {is_app ? (
                     <span>
-                        <div class="msg-subject"> {subject}'s Pet Application </div>
+                        <div className="msg-subject"> {subject}'s Pet Application </div>
                     </span>
                     ) : (
                     <span> 
-                        <div class="msg-subject"> Message from {subject} </div>
-                        <div class="msg-from"> From: {from} </div>
+                        <div className="msg-subject"> Message from {subject} </div>
+                        <div className="msg-from"> From: {from} </div>
                     </span>
                     )
                 }
-                <div class="msg-preview"> {preview} </div>
-                <div class="msg-time"> {timestamp} </div>
+                <div className="msg-preview"> {preview} </div>
+                <div className="msg-time"> {timestamp} </div>
             </div>
-            <div class="btn-container">
+            <div className="btn-container">
             {is_app ? (
                 /* This if 'switch' is true */
                 <div className="btn-container">

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import NotFound from "../NotFound";
 import ApplicationForm from "../../components/applications/application-form";
 import validateForm from "./validateForm.jsx" 
+import { checkExistingApplication } from "./getAllApplications.jsx";
 
 // Idea: 
 // 1. (OK) Check that the user is a seeker.
@@ -21,49 +22,26 @@ import validateForm from "./validateForm.jsx"
 function PetApplication () {
 
     // The data in the form is blank 
-    // let personal_data = {
-    //     firstName: '', 
-    //     lastName: '',
-    //     address: '', 
-    //     city: "", 
-    //     province: "", 
-    //     postalCode: "", 
-    //     phoneNum: '', 
-    //     email: '', 
-    //     pref_call: '', 
-    //     pref_text: '', 
-    //     pref_email: '', 
-    //     pet_num: '',
-    //     has_children: '', 
-    //     experienced: '', 
-    //     intermediate: '', 
-    //     no_exp: '', 
-    //     condo: '', 
-    //     apt: '', 
-    //     house: '', 
-    //   };
-  
-      // To test: 
-      let personal_data = {
-        firstName: 'John', 
-        lastName: 'Doe',
-        address: 'Help', 
-        city: "Tampa", 
-        province: "FL", 
-        postalCode: "123214", 
-        phoneNum: '123-123-1234', 
-        email: 'seeker1@example.com', 
-        pref_call: false, 
-        pref_text: false, 
-        pref_email: true, 
-        pet_num: 1,
-        has_children: false, 
-        experienced: true, 
-        intermediate: false, 
-        no_exp: false, 
-        condo: true, 
-        apt: false, 
-        house: false, 
+    let personal_data = {
+        firstName: '', 
+        lastName: '',
+        address: '', 
+        city: "", 
+        province: "", 
+        postalCode: "", 
+        phoneNum: '', 
+        email: '', 
+        pref_call: '', 
+        pref_text: '', 
+        pref_email: '', 
+        pet_num: '',
+        has_children: '', 
+        experienced: '', 
+        intermediate: '', 
+        no_exp: '', 
+        condo: '', 
+        apt: '', 
+        house: '', 
       };
 
     const { token, userId, role } = useAuth()
@@ -89,11 +67,11 @@ function PetApplication () {
         console.log("PetApplication useEffect"); 
   
        // If there is no token, navigate to the user page
-       // If the user is a shelter, redirect to Home 
+       // If the user is a shelter, redirect to 404-not-found
        if (!token) {
         return navigate('/login'); 
        } else if (role === 'shelter') {
-        return navigate('/');
+        return navigate('404-not-found');
        }
          
       // Fetch data when component mounts
@@ -105,43 +83,32 @@ function PetApplication () {
       }).then(response => response.json())
         .then(data => {
           setApplications(data);
+          console.log("This is PetApplication data", data); 
         })
         .catch(error => console.log(error)); 
   
       }, [token, navigate]);
 
-    // Check to see if user already has an app for this pet.
-    useEffect(() => {
-        if (applications != null) {
-            applications_data = applications.results.data; 
-            if (applications_data.some(application => application.petlisting == pet_id)) {
-                let app_id = applications_data.find(app => app.petlisting == pet_id);
-                if (app_id){
-                    return navigate(`/applications/${app_id.id}`);
-                } 
-            }
-        }
+  // Check to see the status of the pet
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/petlistings/${pet_id}`, {
+      method: 'GET',
+      headers: {
+          Authorization: `Bearer ${token}`,
+      },
+    }).then(response => response.json())
+    .then(data => {
+      console.log("PET STATUS", data.data.status);
+      if (data.data.status != 'AV') {
+        setErrorMsg("You can only apply for pets with Status: Available");
+        setIsReadOnly(true);
+        setFirstFetchError(true); // Set the error flag
+      }
+      }).catch( error => console.log(error));
+    });
 
-    }, [applications, pet_id, navigate]);
 
-    // Check to see the status of the pet
-    useEffect(() => {
-      fetch(`${process.env.REACT_APP_API_URL}/api/petlistings/${pet_id}`, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-      }).then(response => response.json())
-      .then(data => {
-        console.log("PET STATUS", data.data.status);
-        if (data.data.status != 'AV') {
-          setErrorMsg("You can only apply for pets with Status: Available");
-          setIsReadOnly(true);
-          setFirstFetchError(true); // Set the error flag
-        }
-        }).catch( error => console.log(error));
-      });
-
+  // Make POST request
   useEffect(() => {
     if (isReady && validData && validData.firstName !== '' && !firstFetchError) {
       console.log("ValidData", validData);
@@ -162,6 +129,7 @@ function PetApplication () {
         if (!response.ok) {
           // console.log(validData);
           console.log("Error with application POST request");
+          return navigate(`/petlistings/already-applied`, { replace: true });
         } else {
           return navigate(`/petlistings/application-success`, { replace: true });
         }
@@ -196,8 +164,6 @@ function PetApplication () {
           }
         }
     }
-
-    //applications_data = applications.results.data || [];
 
     return (
         // <div>Application Detail {application_id} </div>

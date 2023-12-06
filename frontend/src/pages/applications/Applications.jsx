@@ -1,71 +1,81 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
 import CorrespondenceRow from "../../components/applications/correspondence-row/index.jsx"
 import Button from "../../components/ui/Button/index.jsx"
 import { withdrawApp, denyApp, acceptApp } from "./updateAppStatus.jsx";
 import Pagination from "../../components/ui/Pagination/index.jsx";
 import ApplicationDisplay from "../../components/applications/application-display/index.jsx"
+import ApplicationSort from "../../components/applications/application-sort/index.jsx";
+import SearchBar from "../../components/applications/application-searchbar/index.jsx";
+import getQueryString from "./queryStringHelper.jsx";
+import { useFetch } from "../../hooks/useFetch.js";
 
+//STARTED TO CHANGE HERE 
 // Component for the list applications page
 function Applications() {
 
   // Destructure auth variables
-  const { token, userId, role } = useAuth()
+  const { token, userId, role } = useAuth();
 
   // States
   const [applications, setApplications] = useState(null);
   const navigate = useNavigate();
-  const [endPoint, setEndPoint] = useState(`/api/applications`)
   const [page, setPage] = useState(1); 
+  const [ sortCreatedTime, setSortCreatedTime ] = useState(false); 
 
-  // If there are no apps in the current window, 
-  // See if there are more in other windows. 
-  const [claimNext, setClaimNext] = useState('')
+  // If there are no apps in the current window, see if there are more in other windows. 
+  const [claimNext, setClaimNext] = useState('');
 
-  // Get data
-  useEffect(() => {
-      console.log("Applications useEffect"); 
+  // Search bar states
+  const [searchParams, _] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search'));
+  const [endPoint, setEndPoint] = useState(`/api/applications`);
+  const [query, setQuery] = useState('')
 
-     // If there is no token, navigate to the user page 
-     if (!token) return navigate('/login'); 
+  const [isPending, setIsPending] = useState(false);
+  const [failedSearchMsg, setFailedSearchMsg] = useState(''); 
 
-    // Fetch data when component mounts
-    fetch(`${process.env.REACT_APP_API_URL}${endPoint}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}`}})
-      .then(response => response.json())
-      .then(data => {
-        setApplications(data); 
-      })
-      .catch(error => console.log(error)); 
-
-    }, [token, endPoint, navigate]);
-
-  // Change endpoint if page changes
-  useEffect(() => {
-    console.log("This is app page:", page);
-    if (page > 1) {
-      setEndPoint(prevEndPoint => `/api/applications?page=${page}`);
-    } else {
-      setEndPoint(prevEndPoint => `/api/applications`);
+  // Fetch data
+  // Why did it not work if i used fetch() ? 
+  const { data } = useFetch(endPoint, {
+    headers: {
+      Authorization: `Bearer ${token}`
     }
+  });
 
-    if (claimNext == true){
-      if (applications.next != null && page < applications.total_pages && page > 0) {
-        console.log(applications.next); 
-        setPage(parseInt(page) + 1); 
-        setClaimNext(false);
-      }
+  // Listen for search parameters
+  useEffect(() => {
+    const searchTerm = searchParams.get('search')
+    setSearchTerm(searchTerm)
+    setPage(1);
+  }, [searchParams, isPending]);
+
+
+  // Get query string
+  let query_string;
+  useEffect(() => {
+
+    // Get string for query
+    query_string = getQueryString(searchTerm, page, sortCreatedTime, isPending);
+
+    setQuery(query_string);
+
+  }, [page, claimNext, sortCreatedTime, searchTerm]);
+
+  // Send query to the backend
+  useEffect(() => {
+    if(query !== '') {
+      setEndPoint(`/api/applications?${query}`);
+      // if (query.includes('name')){
+      //   setFailedSearchMsg('Your search yielded no results');
+      // }
+      console.log('This is the endpoint:',`/api/applications?${query}` );
     }
+    else setEndPoint(`/api/applications`);
+  }, [query]);
 
-  }, [page, claimNext]);
 
-  // Loading msg
-  if (!applications) {
-    return <p>Loading applications...</p>;
-  }
-  
   // Handles button to deny or withdraw an application 
   const onWithdrawDenyBtn = (event) => {
     // To get application id, get .msg-preview
@@ -75,7 +85,7 @@ function Applications() {
     if (msgRow) {
       // Find the "msg-preview" element within the "msg-row"
       const msgPreview = msgRow.querySelector('.msg-preview');
-      // console.log(msgPreview);
+
       // Get the application ID from msgContext
       const msgContent = msgPreview.textContent;
       app_id = parseInt(msgContent.match(/\d+/)[0]);
@@ -84,6 +94,7 @@ function Applications() {
     if (role === 'seeker' && app_id != undefined) {
       withdrawApp(token, app_id);
       console.log("Withdrew App");
+      setPage(1); 
 
       return window.location.reload();
 
@@ -96,6 +107,7 @@ function Applications() {
 
     }
   }
+
 
   // Function to accept application.
   const onAcceptBtn = (event) => {
@@ -121,18 +133,22 @@ function Applications() {
   }
 
   // Render component
-  if (applications != null) {
-    // console.log("This is applications data", applications);
+  if (data != null) {
     return (
       <div className="main__wrapper">
+        <SearchBar searchTerm={searchTerm}/>
+        <div> {failedSearchMsg} </div>
+        <ApplicationSort setSortCreatedTime={setSortCreatedTime} sortCreatedTime={sortCreatedTime} />
         <ApplicationDisplay 
-          applications={applications} 
+          applications={data} 
           onWithdrawDenyBtn={onWithdrawDenyBtn} 
           onAcceptBtn={onAcceptBtn}
           role = {role}
           page = {page}
           setPage = {setPage}
           setClaimNext = {setClaimNext}
+          setIsPending = {setIsPending}
+          queryString = {query}
         />
       </div>)
   }
