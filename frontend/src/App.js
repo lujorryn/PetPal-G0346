@@ -12,8 +12,6 @@ import SignUp from './pages/SignUp';
 import SignupSuccess from './pages/SignupSuccess';
 
 import Shelters from './pages/shelters/Shelters';
-import Shelter from './pages/shelters/Shelter';
-import ShelterEdit from './pages/shelters/ShelterEdit';
 
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
@@ -26,8 +24,9 @@ import PetDetailCreate from './pages/petlistings/PetDetailCreate';
 
 import ApplicationDetail from './pages/applications/ApplicationDetail';
 import Applications from './pages/applications/Applications';
-import PetApplication from './pages/applications/PetApplication'
-import ApplicationSuccess from './pages/applications/ApplicationSuccess'
+import PetApplication from './pages/applications/PetApplication';
+import ApplicationSuccess from './pages/applications/ApplicationSuccess';
+import ApplicationExists from './pages/applications/ApplicationExists';
 
 import Messages from './pages/messages/Messages';
 import MessageDetail from './pages/messages/MessageDetail';
@@ -38,7 +37,6 @@ import ShelterBlogEdit from './pages/blog/ShelterBlogEdit';
 import ShelterBlogPost from './pages/blog/ShelterBlogPost';
 
 import NotFound from './pages/NotFound';
-import ApplicationExists from './components/applications/application-exists';
 
 function App() {
   return (
@@ -64,11 +62,12 @@ function App() {
 
             <Route path='messages' element={<Messages />} />
             <Route path='messages/:applicationId' element={<MessageDetail />} />
+
             <Route path='applications' element={<Applications />} />
             <Route path='applications/:appId' element={<ApplicationDetail />} />
             <Route path='petlistings/:petId/apply' element={ <PetApplication/> }/>
             <Route path='petlistings/application-success' element={ <ApplicationSuccess/> }/>
-            <Route path='petlistings/already-applied' element={ <ApplicationExists/> }/>
+            <Route path='petlistings/already-applied' element={ <ApplicationExists/> }/> 
 
             <Route path='blog/:userId' element={<ShelterBlog />} />
             <Route path='blog/:userId/create' element={<ShelterBlogCreate />} />
