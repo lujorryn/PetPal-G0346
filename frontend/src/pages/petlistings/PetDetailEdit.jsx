@@ -292,12 +292,12 @@ function PetDetailEdit() {
               <div className="pet-profile-details edit-mode">
                 <div className="pet-profile-header edit-mode">
                   <input className="title" name="name" value={listing.name} onChange={handlePetChange} placeholder="pet name" required />
-                  <input id="address" className="address" name="address" value={shelter.address} onChange={handleShelterChange} placeholder='shelter address' />
+                  <input readOnly id="address" className="address" name="address" value={shelter.address} onChange={handleShelterChange} placeholder='shelter address' />
                 </div>
                 <div className="pet-profile-info">
                   <div className="row">
                     <label htmlFor="shelter" className="key">Shelter:</label>
-                    <input name="email" className="value" value={shelter.email} onChange={handleShelterChange} placeholder='shelter email' />
+                    <input readOnly name="email" className="value" value={shelter.email} onChange={handleShelterChange} placeholder='shelter email' />
                   </div>
                   <div className="row">
                     <label htmlFor="size" className="key">Size:</label>

@@ -177,8 +177,6 @@ function PetDetailCreate() {
 
 
     const mainContent = (listing, shelter) => {
-        const fDate = new Date(listing.created_time).toLocaleDateString();
-
 
         const sendPost = async (e) => {
             e.preventDefault();
@@ -186,7 +184,8 @@ function PetDetailCreate() {
             let pk = 0;
             let method = 'POST'
 
-            for (let i = 0; i < photoUrls.length; i++) {
+
+            for (let i = 0; i < (photoObjects.length > 0 ? photoObjects.length : 1); i++) {
                 const newFormData = new FormData();
                 for (const key in listingData) {
                     if (listingData.hasOwnProperty(key)) {
