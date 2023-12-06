@@ -20,6 +20,7 @@ import ProfileOther from './pages/profile/ProfileOther';
 import PetListings from './pages/petlistings/PetListingsPage';
 import PetDetail from './pages/petlistings/PetDetail';
 import PetDetailEdit from './pages/petlistings/PetDetailEdit';
+import PetDetailCreate from './pages/petlistings/PetDetailCreate';
 
 import ApplicationDetail from './pages/applications/ApplicationDetail';
 import Applications from './pages/applications/Applications';
@@ -56,6 +57,7 @@ function App() {
             <Route path='petlistings' element={<PetListings />} />
             <Route path='petlistings/:petId' element={<PetDetail />} />
             <Route path='petlistings/:petId/edit' element={<PetDetailEdit />} />
+            <Route path='petlistings/create' element={<PetDetailCreate />} />
 
             <Route path='messages' element={<Messages />} />
             <Route path='messages/:applicationId' element={<MessageDetail />} />
