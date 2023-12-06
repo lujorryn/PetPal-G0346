@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import '../../styles/reset.css';
 import '../../styles/global.css';
@@ -23,7 +23,6 @@ function PetDetailCreate() {
         status: "AV",
         med_history: "none",
         description: "",
-        // not provided
     }
     const [shelterData, setShelterData] = useState(sampleListing);
     const [selectedPhoto, setSelectedPhoto] = useState(0);
@@ -35,7 +34,6 @@ function PetDetailCreate() {
 
     const navigate = useNavigate();
 
-    const listingUrl = `${process.env.REACT_APP_API_URL}/api/petlistings`;
 
     // upon page load: fetch petlisting and shelter
     useEffect(() => {
@@ -52,7 +50,7 @@ function PetDetailCreate() {
             try {
                 const listingOwner = await getShelterById(userId);
                 setShelterData(listingOwner);
-                // console.log(listingOwner);
+
             } catch (err) {
                 setErr(err.message);
                 console.log("Uh oh =>", err);
@@ -78,46 +76,11 @@ function PetDetailCreate() {
             return shelter.data;
         }
 
-        const getListingOwner = async (email) => {
-            const allShelters = [];
-            let hasNext = true;
-            let page = 1;
-            while (hasNext) {
-                let shelterUrl = `${process.env.REACT_APP_API_URL}/api/shelters?page=${page}`;
-                const res = await fetch(shelterUrl, getReqContent);
-
-                if (res.status != 200) {
-                    throw new Error(res.statusText);
-                }
-
-                const shelters = await res.json();
-                allShelters.push(...shelters.data);
-                hasNext = shelters.page.has_next;
-                page++;
-            }
-            const ownerShelter = allShelters.find(s => s.email === email);
-            return ownerShelter;
-        }
 
         fetchAllData();
         // end of useEffect()
     }, []);
 
-
-    const processPhotos = (photos) => {
-        const defaultPhoto = "/images/logo_ref.png";
-        if (photos.length == 0) {
-            return [defaultPhoto];
-        }
-
-        if (Array.isArray(photos)) {
-            const photoUrls = photos.map((photo) => {
-                return `${process.env.REACT_APP_API_URL}/${photo.url}`;
-            });
-            return photoUrls;
-        }
-        return [defaultPhoto];
-    }
 
     const stringToCode = (key) => {
         let string = listingData[key];
@@ -151,22 +114,6 @@ function PetDetailCreate() {
                 }
                 return 'S'
 
-            case 'status':
-                string = string.toLowerCase();
-                if (['pending', 'pe'].includes(string)) {
-                    return 'PE'
-                }
-                if (['available', 'av'].includes(string)) {
-                    return 'AV'
-                }
-                if (['withdrawn', 'wi'].includes(string)) {
-                    return 'WI'
-                }
-                if (['adopted', 'ad'].includes(string)) {
-                    return 'AD'
-                }
-                return 'PE'
-
 
             default:
                 return string;
@@ -177,8 +124,6 @@ function PetDetailCreate() {
 
 
     const mainContent = (listing, shelter) => {
-        const fDate = new Date(listing.created_time).toLocaleDateString();
-
 
         const sendPost = async (e) => {
             e.preventDefault();
@@ -186,7 +131,8 @@ function PetDetailCreate() {
             let pk = 0;
             let method = 'POST'
 
-            for (let i = 0; i < photoUrls.length; i++) {
+
+            for (let i = 0; i < (photoObjects.length > 0 ? photoObjects.length : 1); i++) {
                 const newFormData = new FormData();
                 for (const key in listingData) {
                     if (listingData.hasOwnProperty(key)) {
@@ -202,15 +148,12 @@ function PetDetailCreate() {
                         method: method,
                         headers: {
                             Authorization: `Bearer ${token}`,
-                            // 'Content-Type': "application/json",
                         },
                         body: newFormData,
                     });
                     if (!response.ok) {
-                        // console.log(response)
-                        const sd = await response.json();
-                        // console.log("json:::", sd);
                         console.error('File upload failed:', response.error);
+                        throw new Error(response.error);
                     } else {
                         const oj = await response.json();
                         console.log('File uploaded successfully.', oj);
@@ -222,7 +165,7 @@ function PetDetailCreate() {
                 method = "PUT"
                 url = `${process.env.REACT_APP_API_URL}/api/petlistings/${pk}`;
             } // end of for
-            navigate(`/petlistings`)
+            navigate(`/profile`)
         } // end of sendPost()
 
         const renderActionBtn = () => {
@@ -253,7 +196,6 @@ function PetDetailCreate() {
             setPhotoUrls([...photoUrls, objectUrl])
             setPhotoObjects([...photoObjects, kfile])
             setSelectedPhoto(photoUrls.length)
-            //   console.log("photos", photoUrls)
         }
 
         return (
