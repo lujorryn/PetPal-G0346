@@ -17,7 +17,16 @@ from petlistings.models import PetListing
 from accounts.models import PetPalUser
 from notifications.models import Notification
 
-
+class CustomPaginator(PageNumberPagination):
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'current_page': self.page.number,
+            'total_pages': self.page.paginator.num_pages,
+            'results': data
+        })
 
 # Create your views here.
 
@@ -35,7 +44,7 @@ def applications_list_and_create_view(request):
     if request.method == 'GET':
         curr_user = PetPalUser.objects.get(pk=request.user.id)
         status_filter = request.query_params.get('status')
-        sort_option = request.query_params.get('sort')
+        sort_option = request.query_params.get('sort_by')
         
         
         if curr_user.role == PetPalUser.Role.SHELTER:
@@ -44,6 +53,35 @@ def applications_list_and_create_view(request):
             all_apps = Application.objects.filter(seeker=curr_user)
         else:
             return Response({'error':f'invalid user role: {curr_user.role}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Search Params
+        # email
+        seeker_email = request.query_params.get('seeker_email')
+        if seeker_email: all_apps = all_apps.filter(seeker__email=seeker_email)
+        shelter_email = request.query_params.get('shelter_email')
+        if shelter_email: all_apps = all_apps.filter(shelter__email=shelter_email)
+
+        # category
+        category = request.query_params.get('category')
+        if category: all_apps = all_apps.filter(petlisting__category=category)
+
+        # size
+        size = request.query_params.get('size')
+        if size: all_apps = all_apps.filter(petlisting__size=size)
+
+        # gender
+        gender = request.query_params.get('gender')
+        if gender: all_apps = all_apps.filter(petlising__gender=gender)
+
+        # name
+        name = request.query_params.get('name')
+        if name: 
+            all_apps_pet = all_apps.filter(petlisting__name=name)
+            if all_apps_pet: all_apps = all_apps_pet
+            else:
+                seeker_name = name.split(' ')
+                all_apps = all_apps.filter(first_name=seeker_name[0])
+                if len(seeker_name) > 1: all_apps = all_apps.filter(last_name=seeker_name[1])
 
 
         if status_filter in Application.ALLOWED_STATUS:
@@ -56,9 +94,8 @@ def applications_list_and_create_view(request):
         else:
             all_apps = all_apps.order_by('-created_time')
 
-
-        paginator = PageNumberPagination()
-        paginator.page_size = 10
+        paginator = CustomPaginator()
+        paginator.page_size = 5
 
         paginated_apps = paginator.paginate_queryset(all_apps, request)
 
@@ -268,8 +305,6 @@ def application_detail_view(request, app_id):
             put_app = Application.objects.get(pk=app_id)
         except Application.DoesNotExist:
             return Response({'error':'app id not found'}, status=status.HTTP_400_BAD_REQUEST)
-
-       
 
         new_status = data["status"]
 
