@@ -5,18 +5,6 @@ import NotFound from "../NotFound";
 import ApplicationForm from "../../components/applications/application-form";
 import validateForm from "./validateForm.jsx" 
 
-// Idea: 
-// 1. (OK) Check that the user is a seeker.
-//  - What should the behaviour be if a shelter types in this url? 
-//        - Made it so that it navigates back to petlisting (Consider changing it to 404 Not Found)
-// 2. (OK) If a seeker, check that they have not applied to this pet yet.
-//      - If they have applied to this pet, navigate to the applications/:appId page. 
-// 3. (OKA) Show the form and validate their form inputs. 
-
-//TODO: 
-// - (OK) Navigate to success screen 
-// - (OK) GET PET STATUS
-
 /* Component to show an empty form if the seeker has not applied to this pet yet */ 
 function PetApplication () {
 
@@ -62,9 +50,7 @@ function PetApplication () {
     var pet_id = window.location.pathname.split('/petlistings/').pop().split('/apply')[0];
 
     // Fetch user's prev applications when PetApplication dismounts
-    useEffect(() => {
-        console.log("PetApplication useEffect"); 
-  
+    useEffect(() => {  
        // If there is no token, navigate to the user page
        // If the user is a shelter, redirect to 404-not-found
        if (!token) {
@@ -82,7 +68,6 @@ function PetApplication () {
       }).then(response => response.json())
         .then(data => {
           setApplications(data);
-          console.log("This is PetApplication data", data); 
         })
         .catch(error => console.log(error)); 
   
@@ -97,7 +82,6 @@ function PetApplication () {
       },
     }).then(response => response.json())
     .then(data => {
-      console.log("PET STATUS", data.data.status);
       if (data.data.status != 'AV') {
         setErrorMsg("You can only apply for pets with Status: Available");
         setIsReadOnly(true);
@@ -110,8 +94,7 @@ function PetApplication () {
   // Make POST request
   useEffect(() => {
     if (isReady && validData && validData.firstName !== '' && !firstFetchError) {
-      console.log("ValidData", validData);
-  
+
       let form_data = new FormData();
   
       for (var key in validData) {
@@ -126,7 +109,6 @@ function PetApplication () {
         body: form_data,
       }).then(response => {
         if (!response.ok) {
-          // console.log(validData);
           console.log("Error with application POST request");
           return navigate(`/petlistings/already-applied`, { replace: true });
         } else {
@@ -156,7 +138,6 @@ function PetApplication () {
         } else {
           console.log(validation_result);
           if (validation_result.first_name != '') {
-            console.log("This is validation res", validation_result);
 
             setValidData(validation_result);
             setIsReady(true);

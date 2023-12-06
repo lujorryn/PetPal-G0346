@@ -1,10 +1,7 @@
 // Function used to validate application form 
 function validateForm(method, formData, pet_id, token) {
 
-    console.log("Inside validateForm");
     let error_msg = "";
-
-    console.log(formData);
 
     // Check that no input is empty
     for (const pair of formData.entries()) {

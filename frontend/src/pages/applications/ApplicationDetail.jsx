@@ -4,9 +4,6 @@ import { useAuth } from "../../context/AuthContext";
 import ApplicationForm from "../../components/applications/application-form/index.jsx"
 import NotFound from "../NotFound.jsx";
 
-// TODO:
-// - Show 404 not found page if there is an error message
-
 // "ApplicationDetail" Component
 // This renders the details of a specific existing application 
 function ApplicationDetail() {
