@@ -1,0 +1,168 @@
+/* Styles for the application form */ 
+
+.main__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-container {
+    margin-top: 90px;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.form-content {
+    min-height: 800px;
+    width: 100%;
+    background-color: #F2F2F2;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 50px;
+    gap: 30px;
+}
+
+.btn-row {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.title {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.form-row {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    align-items: center;
+}
+
+.radio-group {
+    justify-content: space-evenly;
+}
+
+
+.full-input {
+    width: 100%;
+    overflow: hidden;
+}
+
+.full-input span {
+    display: block;
+    overflow: hidden;
+}
+.full-input input {
+    width: 100%;
+}
+.full-input label {
+    float: left;
+    margin-right: 10px;
+}
+
+.group-5 {
+    width: 50%;
+}
+
+.group-4 {
+    width: 40%;
+}
+
+.group-2 {
+    width: 20%;
+}
+
+#no {
+    margin-left: 20px;
+}
+
+
+#msg-btn {
+    background-color: var(--color-white);
+    color: var(--color-black);
+    text-decoration: underline;
+    text-align: center;
+}
+
+.btn-row {
+    margin-bottom: 30px;
+}
+
+#submit-app-btn {
+    display: inline-block;
+    padding: var(--btn-padding, var(--btn-padding-default));
+    border-radius: 2rem;
+    font-size: var(--font-size);
+    cursor: pointer;
+    appearance: none;
+    transition: 0.3s;
+    color: #f7f9f0;
+}
+
+#submit-app-btn:hover {
+    background-color: var(--btn-bg-color, var(--btn-txt-color-default));
+    color: var(--btn-txt-color, var(--btn-bg-color-default));
+  }
+
+#error-message {
+    color: red; 
+    font-weight: bold;
+}
+
+@media (max-width: 830px) {
+    .form-row {
+        flex-direction: column;
+        justify-self: start;
+        align-items: flex-start;
+        /* width: 80%; */
+    }
+
+    /* .form-group {
+        width: 80%;
+    } */
+    
+    .form-row > * {
+        width: 100%;
+    }
+
+    .form-content {
+        background-color: var(--color-white);
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 600px) {
+    .btn-row {
+        flex-direction: column;
+        gap: 20px;
+        width: 90%;
+    }
+
+
+}
+
+#number-of-pets {
+    width: 60px;
+}
+
+#withdraw-link {
+    float: right;
+    clear: both;
+}
