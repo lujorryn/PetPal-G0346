@@ -6,14 +6,16 @@ import SearchBar from '../../components/petlistings/SearchBar';
 import ApplicationSort from '../../components/applications/ApplicationSort';
 import ApplicationsList from "../../components/applications/applist/ApplicationsList"
 import Pagination from '../../components/ui/Pagination';
+import { useSearchParams } from 'react-router-dom';
 
 function Applications() {
   const { token, role } = useAuth();
 
-  const [status, setStatus] = useState('active');
-  const [sortOption, setSortOption] = useState('created_time')
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('search') || '')
+  const [sortOption, setSortOption] = useState(searchParams.get('sort_by') || 'created_time')
+  const [status, setStatus] = useState(searchParams.get('status') || '');
   const [page, setPage] = useState(1)
-  const [search, setSearch] = useState('')
 
   const [query, setQuery] = useState('')
   const [endPoint, setEndPoint] = useState('')
@@ -22,7 +24,7 @@ function Applications() {
     headers: {
       Authorization: `Bearer ${token}`
     }
-  })
+  }, [status, sortOption], search, false)
 
   const next = data?.next
   const prev = data?.previous
@@ -31,11 +33,18 @@ function Applications() {
 
   useEffect(() => {
     let queryString = '';
-    if(status) queryString = queryString + (queryString !== '' ? `&status=P` : `status=P`)
+    if(status) {
+      queryString = queryString + (queryString !== '' ? `&status=${status}` : `status=${status}`)
+      searchParams.set('status', status)
+    } else {
+      searchParams.delete('status')
+    }
     if(page > 1) queryString = queryString + (queryString !== '' ? `&page=${page}`:`page=${page}`)
-    if(sortOption) queryString = queryString + (queryString !== '' ? `&sort=${sortOption}`:`sort=${sortOption}`)
+    if(sortOption) {
+      queryString = queryString + (queryString !== '' ? `&sort_by=${sortOption}`:`sort_by=${sortOption}`)
+      searchParams.set('sort_by', sortOption)
+    }
     if(search) {
-      setStatus('') // search can only be done on the all page
       const parseSearchArr = search.split(' ')
       let name = ''
       for (let i in parseSearchArr) {
@@ -57,8 +66,10 @@ function Applications() {
         else name = name + (name === '' ? parseSearchArr[i] : ("%20" + parseSearchArr[i]))
       }
       if(name !== '') queryString = queryString + (queryString !== '' ? `&name=${name}` : `name=${name}`)
-    }
+      searchParams.set('search', search)
+    } else searchParams.delete('search')
     setQuery(queryString)
+    setSearchParams(searchParams)
   }, [status, page, sortOption, search])
 
   useEffect(() => {
@@ -68,13 +79,19 @@ function Applications() {
 
   return (
     <div style={{padding: 'var(--padding-wide)'}}>
-      <SearchBar setSearchTerm={setSearch}/>
-      <ApplicationSort setSortOption={setSortOption}/>
+      <SearchBar 
+        searchTerm={search}
+        setSearchTerm={setSearch}
+      />
+      <ApplicationSort
+        sortOption={sortOption}
+        setSortOption={setSortOption}
+      />
       <ApplicationsList
         applications={data ? data.results.data : []}
         status={status}
         setStatus={setStatus}
-        setSearch={setSearch}
+        // setSearch={setSearch}
         role={role}
       />
       <Pagination next={next} prev={prev} curr={curr} total_pages={total_pages} setPage={setPage}/>

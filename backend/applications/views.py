@@ -44,7 +44,7 @@ def applications_list_and_create_view(request):
     if request.method == 'GET':
         curr_user = PetPalUser.objects.get(pk=request.user.id)
         status_filter = request.query_params.get('status')
-        sort_option = request.query_params.get('sort')
+        sort_option = request.query_params.get('sort_by')
         
         
         if curr_user.role == PetPalUser.Role.SHELTER:

@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import styles from './PetlistingsSort.module.css'
 
-function PetlistingsSort({setSortOption, setSortAsc}) {
-  const [selectedOption, setSelectedOption] = useState('')
-  const [ascending, setAscending] = useState(true)
+function PetlistingsSort({sortOption, setSortOption, sortAsc, setSortAsc}) {
+  const [selectedOption, setSelectedOption] = useState(sortOption)
+  const [ascending, setAscending] = useState(sortAsc)
 
   const handleChange = e => {
     const {value} = e.target
     setSelectedOption(value)
-    setSortOption(() => value)
+    setSortOption(value)
   }
   const handleDirectionChange = e => {
     const {value} = e.target
     setAscending(value)
-    setSortAsc(() => value)
+    setSortAsc(value)
   }
 
   return (
