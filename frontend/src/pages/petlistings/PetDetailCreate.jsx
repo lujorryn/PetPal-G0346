@@ -167,18 +167,6 @@ function PetDetailCreate() {
                 }
                 return 'PE'
 
-            case 'category':
-                string = string.toLowerCase();
-                if (['d', 'dog'].includes(string)) {
-                    return 'D';
-                }
-                if (['c', 'cat'].includes(string)) {
-                    return 'C';
-                }
-                if (['o', 'other'].includes(string)) {
-                    return 'O';
-                }
-                return 'O';
 
             default:
                 return string;
@@ -322,41 +310,41 @@ function PetDetailCreate() {
                                     </div>
                                     <div className="row">
                                         <label className="key">Category:</label>
-                                            <div className="value form-radio-labels">
-                                                <label>
-                                                    <input
-                                                        className='form-radio-input'
-                                                        type="radio"
-                                                        name="category"
-                                                        value="dog"
-                                                        checked={listing.category === 'dog'}
-                                                        onChange={handlePetChange}
-                                                    />
-                                                    Dog
-                                                </label>
-                                                <label>
-                                                    <input
-                                                        className='form-radio-input'
-                                                        type="radio"
-                                                        name="category"
-                                                        value="cat"
-                                                        checked={listing.category === 'cat'}
-                                                        onChange={handlePetChange}
-                                                    />
-                                                    Cat
-                                                </label>
-                                                <label>
-                                                    <input
-                                                        className='form-radio-input'
-                                                        type="radio"
-                                                        name="category"
-                                                        value="other"
-                                                        checked={listing.category === 'other'}
-                                                        onChange={handlePetChange}
-                                                    />
-                                                    Other
-                                                </label>
-                                            </div>
+                                        <div className="value form-radio-labels">
+                                            <label>
+                                                <input
+                                                    className='form-radio-input'
+                                                    type="radio"
+                                                    name="category"
+                                                    value="D"
+                                                    checked={listing.category === 'D'}
+                                                    onChange={handlePetChange}
+                                                />
+                                                Dog
+                                            </label>
+                                            <label>
+                                                <input
+                                                    className='form-radio-input'
+                                                    type="radio"
+                                                    name="category"
+                                                    value="C"
+                                                    checked={listing.category === 'C'}
+                                                    onChange={handlePetChange}
+                                                />
+                                                Cat
+                                            </label>
+                                            <label>
+                                                <input
+                                                    className='form-radio-input'
+                                                    type="radio"
+                                                    name="category"
+                                                    value="O"
+                                                    checked={listing.category === 'O'}
+                                                    onChange={handlePetChange}
+                                                />
+                                                Other
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -231,6 +231,19 @@ input.address {
     width: 80%;
 }
 
+.form-radio-input {
+    margin-right: 5px;
+    text-align: baseline;
+}
+
+.form-radio-labels {
+    padding-left: 8px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+
 @media (max-width: 1000px) {
     .pet-profile-container {
         flex-direction: column;

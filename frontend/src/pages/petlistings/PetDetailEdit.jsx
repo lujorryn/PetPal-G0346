@@ -141,34 +141,21 @@ function PetDetailEdit() {
         }
         return 'S'
 
-      case 'status':
-        string = string.toLowerCase();
-        if (['pending', 'pe'].includes(string)) {
-          return 'PE'
-        }
-        if (['available', 'av'].includes(string)) {
-          return 'AV'
-        }
-        if (['withdrawn', 'wi'].includes(string)) {
-          return 'WI'
-        }
-        if (['adopted', 'ad'].includes(string)) {
-          return 'AD'
-        }
-        return 'PE'
-
-      case 'category':
-        string = string.toLowerCase();
-        if (['d', 'dog'].includes(string)) {
-          return 'D';
-        }
-        if (['c', 'cat'].includes(string)) {
-          return 'C';
-        }
-        if (['o', 'other'].includes(string)) {
-          return 'C';
-        }
-        return 'O';
+      // case 'status':
+      //   string = string.toLowerCase();
+      //   if (['pending', 'pe'].includes(string)) {
+      //     return 'PE'
+      //   }
+      //   if (['available', 'av'].includes(string)) {
+      //     return 'AV'
+      //   }
+      //   if (['withdrawn', 'wi'].includes(string)) {
+      //     return 'WI'
+      //   }
+      //   if (['adopted', 'ad'].includes(string)) {
+      //     return 'AD'
+      //   }
+      //   return 'PE'
 
       default:
         return string;
@@ -176,6 +163,7 @@ function PetDetailEdit() {
     } // end of switch(key)
 
   } // end of string to code()
+
 
 
   const mainContent = (listing, shelter) => {
@@ -254,7 +242,6 @@ function PetDetailEdit() {
     const handlePetChange = async (event) => {
       let { name, value } = event.target;
       listingData[name] = value;
-      console.log(listingData)
 
       setListingData({ ...listingData });
     }
@@ -329,12 +316,92 @@ function PetDetailEdit() {
                     <input name="gender" className="value" value={listing.gender} onChange={handlePetChange} />
                   </div>
                   <div className="row">
-                    <label htmlFor="pet-status" className="key">Status:</label>
-                    <input id="pet-status" className="value" name="status" value={listing.status} onChange={handlePetChange} />
+                    <label className="key">Status:</label>
+                    <div className="value form-radio-labels">
+                      <label>
+                        <input
+                          className='form-radio-input'
+                          type="radio"
+                          name="status"
+                          value="AV"
+                          checked={listing.status === 'AV'}
+                          onChange={handlePetChange}
+                        />
+                        AV
+                      </label>
+                      <label>
+                        <input
+                          className='form-radio-input'
+                          type="radio"
+                          name="status"
+                          value="AD"
+                          checked={listing.status === 'AD'}
+                          onChange={handlePetChange}
+                        />
+                        AD
+                      </label>
+                      <label>
+                        <input
+                          className='form-radio-input'
+                          type="radio"
+                          name="status"
+                          value="PE"
+                          checked={listing.status === 'PE'}
+                          onChange={handlePetChange}
+                        />
+                        PE
+                      </label>
+                      <label>
+                        <input
+                          className='form-radio-input'
+                          type="radio"
+                          name="status"
+                          value="WI"
+                          checked={listing.status === 'WI'}
+                          onChange={handlePetChange}
+                        />
+                        WI
+                      </label>
+                    </div>
                   </div>
+
                   <div className="row">
-                    <label htmlFor="category" className="key">Category:</label>
-                    <input id="category" className="value" name="category" value={listing.category} onChange={handlePetChange} />
+                    <label className="key">Category:</label>
+                    <div className="value form-radio-labels">
+                      <label>
+                        <input
+                          className='form-radio-input'
+                          type="radio"
+                          name="category"
+                          value="D"
+                          checked={listing.category === 'D'}
+                          onChange={handlePetChange}
+                        />
+                        Dog
+                      </label>
+                      <label>
+                        <input
+                          className='form-radio-input'
+                          type="radio"
+                          name="category"
+                          value="C"
+                          checked={listing.category === 'C'}
+                          onChange={handlePetChange}
+                        />
+                        Cat
+                      </label>
+                      <label>
+                        <input
+                          className='form-radio-input'
+                          type="radio"
+                          name="category"
+                          value="O"
+                          checked={listing.category === 'O'}
+                          onChange={handlePetChange}
+                        />
+                        Other
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
