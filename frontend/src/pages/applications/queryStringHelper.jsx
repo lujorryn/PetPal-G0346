@@ -1,9 +1,10 @@
 
 // A function to help parse through the search terms available for apps 
-function getQueryString(searchTerm, page, sortCreatedTime) {
+function getQueryString(searchTerm, page, sortCreatedTime, isPending) {
 
   let query_string = '';
   let name = '';
+  let search_pending = false; 
 
   // Check search terms 
   if (searchTerm) {
@@ -18,9 +19,10 @@ function getQueryString(searchTerm, page, sortCreatedTime) {
           case 'intermediate':
             query_string += query_string !== '' ? '&experience=IN' : 'experience=IN';
             break;
-
+          
           case 'pending':
             query_string += query_string !== '' ? '&status=P' : 'status=P';
+            search_pending = true; 
             break;
           case 'accepted':
             query_string += query_string !== '' ? '&status=A' : '&status=A';
@@ -84,7 +86,11 @@ function getQueryString(searchTerm, page, sortCreatedTime) {
     if (name !== '') {
       query_string += query_string !== '' ? `&name=${name}` : `name=${name}`;
     }
-    
+
+    // Check to see if to filter by pending
+    if ((isPending == true) && (search_pending == false)) {
+      query_string += query_string !== '' ? '&status=P' : 'status=P';
+    }
 
     console.log("This is query_string", query_string);
 

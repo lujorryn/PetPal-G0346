@@ -9,8 +9,9 @@ import ApplicationDisplay from "../../components/applications/application-displa
 import ApplicationSort from "../../components/applications/application-sort/index.jsx";
 import SearchBar from "../../components/applications/application-searchbar/index.jsx";
 import getQueryString from "./queryStringHelper.jsx";
+import { useFetch } from "../../hooks/useFetch.js";
 
-
+//STARTED TO CHANGE HERE 
 // Component for the list applications page
 function Applications() {
 
@@ -21,7 +22,7 @@ function Applications() {
   const [applications, setApplications] = useState(null);
   const navigate = useNavigate();
   const [page, setPage] = useState(1); 
-  const [ sortCreatedTime, setSortCreatedTime ] = useState(true); 
+  const [ sortCreatedTime, setSortCreatedTime ] = useState(false); 
 
   // If there are no apps in the current window, see if there are more in other windows. 
   const [claimNext, setClaimNext] = useState('');
@@ -32,79 +33,48 @@ function Applications() {
   const [endPoint, setEndPoint] = useState(`/api/applications`);
   const [query, setQuery] = useState('')
 
+  const [isPending, setIsPending] = useState(false);
+  const [failedSearchMsg, setFailedSearchMsg] = useState(''); 
 
-  // Get data
-  useEffect(() => {
-      console.log("Applications useEffect"); 
-
-     // If there is no token, navigate to the user page 
-     if (!token) return navigate('/login'); 
-
-    // Fetch data when component mounts
-    fetch(`${process.env.REACT_APP_API_URL}${endPoint}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}`}})
-      .then(response => response.json())
-      .then(data => {
-        setApplications(data); 
-      })
-      .catch(error => console.log(error)); 
-
-    }, [token, endPoint, navigate]);
+  // Fetch data
+  // Why did it not work if i used fetch() ? 
+  const { data } = useFetch(endPoint, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 
   // Listen for search parameters
   useEffect(() => {
     const searchTerm = searchParams.get('search')
     setSearchTerm(searchTerm)
-  }, [searchParams]);
+    setPage(1);
+  }, [searchParams, isPending]);
 
 
   // Get query string
   let query_string;
   useEffect(() => {
-    // Jump to the next page if there's no applications to show. Maybe move this up. 
-    if (claimNext == true){
-      if (applications.next != null && page < applications.total_pages && page > 0) {
-        console.log(applications.next); 
-        setPage(parseInt(page) + 1); 
-        setClaimNext(false);
-      }
-    }
-  
-    // Get string for query
-    query_string = getQueryString(searchTerm, page, sortCreatedTime);
 
-    // Set endpoints
-    // if ( query_string !== ''){
-    //   setEndPoint(prevEndPoint => `/api/applications?${query_string}`);
-    // } else {
-    //   setEndPoint(prevEndPoint => `/api/applications`);
-    // }
+    // Get string for query
+    query_string = getQueryString(searchTerm, page, sortCreatedTime, isPending);
 
     setQuery(query_string);
 
   }, [page, claimNext, sortCreatedTime, searchTerm]);
 
-  // Reset page num if new search term is invoked, not helping though. 
-  useEffect( () => {
-    setPage(1);
-  }, [searchTerm]);
-
   // Send query to the backend
   useEffect(() => {
     if(query !== '') {
       setEndPoint(`/api/applications?${query}`);
+      // if (query.includes('name')){
+      //   setFailedSearchMsg('Your search yielded no results');
+      // }
       console.log('This is the endpoint:',`/api/applications?${query}` );
     }
     else setEndPoint(`/api/applications`);
   }, [query]);
 
-
-  // Loading msg
-  if (!applications) {
-    return <p>Loading applications...</p>;
-  }
-  
 
   // Handles button to deny or withdraw an application 
   const onWithdrawDenyBtn = (event) => {
@@ -115,7 +85,7 @@ function Applications() {
     if (msgRow) {
       // Find the "msg-preview" element within the "msg-row"
       const msgPreview = msgRow.querySelector('.msg-preview');
-      // console.log(msgPreview);
+
       // Get the application ID from msgContext
       const msgContent = msgPreview.textContent;
       app_id = parseInt(msgContent.match(/\d+/)[0]);
@@ -163,19 +133,22 @@ function Applications() {
   }
 
   // Render component
-  if (applications != null) {
+  if (data != null) {
     return (
       <div className="main__wrapper">
         <SearchBar searchTerm={searchTerm}/>
+        <div> {failedSearchMsg} </div>
         <ApplicationSort setSortCreatedTime={setSortCreatedTime} sortCreatedTime={sortCreatedTime} />
         <ApplicationDisplay 
-          applications={applications} 
+          applications={data} 
           onWithdrawDenyBtn={onWithdrawDenyBtn} 
           onAcceptBtn={onAcceptBtn}
           role = {role}
           page = {page}
           setPage = {setPage}
           setClaimNext = {setClaimNext}
+          setIsPending = {setIsPending}
+          queryString = {query}
         />
       </div>)
   }
