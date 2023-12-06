@@ -13,7 +13,6 @@ import Button from '../../components/ui/Button';
 function PetDetailEdit() {
   const { token, userId, role } = useAuth();
   const [listingData, setListingData] = useState([]);
-  const [initialListing, setInitialListingData] = useState({});
   const [shelterData, setShelterData] = useState([]);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -47,9 +46,7 @@ function PetDetailEdit() {
 
         const listingOwner = await getListingOwner(petlisting.owner);
         setShelterData(listingOwner);
-        setInitialListingData(petlisting);
 
-        // console.log("first init", petlisting)
       } catch (err) {
         setErr(err.message);
         console.log("Uh oh =>", err);
@@ -141,22 +138,6 @@ function PetDetailEdit() {
         }
         return 'S'
 
-      // case 'status':
-      //   string = string.toLowerCase();
-      //   if (['pending', 'pe'].includes(string)) {
-      //     return 'PE'
-      //   }
-      //   if (['available', 'av'].includes(string)) {
-      //     return 'AV'
-      //   }
-      //   if (['withdrawn', 'wi'].includes(string)) {
-      //     return 'WI'
-      //   }
-      //   if (['adopted', 'ad'].includes(string)) {
-      //     return 'AD'
-      //   }
-      //   return 'PE'
-
       default:
         return string;
 
@@ -167,7 +148,6 @@ function PetDetailEdit() {
 
 
   const mainContent = (listing, shelter) => {
-    // console.log(listing)
     const fDate = new Date(listing.created_time).toLocaleDateString();
 
     const isListingOwner = userId == shelter.id;
@@ -191,15 +171,12 @@ function PetDetailEdit() {
             method: 'PUT',
             headers: {
               Authorization: `Bearer ${token}`,
-              // 'Content-Type': "application/json",
             },
             body: formData,
           });
           if (!response.ok) {
-            // console.log(response)
-            const sd = await response.json();
-            // console.log(sd);
             console.error('File upload failed:', response.error);
+            throw new Error(response.error);
           } else {
             console.log('File uploaded successfully.');
           }
@@ -246,10 +223,6 @@ function PetDetailEdit() {
       setListingData({ ...listingData });
     }
 
-    const handleShelterChange = (event) => {
-      const { name, value } = event.target;
-      setShelterData({ ...shelterData, [name]: value });
-    }
 
     const handleFileChange = async (event) => {
       const kfile = event.target.files[0];
@@ -292,12 +265,12 @@ function PetDetailEdit() {
               <div className="pet-profile-details edit-mode">
                 <div className="pet-profile-header edit-mode">
                   <input className="title" name="name" value={listing.name} onChange={handlePetChange} placeholder="pet name" required />
-                  <input readOnly id="address" className="address" name="address" value={shelter.address} onChange={handleShelterChange} placeholder='shelter address' />
+                  <input readOnly id="address" className="address" name="address" value={shelter.address} placeholder='shelter address' />
                 </div>
                 <div className="pet-profile-info">
                   <div className="row">
                     <label htmlFor="shelter" className="key">Shelter:</label>
-                    <input readOnly name="email" className="value" value={shelter.email} onChange={handleShelterChange} placeholder='shelter email' />
+                    <input readOnly name="email" className="value" value={shelter.email} placeholder='shelter email' />
                   </div>
                   <div className="row">
                     <label htmlFor="size" className="key">Size:</label>

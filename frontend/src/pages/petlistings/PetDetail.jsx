@@ -7,7 +7,6 @@ import '../../styles/global.css';
 import './PetDetail.css';
 
 import Button from '../../components/ui/Button';
-import { containerClasses } from '@mui/material';
 
 
 function PetDetail() {
