@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import styles from './ApplicationSort.module.css'
 
-function ApplicationSort({setSortOption}) {
-  const [selectedOption, setSelectedOption] = useState('')
+function ApplicationSort({sortOption, setSortOption}) {
+  const [selectedOption, setSelectedOption] = useState(sortOption)
 
   const handleChange = e => {
     const {value} = e.target
     setSelectedOption(value)
-    setSortOption(() => value)
+    setSortOption(value)
   }
 
   return (

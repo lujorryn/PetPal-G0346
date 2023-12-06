@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom'
 
 import Input from '../../ui/form/Input'
 import Button from '../../ui/Button'
 import styles from './SearchBar.module.css'
 
 
-function SearchBar({setSearchTerm}) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [newSearch, setNewSearch] = useState(searchParams.get('search') || '')
+function SearchBar({searchTerm, setSearchTerm}) {
+  const [newSearch, setNewSearch] = useState('')
 
   const handleChange = e => setNewSearch(e.target.value)
 
@@ -16,13 +14,9 @@ function SearchBar({setSearchTerm}) {
     e.preventDefault()
     setNewSearch('')
     if(newSearch !== '') {
-      searchParams.set('search', newSearch)
-      setSearchParams(searchParams)
-      setSearchTerm(searchParams.get('search'))
+      setSearchTerm(newSearch)
       setNewSearch('')
     } else {
-      searchParams.delete('search')
-      setSearchParams(searchParams)
       setSearchTerm('')
       setNewSearch('')
     }
@@ -30,7 +24,7 @@ function SearchBar({setSearchTerm}) {
 
   return (
     <div className={styles.wrapper}>
-      {newSearch === '' && <h6 className="h6">Search results for "{searchParams.get('search')}" </h6>}
+      {newSearch === '' && <h6 className="h6">Search results for "{searchTerm}" </h6>}
       <form className={styles.form} onSubmit={handleSubmit}>
         <Input 
           name="search__text"
