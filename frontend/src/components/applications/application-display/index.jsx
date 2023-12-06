@@ -8,8 +8,26 @@ import Pagination from '../../ui/Pagination/index.jsx';
 // TODO: FIX PAGINATION 
 function ApplicationDisplay ({applications, onWithdrawDenyBtn, onAcceptBtn, role, setPage, setClaimNext}) {
     const navigate = useNavigate();
+    
+    // if (applications.results.data == undefined) {
+    //     return (
+    //         <>
+    //             <div className="title-row">
+    //                 <p className="page-title"> My Applications </p>
+    //                 <span id="new-btn"><Button classes={"btn"} children={"Find another pet"} handleClick={() => navigate("/petlistings")}/> </span>
+    //             </div>
+    //             <div className="msg-container">
+    //                 <div className="msg-nav">
+    //                 <button id="inbox" className={`msg-nav-item ${!showAllApps ? 'active': ''}`} onClick={handleActiveClick}> Active Apps </button>
+    //                 <button id="inbox" className={`msg-nav-item ${showAllApps ? 'active': ''}`} onClick={handleAllClick}> All </button>
+    //                 </div>
+    //                     You have no applications with this criteria 
+    //             </div>
+    //         </>
+    //     );
+    // }
+    
     const applications_data = applications.results.data; 
-
     const [showAllApps, setShowAllApps] = useState(false); 
 
     // Pagination
