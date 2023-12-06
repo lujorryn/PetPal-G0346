@@ -166,4 +166,5 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    'https://pet-pal-frontend-l5ny5ivo6-iamyanbo.vercel.app',
 ]

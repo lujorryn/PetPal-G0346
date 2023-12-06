@@ -14,6 +14,7 @@ npm start
 Use Vercel
 Upload frontend folder into new project
 setup env variables to point to backend url
+When using frontend, set site settings -> allow insecure content to be true
 
 # Backend
 Use AWS EC2
@@ -22,5 +23,6 @@ get .pem key, use it to ssh into instance
 upload backend folder and requirements.txt, run.sh, startup.sh into instance
 ./startup.sh
 ./run.sh
+add custom TCP 5000 in security group
 replace 0.0.0.0 in url (0.0.0.0/5000) with public IPV4 address
 
