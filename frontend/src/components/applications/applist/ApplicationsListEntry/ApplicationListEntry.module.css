@@ -1,0 +1,59 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  padding: var(--padding-narrow) var(--padding-wide);
+}
+
+.odd {
+  background-color: #a8bb8b;
+  
+}
+
+.even {
+  background-color: #c9dab0;
+}
+
+.info {
+  flex: 1 auto auto;
+}
+
+.date {
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.date:not(:last-child) {
+  margin-top: var(--margin-mid);
+}
+
+.buttons {
+  width: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.2rem;
+  margin: 0.1rem 0;
+}
+
+.green {
+  background-color: var(--color-primary);
+}
+
+.red {
+  background-color: #ff6c6c;
+}
+
+.disabled {
+  background-color: #a0a0a0;
+  color: white;
+}
+
+.disabled:hover {
+  background-color: #a0a0a0;
+  color: white;
+}
