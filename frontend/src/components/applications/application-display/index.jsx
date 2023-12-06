@@ -31,7 +31,7 @@ function ApplicationDisplay ({applications, onWithdrawDenyBtn, onAcceptBtn, role
         }
       }, [applications_data, showAllApps]);
 
-    console.log("This is applications_data", applications_data);
+    // console.log("This is applications_data", applications_data);
 
     // Show active apps only
     const handleActiveClick = () => {
@@ -56,7 +56,7 @@ function ApplicationDisplay ({applications, onWithdrawDenyBtn, onAcceptBtn, role
         <>
             <>
                 <div className="title-row">
-                    <p class="page-title"> My Applications </p>
+                    <p className="page-title"> My Applications </p>
                     <span id="new-btn"><Button classes={"btn"} children={"Find another pet"} handleClick={() => navigate("/petlistings")}/> </span>
                 </div>
                 <div className="msg-container">
@@ -82,7 +82,7 @@ function ApplicationDisplay ({applications, onWithdrawDenyBtn, onAcceptBtn, role
                         is_app={true}
                         is_seeker={ role === 'shelter' ? true: false}
                         handleAcceptBtn={ role === 'shelter' ? onAcceptBtn : null}
-                        isHidden={!showAllApps && (application.status === 'W' || application.status === 'D')}
+                        isHidden={!showAllApps && (application.status === 'W' || application.status === 'D' || application.status === 'A' )}
                         />
                     ))}
                 </div>

@@ -4,6 +4,7 @@ import './style.css';
 // Button component to toggle between created time or last updated 
 function ApplicationSort ({ setSortCreatedTime, sortCreatedTime }) {
     
+    // Toggle sort time
     const handleClick = () => {
         setSortCreatedTime(!sortCreatedTime);
     }
