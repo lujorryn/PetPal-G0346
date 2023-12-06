@@ -152,7 +152,7 @@ function PetDetail() {
           // application form btn
           <>
             <Button classes="square-btn" id="contact-shelter-btn" handleClick={() => { navigate(shelterContact) }}>contact shelter</Button>
-            <Button id="application-form-btn" handleClick={() => { navigate(`/applications`) }}>Application Form</Button>
+            <Button id="application-form-btn" handleClick={() => { navigate(`/petlistings/${petId}/apply`) }}>Application Form</Button>
           </>
         )
       } else {
