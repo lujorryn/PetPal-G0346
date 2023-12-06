@@ -1,6 +1,26 @@
-# This text file should explain how to deploy your website.
 
-# You should write detailed description on:
+# Local Development
+# Frontend
+cd frontend
+npm install
+npm start
 
-# 1. All the packages you need to install
-# 2. How to configure various servers (e.g., Nginx, Apache, etc)
+# backend
+./startup.sh
+./run.sh
+
+# Deployment
+# Frontend
+Use Vercel
+Upload frontend folder into new project
+setup env variables to point to backend url
+
+# Backend
+Use AWS EC2
+set up new instance with security group to allow all
+get .pem key, use it to ssh into instance
+upload backend folder and requirements.txt, run.sh, startup.sh into instance
+./startup.sh
+./run.sh
+replace 0.0.0.0 in url (0.0.0.0/5000) with public IPV4 address
+
