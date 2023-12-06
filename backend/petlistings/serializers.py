@@ -9,4 +9,4 @@ class PetListingImageSerializer(serializers.ModelSerializer):
 class PetListingSerializer(serializers.ModelSerializer):    
     class Meta:
         model = PetListing
-        fields = ['name', 'category', 'breed', 'age', 'gender', 'size', 'status', 'med_history', 'behaviour', 'special_needs', 'description']
+        fields = ['pk', 'name', 'category', 'breed', 'age', 'gender', 'size', 'status', 'med_history', 'behaviour', 'special_needs', 'description']
