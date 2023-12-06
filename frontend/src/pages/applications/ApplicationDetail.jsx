@@ -47,17 +47,6 @@ function ApplicationDetail() {
     }, [token, navigate]);
 
 
-    // (For testing purposes) Check the response
-    useEffect(() => {
-      console.log(application);
-      if (application != null) {
-        console.log("This is application");
-        console.log(application);
-        console.log(application.error);
-      }
-
-    }, [application]);
-
     // There is an error (User doesn't have application with that id)
     if (application != null && application.error != undefined) {
       return <NotFound/>;

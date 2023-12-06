@@ -5,7 +5,6 @@ function validateForm(method, formData, pet_id, token) {
 
     // Check that no input is empty
     for (const pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
         const [field_name, value] = pair;
 
         if (value.trim() === '') {
@@ -26,7 +25,6 @@ function validateForm(method, formData, pet_id, token) {
     let phone = formData.get("phone").trim();
     let phone_regex = /^\d{3}-\d{3}-\d{4}$/;
     if (!phone_regex.test(phone)) {
-        console.log("error");
         error_msg = 'Invalid phone format';
         return error_msg;
     }

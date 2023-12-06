@@ -1,7 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import NotFound from "../NotFound";
 import ApplicationForm from "../../components/applications/application-form";
 import validateForm from "./validateForm.jsx" 
 
@@ -109,7 +108,6 @@ function PetApplication () {
         body: form_data,
       }).then(response => {
         if (!response.ok) {
-          console.log("Error with application POST request");
           return navigate(`/petlistings/already-applied`, { replace: true });
         } else {
           return navigate(`/petlistings/application-success`, { replace: true });
@@ -136,7 +134,6 @@ function PetApplication () {
         if (typeof validation_result === 'string') {
           setErrorMsg(validation_result);
         } else {
-          console.log(validation_result);
           if (validation_result.first_name != '') {
 
             setValidData(validation_result);
