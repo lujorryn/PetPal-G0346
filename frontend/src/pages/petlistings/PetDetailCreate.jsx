@@ -221,7 +221,7 @@ function PetDetailCreate() {
                 method = "PUT"
                 url = `${process.env.REACT_APP_API_URL}/api/petlistings/${pk}`;
             } // end of for
-            navigate(`/petlistings`)
+            navigate(`/profile`)
         } // end of sendPost()
 
         const renderActionBtn = () => {
