@@ -57,6 +57,10 @@ def notifications_list_view(request):
         if notification.content_type.model == 'comment':
             if comment.application:
                 result['application_id'] = comment.application.pk
+            if comment.is_review:
+                result['is_review'] = comment.is_review
+            else:
+                result['is_review'] = False
         if notification.content_type.model == 'petlisting':
             pet_listing_url = reverse('petlistings:pelisting-detail', args=[notification.object_id])
             result['link'] = pet_listing_url
