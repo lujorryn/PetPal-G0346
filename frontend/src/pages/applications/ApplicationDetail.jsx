@@ -28,8 +28,6 @@ function ApplicationDetail() {
      // If there is no token, navigate to the user page 
     if (!token) return navigate('/login'); 
 
-    // TODO: CHECK USER ROLE HERE? 
-
     // Fetch data when component mounts
       fetch(`${process.env.REACT_APP_API_URL}/api/applications/${application_id}`, {
         method: 'GET',
@@ -139,7 +137,10 @@ function ApplicationDetail() {
         readOnly={true} 
         is_disabled={true} 
         data={personal_data} 
-        button_text={"Return"} 
+        button_text={"Return"}
+        is_active_app={(application_data.status === 'P' || application_data.status === 'A') && role === 'shelter'}
+        handlePet={() => navigate(`/petlistings/${application_data.petlisting.pk}`)}
+        handleUserProfile={() => navigate(`/profile/${application_data.seeker}`)}
         handleClick={() => navigate("/applications")}
         />
     </div>
