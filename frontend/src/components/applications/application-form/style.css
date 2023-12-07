@@ -125,6 +125,10 @@
     font-weight: bold;
 }
 
+.btn:not(:first-child) {
+    margin-left: var(--margin-mid);
+}
+
 @media (max-width: 830px) {
     .form-row {
         flex-direction: column;
@@ -146,9 +150,14 @@
         width: 100%;
     }
 
+    
 }
 
 @media (max-width: 600px) {
+    .btn:not(:first-child) {
+        margin-left: 0;
+    }
+    
     .btn-row {
         flex-direction: column;
         gap: 20px;

@@ -16,54 +16,65 @@ function ApplicationListEntry({application, isOdd, role}) {
 
   const handleWithdraw = (e) => {
     e.preventDefault()
-    const payload = {
-      status: 'W',
-      petlisting_id: application.id
-    }
     fetch(`${API_URL}/api/applications/${application.id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({status: 'W'})
     }).then(res => { res.json() })
       .then(setStatus('Withdrawn'))
+      .catch(err => console.log(err))
+    
+    let petlisting = application.petlisting
+    petlisting.status = "AV"
+    fetch(`${API_URL}/api/petlistings/${petlisting.pk}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(petlisting)
+    }).then(res => { res.json() })
       .catch(err => console.log(err))
   }
 
   const handleApprove = (e) => {
     e.preventDefault()
-    const payload = {
-      status: 'A',
-      petlisting_id: application.id
-    }
     fetch(`${API_URL}/api/applications/${application.id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({status: 'A'})
     }).then(res => { res.json() })
       .then(setStatus('Approved'))
+      .catch(err => console.log(err))
+      
+    let petlisting = application.petlisting
+    petlisting.status = "PE"
+    fetch(`${API_URL}/api/petlistings/${petlisting.pk}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(petlisting)
+    }).then(res => { res.json() })
       .catch(err => console.log(err))
   }
 
   const handleDecline = (e) => {
     e.preventDefault()
-    console.log("decline")
-    const payload = {
-      status: 'D',
-      petlisting_id: application.id
-    }
     fetch(`${API_URL}/api/applications/${application.id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({status: 'D'})
     }).then(res => { res.json() })
       .then(setStatus('Declined'))
       .catch(err => console.log(err))
@@ -98,8 +109,8 @@ function ApplicationListEntry({application, isOdd, role}) {
         <div className={styles.buttons}>
           <Button classes={`${styles.btn}`} handleClick={handleNavigate}>View</Button>
           <Button
-            classes={`${styles.btn} ${styles.red} ${status!=='Pending' ? styles.disabled : ''}`}
-            handleClick={handleWithdraw} disabled={status!=='Pending'}
+            classes={`${styles.btn} ${styles.red} ${status==='Declined' || status==='Withdrawn' ? styles.disabled : ''}`}
+            handleClick={handleWithdraw} disabled={status==='Declined' || status==='Withdrawn'}
           >Withdraw</Button>
         </div>
       )}

@@ -180,7 +180,7 @@ function Profile() {
                 </span>
               </li>
               <li>
-                <span className='font-bold'>Email:</span>
+                <span className='font-bold'>Email: </span>
                 <span className='text-gray-700'>
                   <a href={`mailto:${user?.data.email}`}>{user?.data.email}</a>
                 </span>
@@ -220,24 +220,6 @@ function Profile() {
               </li>
             </ul>
           </div>
-          <div className='profile-favs'>
-            <div className='container mx-auto mb-4 px-5 py-2 lg:px-32 lg:pt-12 space-y-4'>
-              <p className='text-xl font-bold'>Your Favorites</p>
-              <div className='-m-1 flex flex-wrap md:-m-2'>
-                {favPets?.map((pet) => (
-                  <div className='flex w-full md:w-1/2 lg:w-1/3 p-1 md:p-2' key={pet.id}>
-                    <a href={`/petlistings/${pet.id}`} className='w-full block'>
-                      <img
-                        alt={pet.name}
-                        className='block w-full h-64 object-cover object-center rounded-lg'
-                        src={pet.photos[0] ? `${process.env.REACT_APP_API_URL}${pet.photos[0].url}` : '/images/logo_ref.png'}
-                      />
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       )
     } else {
@@ -269,7 +251,7 @@ function Profile() {
                         <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                       </svg>
                     ))}
-                    {user?.data.avg_rating.toFixed(2)} out of 5
+                    {user?.data.avg_rating ? `${user.data.avg_rating.toFixed(2)} out of 5` : 'No reviews yet'}
                   </div>
                 )}
               </div>
@@ -372,7 +354,7 @@ function Profile() {
                       <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
                     </svg>
                   ))}
-                  <p className="ml-2 text-white">{review.rating.toFixed(2)} out of 5</p>
+                  <p className="ml-2 text-white">{review.rating ? `${review.rating.toFixed(2)} out of 5` : 'No rating'}</p>
                 </div>
                 <div className="mt-2 text-white">{review.seeker}: {review.content}</div>
                 {review?.reply ? (

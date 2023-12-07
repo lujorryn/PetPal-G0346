@@ -5,7 +5,7 @@ import RadioInput from '../application-input/radio-input.jsx'
 
 // Component for the application form 
 
-function ApplicationForm({readOnly, is_disabled, data, button_text, handleClick, on_submit="", error=""}) {
+function ApplicationForm({readOnly, is_disabled, data, button_text, is_active_app = false, handlePet, handleUserProfile, handleClick, on_submit, error=""}) {
     return (
         <form className='form-container' aria-readonly={readOnly} onSubmit={on_submit} required> 
             <div className='form-content'>
@@ -93,18 +93,17 @@ function ApplicationForm({readOnly, is_disabled, data, button_text, handleClick,
                 </div>
             </div>
             <div className="btn-row">
-                {/* <input id="submit-btn" className="btn" type="submit" value="Submit" />
-                <Button classes={"btn"} children={button_text} handleClick={handleClick}/> */}
-
                 {!is_disabled ? (
                     <span>
                          <input id="submit-app-btn" className="btn" type="submit" value={button_text} disabled={is_disabled} />
                     </span>
 
                     ) : (
-                    <span>
-                        <Button classes={"btn"} children={button_text} handleClick={handleClick}/>
-                    </span>
+                        <>
+                            <Button classes={"btn"} handleClick={handlePet}>View Pet</Button>
+                            {is_active_app && <Button classes={"btn"} handleClick={handleUserProfile}>View User Profile</Button>}
+                            <Button classes={"btn"} children={button_text} handleClick={handleClick}/>
+                        </>
                 )}
             </div>
         </form>

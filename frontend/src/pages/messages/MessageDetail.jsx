@@ -71,7 +71,18 @@ function MessageDetail() {
           pageNum++
         } else {
           setMessages(results)
-          fetchOtherUser(results[0].seeker_id, results[0].shelter_id)
+          if (results.length === 0) {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/applications/${id}`, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
+            const data = await res.json()
+            fetchOtherUser(data.data.seeker, data.data.shelter)
+          } else {
+            fetchOtherUser(results[0].seeker_id, results[0].shelter_id)
+          }
           fetchSelf()
           break
         }
